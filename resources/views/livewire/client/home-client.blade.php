@@ -58,7 +58,11 @@
                     </div>
                 </div>
                 <!-- Onglet Abonnements -->
-                <div x-show="activeTab === 'pricing'" x-cloak>
+                <div x-show="activeTab === 'pricing'"
+                    x-transition:enter="tw-transition tw-ease-out tw-duration-300"
+                    x-transition:enter-start="tw-opacity-0 tw-transform tw-scale-95"
+                    x-transition:enter-end="tw-opacity-100 tw-transform tw-scale-100"
+                    x-cloak>
                     @include('livewire.client.sections.pricing-plans')
                 </div>
             </div>

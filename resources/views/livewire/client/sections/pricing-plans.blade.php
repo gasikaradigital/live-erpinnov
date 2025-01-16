@@ -1,14 +1,13 @@
 <!-- pricing-plans.blade.php -->
-<div class="tw-max-w-4xl tw-mx-auto tw-px-4 tw-pb-8" x-data="{ 
+<div class="tw-max-w-4xl tw-mx-auto tw-px-4 tw-pb-8" x-data="{
     isYearly: true,
     openPlan: null,
-    animating: false 
-}">
+    animating: false }">
     <!-- Header -->
     <div class="tw-mb-10 tw-text-center">
         <h2 class="tw-text-3xl tw-font-bold tw-text-gray-900">Nos offres</h2>
         <p class="tw-mt-2 tw-text-gray-600">Choisissez le plan qui correspond à vos besoins</p>
-        
+
         <!-- Toggle Prix -->
         <div class="tw-mt-6 tw-inline-flex tw-items-center tw-p-1 tw-bg-gray-100 tw-rounded-lg">
             <button @click="isYearly = false"
@@ -29,18 +28,18 @@
     <div class="tw-space-y-4">
         @foreach($plans->where('is_free', false) as $plan)
             <div class="tw-group"
-                 x-data="{ 
+                 x-data="{
                      isOpen: false,
-                     init() { 
+                     init() {
                          if ('{{ $plan->name }}' === 'Solo+') this.isOpen = true;
                      }
                  }">
                 <!-- Plan Header Bar -->
                 <div @click="isOpen = !isOpen"
-                     class="tw-relative tw-bg-white tw-rounded-xl tw-shadow-sm tw-transition-all tw-duration-300 
+                     class="tw-relative tw-bg-white tw-rounded-xl tw-shadow-sm tw-transition-all tw-duration-300
                             tw-cursor-pointer tw-overflow-hidden hover:tw-shadow-md
                             {{ $plan->name === 'Solo+' ? 'tw-border-2 tw-border-gray-900' : 'tw-border tw-border-gray-200' }}">
-                    
+
                     <!-- Background Progress Bar (Solo+ uniquement) -->
                     @if($plan->name === 'Solo+')
                         <div class="tw-absolute tw-inset-0 tw-bg-gray-50 tw-transition-all tw-duration-500"
@@ -98,7 +97,7 @@
                                     <div class="tw-text-sm tw-text-gray-500">par mois</div>
                                 </div>
                             </div>
-                            
+
                             <svg class="tw-w-5 tw-h-5 tw-text-gray-400 tw-transition-transform tw-duration-300"
                                  :class="isOpen ? 'tw-rotate-180' : ''"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +114,7 @@
                      class="tw-bg-white tw-border-x tw-border-b tw-border-gray-200 tw-rounded-b-xl tw-shadow-sm tw-overflow-hidden">
                     <div class="tw-p-6 tw-space-y-6">
                         <!-- Prix annuel si applicable -->
-                        <div x-show="isYearly" 
+                        <div x-show="isYearly"
                              class="tw-bg-green-50 tw-rounded-lg tw-p-4">
                             <div class="tw-flex tw-justify-between tw-items-center">
                                 <div>
@@ -147,12 +146,12 @@
                             <div>
                                 <h4 class="tw-font-medium tw-text-gray-900">Support inclus</h4>
                                 <p class="tw-text-sm tw-text-gray-500 tw-mt-1">
-                                    {{ $plan->name === 'Solo' ? 'Email uniquement' : 
+                                    {{ $plan->name === 'Solo' ? 'Email uniquement' :
                                        ($plan->name === 'Solo+' ? 'Email & Messagerie' : 'Email, Chat & Visio') }}
                                 </p>
                             </div>
                             <span class="tw-bg-gray-200 tw-text-gray-700 tw-px-3 tw-py-1 tw-rounded-full tw-text-sm">
-                                {{ $plan->name === 'Solo' ? 'Délai 48h' : 
+                                {{ $plan->name === 'Solo' ? 'Délai 48h' :
                                    ($plan->name === 'Solo+' ? 'Délai 24h' : 'Prioritaire') }}
                             </span>
                         </div>
@@ -160,8 +159,8 @@
                         <!-- Bouton d'action -->
                         <button wire:click="changePlan('{{ $plan->uuid }}')"
                                 class="tw-w-full tw-text-center tw-px-6 tw-py-3 tw-rounded-lg tw-font-medium tw-transition-all
-                                       {{ $plan->name === 'Solo+' 
-                                          ? 'tw-bg-gray-900 tw-text-white hover:tw-bg-gray-800' 
+                                       {{ $plan->name === 'Solo+'
+                                          ? 'tw-bg-gray-900 tw-text-white hover:tw-bg-gray-800'
                                           : 'tw-border tw-border-gray-300 tw-text-gray-700 hover:tw-bg-gray-50' }}">
                             {{ $plan->name === 'Solo+' ? "Choisir l'offre recommandée" : 'Sélectionner ce plan' }}
                         </button>
@@ -174,7 +173,7 @@
     <!-- Current Plan Badge -->
     @if($currentPlan)
         <div class="tw-mt-8 tw-mb-8 tw-text-center"> <!-- Ajout d'une marge en bas -->
-            <span class="tw-inline-flex tw-items-center tw-gap-2 tw-bg-gray-100 tw-text-gray-700 
+            <span class="tw-inline-flex tw-items-center tw-gap-2 tw-bg-gray-100 tw-text-gray-700
                         tw-px-4 tw-py-2 tw-rounded-full tw-text-sm">
                 <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
