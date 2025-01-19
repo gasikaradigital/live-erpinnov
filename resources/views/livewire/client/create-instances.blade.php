@@ -1,4 +1,11 @@
 <div>
+    @push('styles')
+        <style>
+            .progress-transition {
+                transition: width 0.5s ease-in-out;
+            }
+        </style>
+    @endpush
     <div class="tw-min-h-screen tw-bg-gray-50 dark:tw-bg-gray-900">
         <!-- Header avec navigation -->
         <div class="tw-bg-white dark:tw-bg-gray-800 tw-border-b dark:tw-border-gray-700 tw-py-4 tw-mt-16">
@@ -18,22 +25,22 @@
             </div>
         </div>
 
-        <!-- Contenu principal -->
-        <div class="tw-flex-1">
+        <!-- Contenu principal avec sidebar -->
+        <div class="tw-flex-1 tw-bg-gray-50 dark:tw-bg-gray-900">
             <div class="tw-max-w-7xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8 tw-py-8">
                 <div class="tw-grid lg:tw-grid-cols-3 tw-gap-8">
                     <!-- Formulaire principal -->
                     <div class="lg:tw-col-span-2">
+
                         @if($newInstanceInfo)
                             @include('livewire.client.messages.infocreated')
                         @else
+
                             <div class="tw-bg-white dark:tw-bg-gray-800 tw-shadow tw-rounded-lg">
                                 @if(!$showPlanSelection)
                                     <div class="tw-px-6 tw-py-8 tw-border-b dark:tw-border-gray-700">
                                         <div class="tw-text-center">
-                                            <h3 class="tw-font-display tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white">
-                                                Créez votre espace de travail
-                                            </h3>
+                                            <h3 class="tw-font-display tw-text-2xl tw-font-semibold tw-text-gray-900 dark:tw-text-white">Créez votre espace de travail</h3>
                                             <p class="tw-mt-2 tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">
                                                 En quelques clics, créez votre environnement professionnel personnalisé
                                             </p>
@@ -42,7 +49,6 @@
 
                                     <div class="tw-p-6">
                                         <form wire:submit.prevent="store" class="tw-space-y-6">
-                                            <!-- Nom de l'instance -->
                                             <div>
                                                 <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 dark:tw-text-gray-300">
                                                     Nom de l'instance
@@ -61,7 +67,6 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Sélection de l'entreprise -->
                                             <div>
                                                 <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 dark:tw-text-gray-300">
                                                     Votre entreprise
@@ -78,7 +83,6 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Affichage du pays -->
                                             @if($entreprise_id)
                                                 <div class="tw-bg-gray-50 dark:tw-bg-gray-700 tw-rounded-lg tw-p-3 tw-inline-flex tw-items-center tw-gap-2">
                                                     <img src="{{ asset('client/assets/img/flags/' . ($selectedPays == 'Madagascar' ? '0.png' : '1.png')) }}"
@@ -88,7 +92,6 @@
                                                 </div>
                                             @endif
 
-                                            <!-- Boutons d'action -->
                                             <div class="tw-border-t dark:tw-border-gray-700 tw-pt-6">
                                                 <div class="tw-flex tw-justify-between tw-items-center">
                                                     <a href="{{ route('espaceClient') }}"
@@ -110,49 +113,57 @@
                                         </form>
                                     </div>
                                 @else
-                                    {{-- Section pour plan de souscription --}}
-                                    @include('livewire.client.sections.plan-selection')
+                                    <div class="tw-p-8 tw-text-center">
+                                        <div class="tw-mx-auto tw-flex tw-items-center tw-justify-center tw-h-12 tw-w-12 tw-rounded-full tw-bg-red-100 dark:tw-bg-red-900 tw-mb-4">
+                                            <svg class="tw-h-6 tw-w-6 tw-text-red-600 dark:tw-text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="tw-text-lg tw-font-medium tw-text-gray-900 dark:tw-text-white">Limite d'instances atteinte</h3>
+                                        <p class="tw-mt-2 tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">
+                                            Passez à un forfait supérieur pour créer plus d'instances
+                                        </p>
+                                        <div class="tw-mt-6">
+                                            <button class="tw-btn-primary tw-py-2 tw-px-4 tw-rounded-lg tw-text-sm tw-font-semibold"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#pricingModal">
+                                                <span class="tw-flex tw-items-center tw-gap-2">
+                                                    <svg class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                                    </svg>
+                                                    <span>Voir les forfaits</span>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
                         @endif
                     </div>
-
                     <!-- Sidebar avec informations -->
                     @include('livewire.client.sections.sidebar')
                 </div>
             </div>
         </div>
 
-        <!-- Modal de progression -->
-        <div x-data="{
-                isCreating: @entangle('isCreating'),
-                progress: @entangle('progress'),
-                currentMessage: @entangle('currentStepMessage')
-             }"
-             x-show="isCreating"
-             x-on:progress-updated.window="
-                progress = $event.detail.progress;
-                currentMessage = $event.detail.message;
-             "
-             x-transition:enter="tw-transition tw-ease-out tw-duration-300"
-             x-transition:enter-start="tw-opacity-0"
-             x-transition:enter-end="tw-opacity-100"
-             x-transition:leave="tw-transition tw-ease-in tw-duration-200"
-             x-transition:leave-start="tw-opacity-100"
-             x-transition:leave-end="tw-opacity-0"
-             class="tw-fixed tw-inset-0 tw-z-50 tw-flex tw-items-center tw-justify-center">
+        <!-- Loading Overlay avec progression -->
+        <div x-data="instanceProgress()"
+            x-show="isCreating"
+            x-on:start-creation.window="startCreation()"
+            x-on:creation-completed.window="complete()"
+            x-on:progress-updated.window="updateProgress($event.detail.progress, $event.detail.message)"
+            class="tw-fixed tw-inset-0 tw-items-center tw-justify-center tw-z-50"
+            :class="{ 'tw-flex': isCreating, 'tw-hidden': !isCreating }">
 
-            <!-- Overlay -->
             <div class="tw-fixed tw-inset-0 tw-bg-black tw-opacity-50"></div>
 
-            <!-- Modal Content -->
-            <div class="tw-relative tw-bg-white dark:tw-bg-gray-800 tw-rounded-lg tw-p-6 tw-max-w-md tw-w-full tw-mx-4 tw-shadow-xl">
+            <div class="tw-relative tw-bg-white dark:tw-bg-gray-800 tw-rounded-lg tw-p-6 tw-max-w-md tw-w-full tw-mx-4">
                 <h3 class="tw-text-lg tw-font-semibold tw-text-center tw-text-gray-900 dark:tw-text-white">
                     Création de votre instance
                 </h3>
 
-                <!-- Message de l'étape -->
-                <p class="tw-mt-2 tw-text-sm tw-text-center tw-text-gray-600 dark:tw-text-gray-400" x-text="currentMessage"></p>
+                <!-- Message de l'étape actuelle -->
+                <p class="tw-text-sm tw-text-center tw-text-gray-600 dark:tw-text-gray-400 tw-mt-2" x-text="currentMessage"></p>
 
                 <!-- Barre de progression -->
                 <div class="tw-mt-4">
@@ -160,33 +171,50 @@
                         <div class="tw-flex tw-mb-2 tw-items-center tw-justify-between">
                             <div>
                                 <span class="tw-text-xs tw-font-semibold tw-inline-block tw-py-1 tw-px-2 tw-rounded-full tw-text-primary-600 dark:tw-text-primary-400"
-                                      x-text="`${progress}%`">
+                                        x-text="`${progress}%`">
+                                    0%
                                 </span>
                             </div>
                         </div>
                         <div class="tw-overflow-hidden tw-h-2 tw-mb-4 tw-text-xs tw-flex tw-rounded tw-bg-primary-200 dark:tw-bg-primary-900">
                             <div class="tw-shadow-none tw-flex tw-flex-col tw-text-center tw-whitespace-nowrap tw-text-white tw-justify-center tw-bg-primary-600 dark:tw-bg-primary-400 tw-transition-all tw-duration-500"
-                                 x-bind:style="`width: ${progress}%`">
+                                :style="`width: ${progress}%`">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
     </div>
 </div>
-
-@push('scripts')
+@push("scripts")
+<!-- Alpine.js Script -->
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('instanceProgress', () => ({
-            init() {
-                this.$watch('progress', value => {
-                    // Animation fluide de la barre de progression
-                    this.$refs.progressBar.style.width = `${value}%`;
-                });
+            isCreating: false,
+            progress: 0,
+            currentMessage: '',
+
+            startCreation() {
+                this.isCreating = true;
+                this.progress = 0;
+                this.currentMessage = 'Initialisation...';
+            },
+
+            updateProgress(progress, message) {
+                this.progress = progress;
+                this.currentMessage = message;
+            },
+
+            complete() {
+                this.isCreating = false;
+                this.progress = 100;
             }
         }));
     });
 </script>
+
 @endpush
