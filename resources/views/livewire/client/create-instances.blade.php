@@ -89,47 +89,65 @@
 
                                             <!-- Barre de progression -->
                                             @if($isCreating)
-                                                <div class="tw-space-y-3">
-                                                    <div class="tw-flex tw-justify-between tw-items-center">
-                                                        <span class="tw-text-sm tw-font-medium tw-text-gray-700 dark:tw-text-gray-300">
-                                                            Création en cours...
-                                                        </span>
-                                                        <span class="tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">
-                                                            {{ $progress }}%
-                                                        </span>
-                                                    </div>
-                                                    <div class="tw-relative tw-w-full">
-                                                        <div class="tw-overflow-hidden tw-h-2 tw-bg-gray-200 dark:tw-bg-gray-700 tw-rounded-full">
-                                                            <div class="tw-transition-all tw-duration-500 tw-ease-in-out tw-h-full tw-bg-primary-500 tw-rounded-full"
-                                                                 style="width: {{ $progress }}%">
-                                                            </div>
+                                            <div class="tw-space-y-4 tw-my-6">
+                                                <!-- Barre de progression -->
+                                                <div class="tw-relative tw-pt-1">
+                                                    <div class="tw-flex tw-mb-2 tw-items-center tw-justify-between">
+                                                        <div>
+                                                            <span class="tw-text-xs tw-font-semibold tw-inline-block tw-py-1 tw-px-2 tw-uppercase tw-rounded-full tw-text-primary-600 tw-bg-primary-200">
+                                                                Progression
+                                                            </span>
+                                                        </div>
+                                                        <div class="tw-text-right">
+                                                            <span class="tw-text-xs tw-font-semibold tw-inline-block tw-text-primary-600">
+                                                                {{ $progress }}%
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                    <div class="tw-text-center tw-text-sm tw-text-gray-600 dark:tw-text-gray-400">
-                                                        @switch($currentStep)
-                                                            @case('validation')
-                                                                Validation des données...
-                                                                @break
-                                                            @case('init')
-                                                                Initialisation...
-                                                                @break
-                                                            @case('provision')
-                                                                Configuration du serveur...
-                                                                @break
-                                                            @case('database')
-                                                                Création de la base de données...
-                                                                @break
-                                                            @case('users')
-                                                                Configuration des utilisateurs...
-                                                                @break
-                                                            @case('complete')
-                                                                Finalisation...
-                                                                @break
-                                                            @default
-                                                                Préparation...
-                                                        @endswitch
+                                                    <div class="tw-overflow-hidden tw-h-2 tw-mb-4 tw-text-xs tw-flex tw-rounded tw-bg-primary-200">
+                                                        <div style="width:{{ $progress }}%"
+                                                             class="tw-shadow-none tw-flex tw-flex-col tw-text-center tw-whitespace-nowrap tw-text-white tw-justify-center tw-bg-primary-500 tw-transition-all tw-duration-500">
+                                                        </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Message d'étape -->
+                                                <div class="tw-text-center tw-text-sm tw-text-gray-600">
+                                                    @switch($currentStep)
+                                                        @case('validation')
+                                                            Validation des données...
+                                                            @break
+                                                        @case('preparation')
+                                                            Préparation de l'instance...
+                                                            @break
+                                                        @case('configuration')
+                                                            Configuration du serveur...
+                                                            @break
+                                                        @case('creation')
+                                                            Création de l'environnement...
+                                                            @break
+                                                        @case('configuration_finale')
+                                                            Configuration finale...
+                                                            @break
+                                                        @case('complete')
+                                                            Instance créée avec succès!
+                                                            @break
+                                                        @default
+                                                            En cours de traitement...
+                                                    @endswitch
+                                                </div>
+
+                                                <!-- Indicateur spinner -->
+                                                @if($progress < 100)
+                                                <div class="tw-flex tw-justify-center tw-items-center tw-gap-2">
+                                                    <svg class="tw-animate-spin tw-h-5 tw-w-5 tw-text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <span class="tw-text-sm tw-text-gray-500">Traitement en cours...</span>
+                                                </div>
+                                                @endif
+                                            </div>
                                             @endif
 
                                             <!-- Message d'erreur -->
@@ -175,6 +193,7 @@
                                                     </button>
                                                 </div>
                                             </div>
+
                                         </form>
                                     </div>
                                 @else
@@ -196,14 +215,13 @@
     @script
     <script>
         document.addEventListener('livewire:init', () => {
-            let processingSteps = false;
-
-            Livewire.on('progressUpdate', async (step) => {
-                if (processingSteps) return;
-                processingSteps = true;
-
-                await new Promise(resolve => setTimeout(resolve, 500));
-                processingSteps = false;
+            Livewire.on('progressUpdated', ({ progress, step }) => {
+                // Animation fluide de la barre de progression
+                const progressBar = document.querySelector('[wire\\:model="progress"]');
+                if (progressBar) {
+                    progressBar.style.transition = 'width 0.5s ease-in-out';
+                    progressBar.style.width = `${progress}%`;
+                }
             });
         });
     </script>

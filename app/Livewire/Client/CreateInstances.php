@@ -12,12 +12,11 @@ use Livewire\Attributes\On;
 use App\Models\Subscription;
 use Livewire\WithPagination;
 use App\Services\CreateUsersInnov;
-use App\Services\DolibarrService;
 use App\Models\DolibarrCredential;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Notifications\InstanceCreated;
 use Illuminate\Support\Facades\Cache;
+use App\Notifications\InstanceCreated;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Notification;
 use App\Services\InstanceProvisioningService;
@@ -42,17 +41,48 @@ class CreateInstances extends Component
     public $currentStep = '';
     public $errorMessage = '';
 
-    protected $listeners = [
-        'progressUpdate' => 'updateProgress',
-        'instanceCreated' => 'handleInstanceCreated',
-        'instanceError' => 'handleInstanceError'
+    // Messages de validation
+    protected $messages = [
+        'name.required' => 'Le nom de l\'instance est obligatoire.',
+        'name.unique' => 'Ce nom d\'instance est déjà utilisé.',
+        'name.min' => 'Le nom de l\'instance doit contenir au moins 3 caractères.',
+        'name.max' => 'Le nom de l\'instance ne peut pas dépasser 15 caractères.',
+        'entreprise_id.required' => 'Le choix de l\'entreprise est obligatoire.',
+        'entreprise_id.exists' => 'L\'entreprise sélectionnée n\'existe pas.',
     ];
 
+    // Écouteurs d'événements
+    protected $listeners = [
+        'progressUpdate' => 'updateProgress',
+        'instance-error' => 'handleError'
+    ];
+
+    // Règles de validation
+    protected function rules()
+    {
+        return [
+            'name' => ['required', 'unique:instances,name', 'min:3', 'max:15'],
+            'entreprise_id' => 'required|exists:entreprises,id',
+        ];
+    }
+
+    // Méthode d'initialisation
+    public function mount()
+    {
+        $this->checkInstanceCreationEligibility();
+        $this->loadEnterprises();
+
+        if ($this->entreprise_id) {
+            $this->updatedEntrepriseId($this->entreprise_id);
+        }
+    }
+
+    // Méthode de mise à jour de la progression
     public function updateProgress($step)
     {
         $progressSteps = [
             'validation' => 10,
-            'init' => 20,
+            'init' => 25,
             'provision' => 40,
             'database' => 60,
             'users' => 80,
@@ -62,9 +92,19 @@ class CreateInstances extends Component
         if (isset($progressSteps[$step])) {
             $this->progress = $progressSteps[$step];
             $this->currentStep = $step;
+            $this->dispatch('progressUpdated', progress: $this->progress);
         }
     }
 
+    // Méthode de chargement des entreprises
+    public function loadEnterprises()
+    {
+        $this->entreprises = Cache::remember('user_entreprises_' . Auth::id(), 300, function () {
+            return Auth::user()->entreprises;
+        });
+    }
+
+    // Mise à jour du pays lors du changement d'entreprise
     public function updatedEntrepriseId($value)
     {
         if ($value) {
@@ -77,60 +117,31 @@ class CreateInstances extends Component
         }
     }
 
-    public function loadEnterprises()
-    {
-        $this->entreprises = Cache::remember('user_entreprises_' . Auth::id(), 300, function () {
-            return Auth::user()->entreprises;
-        });
-    }
-
-    public function mount()
-    {
-        $this->checkInstanceCreationEligibility();
-        $this->loadEnterprises();
-
-        if ($this->entreprise_id) {
-            $this->updatedEntrepriseId($this->entreprise_id);
-        }
-    }
-
+    // Vérification de l'éligibilité
     public function checkInstanceCreationEligibility()
     {
         $user = Auth::user();
         $this->showPlanSelection = !$user->canCreateInstance();
     }
 
+    // Gestionnaire de changement de plan
     #[On('planChanged')]
     public function planChanged()
     {
         $this->checkInstanceCreationEligibility();
     }
 
-    protected function rules()
-    {
-        return [
-            'name' => ['required', 'unique:instances,name', 'min:3', 'max:15'],
-            'entreprise_id' => 'required|exists:entreprises,id',
-        ];
-    }
-
-    protected $messages = [
-        'name.required' => 'Le nom de l\'instance est obligatoire.',
-        'name.unique' => 'Ce nom d\'instance est déjà utilisé.',
-        'name.min' => 'Le nom de l\'instance doit contenir au moins 3 caractères.',
-        'name.max' => 'Le nom de l\'instance ne peut pas dépasser 15 caractères.',
-        'entreprise_id.required' => 'Le choix de l\'entreprise est obligatoire.',
-        'entreprise_id.exists' => 'L\'entreprise sélectionnée n\'existe pas.',
-    ];
-
+    // Méthode principale de création d'instance
     public function store()
     {
         try {
+            // Initialisation
             $this->isCreating = true;
             $this->progress = 0;
             $this->errorMessage = '';
-            $this->updateProgress('validation');
 
+            // Étape 1: Validation
+            $this->updateProgress('validation');
             $this->validate();
 
             $user = Auth::user();
@@ -138,14 +149,12 @@ class CreateInstances extends Component
                 throw new \Exception('Vous avez atteint votre limite de création d\'instances.');
             }
 
+            // Étape 2: Initialisation
             $this->updateProgress('init');
+            $instanceData = $this->prepareInstanceData();
 
-            // Préparation des données
-            $instanceData = $this->prepareInstanceData($user);
-
+            // Étape 3: Provisionnement
             $this->updateProgress('provision');
-
-            // Service de provisionnement
             $provisioningService = app(InstanceProvisioningService::class);
             $instanceDetails = $provisioningService->provisionInstance(
                 $instanceData['name'],
@@ -160,53 +169,25 @@ class CreateInstances extends Component
                 throw new \Exception('Erreur lors de la création de l\'instance.');
             }
 
+            // Étape 4: Base de données
             $this->updateProgress('database');
-
-            // Création de l'instance en base
             $instance = $this->createInstance($user, $instanceData, $instanceDetails);
 
+            // Étape 5: Configuration des utilisateurs
             $this->updateProgress('users');
+            $this->setupUsers($user, $instance, $instanceData, $instanceDetails);
 
-            // Création des credentials
-            $this->createDolibarrCredential($user, $instanceData['login'], $instanceData['password']);
-
-            // Mise à jour des informations
-            $this->newInstanceInfo = [
-                'name' => $instance->name,
-                'login' => $user->email,
-                'password' => $instanceData['password'],
-                'url' => "https://{$instance->name}.erpinnov.com",
-            ];
-
-            // Création des utilisateurs
-            $newUsersInnov = new CreateUsersInnov();
-            $newUsersInnov->insertIntoOtherDb(
-                $instance->name,
-                $user->email,
-                $instanceData['api_key'],
-                $instanceData['password'],
-                "http://" . $instanceDetails['url']
-            );
-
-            // Notification
-            Notification::send($user, new InstanceCreated($this->newInstanceInfo));
-
+            // Étape 6: Finalisation
             $this->updateProgress('complete');
-
-            $this->alert('success', 'Votre instance a été créée avec succès.');
-            session()->flash('success', 'Ces informations ont été envoyées par email.');
-            $this->reset(['name']);
+            $this->finalize($user, $instance, $instanceData);
 
         } catch (\Exception $e) {
-            $this->errorMessage = $e->getMessage();
-            \Log::error('Erreur lors de la création de l\'instance: ' . $e->getMessage());
-            $this->alert('error', 'Une erreur est survenue: ' . $e->getMessage());
-        } finally {
-            $this->isCreating = false;
+            $this->handleError($e);
         }
     }
 
-    private function prepareInstanceData($user)
+    // Préparation des données de l'instance
+    private function prepareInstanceData()
     {
         return [
             'name' => $this->name,
@@ -220,6 +201,7 @@ class CreateInstances extends Component
         ];
     }
 
+    // Création de l'instance en base de données
     private function createInstance($user, $instanceData, $instanceDetails)
     {
         $activeSubscription = $this->getOrCreateSubscription($user);
@@ -242,6 +224,40 @@ class CreateInstances extends Component
         ]);
     }
 
+    // Configuration des utilisateurs
+    private function setupUsers($user, $instance, $instanceData, $instanceDetails)
+    {
+        $this->createDolibarrCredential($user, $instanceData['login'], $instanceData['password']);
+
+        $newUsersInnov = new CreateUsersInnov();
+        $newUsersInnov->insertIntoOtherDb(
+            $instance->name,
+            $user->email,
+            $instanceData['api_key'],
+            $instanceData['password'],
+            "http://" . $instanceDetails['url']
+        );
+    }
+
+    // Finalisation de la création
+    private function finalize($user, $instance, $instanceData)
+    {
+        $this->newInstanceInfo = [
+            'name' => $instance->name,
+            'login' => $user->email,
+            'password' => $instanceData['password'],
+            'url' => "http://{$instance->name}.erpinnov.com",
+        ];
+
+        Notification::send($user, new InstanceCreated($this->newInstanceInfo));
+
+        $this->alert('success', 'Votre instance a été créée avec succès.');
+        session()->flash('success', 'Ces informations ont été envoyées par email.');
+        $this->reset(['name']);
+        $this->isCreating = false;
+    }
+
+    // Création ou récupération de l'abonnement
     private function getOrCreateSubscription($user)
     {
         $activeSubscription = $user->activeSubscription();
@@ -263,6 +279,7 @@ class CreateInstances extends Component
         return $activeSubscription;
     }
 
+    // Création des identifiants Dolibarr
     private function createDolibarrCredential($user, $login, $password)
     {
         return DolibarrCredential::create([
@@ -272,19 +289,26 @@ class CreateInstances extends Component
         ]);
     }
 
+    // Gestion des erreurs
+    private function handleError(\Exception $e)
+    {
+        $this->errorMessage = $e->getMessage();
+        \Log::error('Erreur lors de la création de l\'instance: ' . $e->getMessage());
+        $this->alert('error', 'Une erreur est survenue: ' . $e->getMessage());
+        $this->isCreating = false;
+        $this->progress = 0;
+    }
+
+    // Rendu du composant
     public function render()
     {
         $user = Auth::user();
-        $instanceCount = $user->instances()->count();
-        $activeSubscription = $user->activeSubscription();
-        $canCreate = $user->canCreateInstance();
-        $remainingInstances = $user->remainingInstances();
 
         return view('livewire.client.create-instances', [
-            'instanceCount' => $instanceCount,
-            'activeSubscription' => $activeSubscription,
-            'canCreate' => $canCreate,
-            'remainingInstances' => $remainingInstances,
+            'instanceCount' => $user->instances()->count(),
+            'activeSubscription' => $user->activeSubscription(),
+            'canCreate' => $user->canCreateInstance(),
+            'remainingInstances' => $user->remainingInstances(),
             'showPlanSelection' => $this->showPlanSelection,
         ])->layout('layouts.main');
     }
