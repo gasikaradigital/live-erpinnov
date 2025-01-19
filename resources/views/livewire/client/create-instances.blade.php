@@ -1,4 +1,3 @@
-<!-- create-instances.blade.php -->
 <div>
     <div class="tw-min-h-screen tw-bg-gray-50 dark:tw-bg-gray-900">
         <!-- Header avec navigation -->
@@ -60,7 +59,7 @@
                                                 @enderror
                                             </div>
 
-                                            <!-- Sélection entreprise -->
+                                            <!-- Sélection de l'entreprise -->
                                             <div>
                                                 <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 dark:tw-text-gray-300">
                                                     Votre entreprise
@@ -86,91 +85,6 @@
                                                     <span class="tw-font-medium tw-text-gray-900 dark:tw-text-white">{{ $selectedPays }}</span>
                                                 </div>
                                             @endif
-
-                                            <!-- Barre de progression -->
-                                            @if($isCreating)
-                                            <div class="tw-space-y-4 tw-my-6">
-                                                <!-- Barre de progression -->
-                                                <div class="tw-relative tw-pt-1">
-                                                    <div class="tw-flex tw-mb-2 tw-items-center tw-justify-between">
-                                                        <div>
-                                                            <span class="tw-text-xs tw-font-semibold tw-inline-block tw-py-1 tw-px-2 tw-uppercase tw-rounded-full tw-text-primary-600 tw-bg-primary-200">
-                                                                Progression
-                                                            </span>
-                                                        </div>
-                                                        <div class="tw-text-right">
-                                                            <span class="tw-text-xs tw-font-semibold tw-inline-block tw-text-primary-600">
-                                                                {{ $progress }}%
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="tw-overflow-hidden tw-h-2 tw-mb-4 tw-text-xs tw-flex tw-rounded tw-bg-primary-200">
-                                                        <div style="width:{{ $progress }}%"
-                                                             class="tw-shadow-none tw-flex tw-flex-col tw-text-center tw-whitespace-nowrap tw-text-white tw-justify-center tw-bg-primary-500 tw-transition-all tw-duration-500">
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Message d'étape -->
-                                                <div class="tw-text-center tw-text-sm tw-text-gray-600">
-                                                    @switch($currentStep)
-                                                        @case('validation')
-                                                            Validation des données...
-                                                            @break
-                                                        @case('preparation')
-                                                            Préparation de l'instance...
-                                                            @break
-                                                        @case('configuration')
-                                                            Configuration du serveur...
-                                                            @break
-                                                        @case('creation')
-                                                            Création de l'environnement...
-                                                            @break
-                                                        @case('configuration_finale')
-                                                            Configuration finale...
-                                                            @break
-                                                        @case('complete')
-                                                            Instance créée avec succès!
-                                                            @break
-                                                        @default
-                                                            En cours de traitement...
-                                                    @endswitch
-                                                </div>
-
-                                                <!-- Indicateur spinner -->
-                                                @if($progress < 100)
-                                                <div class="tw-flex tw-justify-center tw-items-center tw-gap-2">
-                                                    <svg class="tw-animate-spin tw-h-5 tw-w-5 tw-text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                        <circle class="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                        <path class="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                    </svg>
-                                                    <span class="tw-text-sm tw-text-gray-500">Traitement en cours...</span>
-                                                </div>
-                                                @endif
-                                            </div>
-                                            @endif
-
-                                            <!-- Message d'erreur -->
-                                            @if($errorMessage)
-                                                <div class="tw-rounded-md tw-bg-red-50 dark:tw-bg-red-900/50 tw-p-4">
-                                                    <div class="tw-flex">
-                                                        <div class="tw-flex-shrink-0">
-                                                            <svg class="tw-h-5 tw-w-5 tw-text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                                            </svg>
-                                                        </div>
-                                                        <div class="tw-ml-3">
-                                                            <h3 class="tw-text-sm tw-font-medium tw-text-red-800 dark:tw-text-red-200">
-                                                                Une erreur est survenue
-                                                            </h3>
-                                                            <div class="tw-mt-2 tw-text-sm tw-text-red-700 dark:tw-text-red-300">
-                                                                {{ $errorMessage }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-
                                             <!-- Boutons d'action -->
                                             <div class="tw-border-t dark:tw-border-gray-700 tw-pt-6">
                                                 <div class="tw-flex tw-justify-between tw-items-center">
@@ -182,22 +96,27 @@
                                                         Annuler
                                                     </a>
                                                     <button type="submit"
-                                                            class="tw-btn-primary tw-py-2.5 tw-px-6 tw-rounded-lg tw-text-sm tw-font-semibold focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-primary-500 tw-inline-flex tw-items-center tw-gap-2"
+                                                            class="tw-btn-primary tw-py-2.5 tw-px-6 tw-rounded-lg tw-text-sm tw-font-semibold focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-primary-500 tw-inline-flex tw-items-center tw-gap-2 disabled:tw-opacity-50 disabled:tw-cursor-not-allowed"
                                                             wire:loading.attr="disabled"
-                                                            wire:loading.class="tw-opacity-50 tw-cursor-not-allowed"
-                                                            @if($isCreating) disabled @endif>
-                                                        <span>Créer l'instance</span>
-                                                        <svg class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                                                        </svg>
+                                                            wire:target="store">
+                                                        <span>{{ $isCreating ? 'Création en cours...' : 'Créer l\'instance' }}</span>
+                                                        @if(!$isCreating)
+                                                            <svg class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                                            </svg>
+                                                        @else
+                                                            <svg class="tw-w-4 tw-h-4 tw-animate-spin" fill="none" viewBox="0 0 24 24">
+                                                                <circle class="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                                <path class="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                        @endif
                                                     </button>
                                                 </div>
                                             </div>
-
                                         </form>
                                     </div>
                                 @else
-                                    <!-- Section plan selection [inchangée] -->
+                                    <!-- Message pour mise à niveau -->
                                     <div class="tw-p-8 tw-text-center">
                                         @include('livewire.client.sections.free_expired')
                                     </div>
@@ -211,19 +130,4 @@
             </div>
         </div>
     </div>
-
-    @script
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('progressUpdated', ({ progress, step }) => {
-                // Animation fluide de la barre de progression
-                const progressBar = document.querySelector('[wire\\:model="progress"]');
-                if (progressBar) {
-                    progressBar.style.transition = 'width 0.5s ease-in-out';
-                    progressBar.style.width = `${progress}%`;
-                }
-            });
-        });
-    </script>
-    @endscript
 </div>
