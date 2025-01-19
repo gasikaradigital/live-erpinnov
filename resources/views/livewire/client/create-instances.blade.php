@@ -128,52 +128,41 @@
         </div>
 
         <!-- Modal de progression -->
-        <div x-data="{
-            show: @entangle('isCreating'),
-            progress: @entangle('progress'),
-            message: @entangle('currentStepMessage')
-        }"
-             x-show="show"
-             x-cloak
-             class="tw-fixed tw-inset-0 tw-z-50 tw-flex tw-items-center tw-justify-center"
-             x-transition:enter="tw-transition tw-ease-out tw-duration-300"
-             x-transition:enter-start="tw-opacity-0"
-             x-transition:enter-end="tw-opacity-100"
-             x-transition:leave="tw-transition tw-ease-in tw-duration-200"
-             x-transition:leave-start="tw-opacity-100"
-             x-transition:leave-end="tw-opacity-0">
 
-            <!-- Overlay -->
-            <div class="tw-fixed tw-inset-0 tw-bg-black tw-opacity-50"></div>
+        <div wire:loading.flex wire:target="store"
+        style="display: none;"
+        class="tw-fixed tw-inset-0 tw-z-50 tw-items-center tw-justify-center">
 
-            <!-- Modal Content -->
-            <div class="tw-relative tw-bg-white dark:tw-bg-gray-800 tw-rounded-lg tw-p-6 tw-max-w-md tw-w-full tw-mx-4 tw-shadow-xl">
-                <h3 class="tw-text-lg tw-font-semibold tw-text-center tw-text-gray-900 dark:tw-text-white">
-                    Création de votre instance
-                </h3>
+        <!-- Overlay -->
+        <div class="tw-fixed tw-inset-0 tw-bg-black/50"></div>
 
-                <!-- Message de l'étape -->
-                <p class="tw-mt-2 tw-text-sm tw-text-center tw-text-gray-600 dark:tw-text-gray-400" x-text="message"></p>
+        <!-- Modal Content -->
+        <div class="tw-relative tw-bg-white dark:tw-bg-gray-800 tw-rounded-lg tw-p-6 tw-max-w-md tw-w-full tw-mx-4">
+        <h3 class="tw-text-lg tw-font-semibold tw-text-center">
+            Création de votre instance
+        </h3>
 
-                <!-- Barre de progression -->
-                <div class="tw-mt-4">
-                    <div class="tw-relative tw-pt-1">
-                        <div class="tw-flex tw-mb-2 tw-items-center tw-justify-between">
-                            <div>
-                                <span class="tw-text-xs tw-font-semibold tw-inline-block tw-py-1 tw-px-2 tw-rounded-full tw-text-primary-600 dark:tw-text-primary-400"
-                                      x-text="`${progress}%`">
-                                </span>
-                            </div>
-                        </div>
-                        <div class="tw-overflow-hidden tw-h-2 tw-mb-4 tw-rounded tw-bg-gray-200 dark:tw-bg-gray-700">
-                            <div class="tw-h-2 tw-bg-primary-600 dark:tw-bg-primary-400 tw-transition-all tw-duration-500"
-                                 x-bind:style="`width: ${progress}%`">
-                            </div>
-                        </div>
+        <!-- Barre de progression -->
+        <div class="tw-mt-4" wire:poll.1s>
+            <div class="tw-relative tw-pt-1">
+                <div class="tw-flex tw-mb-2 tw-items-center tw-justify-between">
+                    <span class="tw-text-xs tw-font-semibold tw-inline-block tw-py-1 tw-px-2 tw-rounded-full tw-text-primary-600">
+                        {{ $progress }}%
+                    </span>
+                </div>
+                <div class="tw-overflow-hidden tw-h-2 tw-mb-4 tw-rounded tw-bg-gray-200">
+                    <div class="tw-h-2 tw-bg-primary-600 tw-transition-all tw-duration-500"
+                            style="width: {{ $progress }}%">
                     </div>
                 </div>
+                @if($currentStepMessage)
+                    <p class="tw-text-sm tw-text-center tw-text-gray-600">{{ $currentStepMessage }}</p>
+                @endif
             </div>
         </div>
+        </div>
+        </div>
+
     </div>
 
     @push('scripts')
