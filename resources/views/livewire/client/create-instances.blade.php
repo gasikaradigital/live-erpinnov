@@ -1,11 +1,4 @@
 <div>
-    @push("styles")
-        <style>
-            .tw-transition-all {
-                transition: all 0.5s ease-in-out;
-            }
-        </style>
-    @endpush
     <div class="tw-min-h-screen tw-bg-gray-50 dark:tw-bg-gray-900">
         <!-- Header avec navigation -->
         <div class="tw-bg-white dark:tw-bg-gray-800 tw-border-b dark:tw-border-gray-700 tw-py-4 tw-mt-16">
@@ -48,7 +41,7 @@
                                     </div>
 
                                     <div class="tw-p-6">
-                                        <form wire:submit.prevent="store" class="tw-space-y-6">
+                                        <form wire:submit="store" class="tw-space-y-6">
                                             <!-- Nom de l'instance -->
                                             <div>
                                                 <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700 dark:tw-text-gray-300">
@@ -120,59 +113,10 @@
                             </div>
                         @endif
                     </div>
-
                     <!-- Sidebar avec informations -->
                     @include('livewire.client.sections.sidebar')
                 </div>
             </div>
         </div>
-
-        <!-- Modal de progression -->
-
-        <div wire:loading.flex wire:target="store"
-        style="display: none;"
-        class="tw-fixed tw-inset-0 tw-z-50 tw-items-center tw-justify-center">
-
-        <!-- Overlay -->
-        <div class="tw-fixed tw-inset-0 tw-bg-black/50"></div>
-
-        <!-- Modal Content -->
-        <div class="tw-relative tw-bg-white dark:tw-bg-gray-800 tw-rounded-lg tw-p-6 tw-max-w-md tw-w-full tw-mx-4">
-        <h3 class="tw-text-lg tw-font-semibold tw-text-center">
-            Création de votre instance
-        </h3>
-
-        <!-- Barre de progression -->
-        <div class="tw-mt-4" wire:poll.1s>
-            <div class="tw-relative tw-pt-1">
-                <div class="tw-flex tw-mb-2 tw-items-center tw-justify-between">
-                    <span class="tw-text-xs tw-font-semibold tw-inline-block tw-py-1 tw-px-2 tw-rounded-full tw-text-primary-600">
-                        {{ $progress }}%
-                    </span>
-                </div>
-                <div class="tw-overflow-hidden tw-h-2 tw-mb-4 tw-rounded tw-bg-gray-200">
-                    <div class="tw-h-2 tw-bg-primary-600 tw-transition-all tw-duration-500"
-                            style="width: {{ $progress }}%">
-                    </div>
-                </div>
-                @if($currentStepMessage)
-                    <p class="tw-text-sm tw-text-center tw-text-gray-600">{{ $currentStepMessage }}</p>
-                @endif
-            </div>
-        </div>
-        </div>
-        </div>
-
     </div>
-
-    @push('scripts')
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('progressUpdated', (event) => {
-                // Pour déboguer
-                console.log('Progress updated:', event);
-            });
-        });
-    </script>
-    @endpush
 </div>

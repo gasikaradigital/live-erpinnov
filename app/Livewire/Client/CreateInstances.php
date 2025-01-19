@@ -26,26 +26,60 @@ class CreateInstances extends Component
 {
     use WithPagination, LivewireAlert, AuthorizesRequests;
 
-    // Propriétés de base
     public $newInstanceInfo = null;
     public $name = '';
     public $entreprises;
     public $entreprise_id;
     public $showPlanSelection = false;
+
     public $selectedPays = null;
 
-    // Propriétés pour la progression
-    public bool $isCreating = false;
-    public int $progress = 0;
-    public string $currentStepMessage = '';
+    public function updatedEntrepriseId($value)
+    {
+        if ($value) {
+            $entreprise = Entreprise::find($value);
+            if ($entreprise) {
+                // Affectation directe de la valeur du pays
+                $this->selectedPays = $entreprise->pays;
+            }
+        } else {
+            $this->selectedPays = null;
+        }
+    }
 
-    protected $listeners = [
-        'refreshComponent' => '$refresh',
-        'startCreation' => 'handleCreationStart',
-        'endCreation' => 'handleCreationEnd'
-    ];
 
-    // Règles de validation
+    public function loadEnterprises()
+    {
+        $this->entreprises = Auth::user()->entreprises;
+    }
+
+
+    public function mount()
+    {
+        $this->checkInstanceCreationEligibility();
+        $this->loadEnterprises();
+
+        if ($this->entreprise_id) {
+            $this->updatedEntrepriseId($this->entreprise_id);
+        }
+    }
+
+    public function checkInstanceCreationEligibility()
+    {
+        $user = Auth::user();
+        $this->showPlanSelection = !$user->canCreateInstance();
+    }
+
+    public function openPlanSelection()
+    {
+        $this->showPlanSelection = true;
+    }
+
+    #[On('planChanged')]
+    public function planChanged()
+    {
+        $this->checkInstanceCreationEligibility();
+    }
     protected function rules()
     {
         return [
@@ -63,107 +97,48 @@ class CreateInstances extends Component
         'entreprise_id.exists' => 'L\'entreprise sélectionnée n\'existe pas.',
     ];
 
-    public function mount()
-    {
-        $this->isCreating = false;
-        $this->progress = 0;
-        $this->checkInstanceCreationEligibility();
-        $this->loadEnterprises();
-
-        if ($this->entreprise_id) {
-            $this->updatedEntrepriseId($this->entreprise_id);
-        }
-    }
-
-    public function updatedEntrepriseId($value)
-    {
-        if ($value) {
-            $entreprise = Entreprise::find($value);
-            if ($entreprise) {
-                $this->selectedPays = $entreprise->pays;
-            }
-        } else {
-            $this->selectedPays = null;
-        }
-    }
-
-    public function loadEnterprises()
-    {
-        $this->entreprises = Auth::user()->entreprises;
-    }
-
-    public function checkInstanceCreationEligibility()
-    {
-        $user = Auth::user();
-        $this->showPlanSelection = !$user->canCreateInstance();
-    }
-
-    private function updateProgress($value, $message)
-    {
-        $this->progress = $value;
-        $this->currentStepMessage = $message;
-        $this->dispatch('progressUpdated', [
-            'progress' => $this->progress,
-            'message' => $this->currentStepMessage
-        ]);
-    }
-
-    public function handleCreationStart()
-    {
-        $this->isCreating = true;
-        $this->progress = 0;
-        $this->currentStepMessage = 'Démarrage...';
-    }
-
-    public function handleCreationEnd()
-    {
-        $this->isCreating = false;
-        $this->progress = 100;
-        $this->currentStepMessage = '';
-    }
 
     public function store()
     {
+
+        $this->dispatch('instanceCreationStarted');
+
         $this->validate();
 
         $user = Auth::user();
+
         if (!$user->canCreateInstance()) {
-            $this->alert('error', 'Vous avez atteint votre limite de création d\'instances.');
+            $this->alert('error', 'Vous avez atteint votre limite de création d\'instances. Veuillez mettre à niveau votre abonnement pour créer plus d\'instances.');
+            return;
+        }
+
+        $reference = Instance::generateNextReference();
+        $password_dolibarr = Str::random(16);
+        $login_dolibarr = 'admin';
+        $url_suffix = Str::slug($this->name);
+
+        $api_key_dolibarr = Str::random(32);
+
+        $provisioningService = new InstanceProvisioningService();
+
+        $instanceDetails = $provisioningService->provisionInstance(
+            $this->name,
+            $password_dolibarr,
+            $login_dolibarr,
+            $url_suffix,
+            $api_key_dolibarr,
+            $user->email
+        );
+
+        if (!$instanceDetails) {
+            $this->alert('error', 'Une erreur est survenue lors de la création de l\'instance.');
             return;
         }
 
         try {
-            $this->handleCreationStart();
-
-            // Étape 1: Configuration
-            $this->updateProgress(25, 'Configuration initiale...');
-            $reference = Instance::generateNextReference();
-            $password_dolibarr = Str::random(16);
-            $login_dolibarr = 'admin';
-            $url_suffix = Str::slug($this->name);
-            $api_key_dolibarr = Str::random(32);
-
-            // Étape 2: Base de données
-            $this->updateProgress(50, 'Création de la base de données...');
-            $provisioningService = new InstanceProvisioningService();
-            $instanceDetails = $provisioningService->provisionInstance(
-                $this->name,
-                $password_dolibarr,
-                $login_dolibarr,
-                $url_suffix,
-                $api_key_dolibarr,
-                $user->email
-            );
-
-            if (!$instanceDetails) {
-                throw new \Exception('Erreur lors de la création de l\'instance.');
-            }
-
-            // Étape 3: Création instance
-            $this->updateProgress(75, 'Configuration de l\'instance...');
-
             $activeSubscription = $user->activeSubscription();
             if (!$activeSubscription) {
+                // Si l'utilisateur n'a pas d'abonnement actif, créez-en un avec le plan gratuit par défaut
                 $freePlan = Plan::where('is_free', true)->where('is_default', true)->first();
                 $activeSubscription = Subscription::create([
                     'user_id' => $user->id,
@@ -175,6 +150,9 @@ class CreateInstances extends Component
             }
 
             $entreprise = Entreprise::find($this->entreprise_id);
+
+            $paysValue = $entreprise->pays === 'Madagascar' ? 0 : 1;
+
             $instance = Instance::create([
                 'user_id' => $user->id,
                 'subscription_id' => $activeSubscription->id,
@@ -187,11 +165,8 @@ class CreateInstances extends Component
                 'dolibarr_username' => $login_dolibarr,
                 'dolibarr_password' => Hash::make($password_dolibarr),
                 'dolibarr_api_key' => $api_key_dolibarr,
-                'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
+                'pays' => $paysValue,
             ]);
-
-            // Étape 4: Finalisation
-            $this->updateProgress(90, 'Finalisation...');
 
             $this->createDolibarrCredential($user, $login_dolibarr, $password_dolibarr);
 
@@ -199,36 +174,30 @@ class CreateInstances extends Component
                 'name' => $instance->name,
                 'login' => $user->email,
                 'password' => $password_dolibarr,
-                'url' => "http://" . $instance->name . ".erpinnov.com",
+                'url' => "https://". $instance->name .".erpinnov.com",
             ];
 
             $newUsersInnov = new CreateUsersInnov();
-            $newUsersInnov->insertIntoOtherDb(
-                $instance->name,
-                $user->email,
-                $api_key_dolibarr,
-                $password_dolibarr,
-                "http://" . $instanceDetails['url']
-            );
+
+            $newUsersInnov->insertIntoOtherDb($instance->name, $user->email, $api_key_dolibarr, $password_dolibarr, "http://" . $instanceDetails['url']);
 
             Notification::send($user, new InstanceCreated($this->newInstanceInfo));
 
-            $this->updateProgress(100, 'Instance créée avec succès!');
             $this->alert('success', 'Votre instance a été créée avec succès.');
             session()->flash('success', 'Ces informations ont été envoyées par email.');
             $this->reset(['name']);
 
         } catch (\Exception $e) {
-            \Log::error('Erreur: ' . $e->getMessage());
-            $this->alert('error', 'Une erreur est survenue lors de la création de l\'instance.');
-        } finally {
-            $this->handleCreationEnd();
+            \Log::error('Erreur lors de la création de l\'instance: ' . $e->getMessage());
+            $this->alert('error', 'Une erreur inattendue est survenue. Veuillez réessayer plus tard.'.$e->getMessage());
         }
+
+        $this->dispatch('instanceCreationEnded');
     }
 
     private function createDolibarrCredential($user, $login, $password)
     {
-        return DolibarrCredential::create([
+        DolibarrCredential::create([
             'user_id' => $user->id,
             'username' => $login,
             'password' => Hash::make($password),
