@@ -23,6 +23,9 @@ class PaymentProcess extends Component
     public $cardCVC;
     public $isAnnual = false;
     public $total;
+    public $paymentMethod;
+
+    protected $listeners = ['planChanged' => 'handlePlanChanged'];
 
     protected $rules = [
         'cardholderName' => 'required|string|max:255',
@@ -36,6 +39,7 @@ class PaymentProcess extends Component
         $this->uuid = $uuid;
         $this->plan = Plan::where('uuid', $uuid)->firstOrFail();
         $this->calculateTotal();
+        $this->paymentMethod = 'VISA'; // Par défaut, on choisit VISA
     }
 
     public function updatedIsAnnual()
@@ -69,7 +73,6 @@ class PaymentProcess extends Component
         return $regularYearlyPrice - $this->yearlyPrice;
     }
 
-
     public function changePlan($uuid)
     {
         $this->uuid = $uuid;
@@ -91,7 +94,7 @@ class PaymentProcess extends Component
             'status' => 'active'
         ]);
 
-        $payment = Payment::create([
+        Payment::create([
             'user_id' => $user->id,
             'plan_id' => $this->plan->id,
             'subscription_id' => $subscription->id,
@@ -115,6 +118,6 @@ class PaymentProcess extends Component
             'monthlyPrice' => $this->monthlyPrice,
             'yearlyPrice' => $this->yearlyPrice,
             'yearlySavings' => $this->yearlySavings,
-        ])->layout('layouts.homeClient');
+        ])->layout('layouts.main');
     }
 }

@@ -22,6 +22,8 @@
     "dependencies": {
         "@headlessui/vue": "^1.7.16",
         "@popperjs/core": "^2.11.8",
+        "@tailwindcss/aspect-ratio": "^0.4.2",
+        "@tailwindcss/line-clamp": "^0.4.4",
         "aos": "^2.3.4",
         "lodash": "^4.17.21",
         "node-waves": "^0.7.6",

@@ -1,112 +1,159 @@
-<div> {{-- Élément racine unique --}}
-    <div class="tw-min-h-screen tw-flex">
-        <div class="tw-flex tw-w-full">
-            {{-- Left Text --}}
-            <div class="tw-hidden lg:tw-flex lg:tw-w-1/3 tw-items-center tw-justify-center tw-p-5 tw-bg-gray-50 tw-relative">
-                <img src="{{ asset('client/assets/img/illustrations/auth-register-multisteps-illustration.png')}}" 
-                     alt="auth-register-multisteps" 
-                     class="tw-w-80 tw-h-60 tw-object-contain" />
+<div class="tw-flex tw-h-full tw-pt-16">
+    {{-- Colonne gauche --}}
+    <div class="tw-w-1/3 tw-bg-primary-600">
+        <div class="tw-p-8">
+            {{-- Message de bienvenue et étapes --}}
+            <div class="tw-mb-8">
+                <p class="tw-text-base tw-text-primary-100">
+                    Commencez votre voyage avec ERP INNOV en configurant les informations essentielles de votre entreprise
+                </p>
             </div>
-            
-            {{-- Multi Steps Registration --}}
-            <div class="tw-flex lg:tw-w-2/3 tw-items-center tw-justify-center tw-bg-white tw-p-5">
-                <div class="tw-max-w-3xl tw-w-full">
-                    <form wire:submit.prevent="store">
-                        @csrf
-                        {{-- Personal Info --}}
-                        <div class="tw-space-y-6">
-                            <div class="tw-mb-6">
-                                <h4 class="tw-text-xl tw-font-semibold tw-mb-0">Renseignements de l'entreprise</h4>
-                                <p class="tw-text-gray-600 tw-mb-0">Entrez vos informations</p>
+
+            {{-- Étapes --}}
+            <div class="tw-space-y-4">
+                <div class="tw-flex tw-items-center tw-text-white tw-bg-white/10 tw-rounded-lg tw-p-3">
+                    <div class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-white/20 tw-flex tw-items-center tw-justify-center">
+                        <span class="tw-text-sm">1</span>
+                    </div>
+                    <span class="tw-ml-3 tw-text-sm">Informations générales</span>
+                </div>
+                <div class="tw-flex tw-items-center tw-text-white/50 tw-p-3">
+                    <div class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-white/10 tw-flex tw-items-center tw-justify-center">
+                        <span class="tw-text-sm">2</span>
+                    </div>
+                    <span class="tw-ml-3 tw-text-sm">Configuration des services</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Colonne droite (Formulaire) --}}
+    <div class="tw-flex-1 tw-bg-gray-50">
+        <div class="tw-p-8">
+            <div class="tw-max-w-4xl tw-mx-auto">
+                {{-- Message d'information --}}
+                @if($entreprises->isNotEmpty())
+                <div class="tw-bg-green-50 tw-border tw-border-green-200 tw-text-green-800 tw-p-4 tw-rounded-lg tw-flex tw-items-center tw-mb-6">
+                    <svg class="tw-w-5 tw-h-5 tw-mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        Vous avez déjà ajouté <strong>{{ $entreprises->count() }}</strong> entreprise(s).
+                        @if($entreprises->count() == 1)
+                            Vous pouvez en ajouter d'autres ou terminer.
+                        @else
+                            Vous pouvez continuer à en ajouter ou terminer.
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                {{-- Formulaire avec card --}}
+                <div class="tw-bg-white tw-rounded-xl tw-shadow-lg tw-p-6">
+                    <form wire:submit.prevent="store" class="tw-space-y-6">
+                        {{-- Nom entreprise --}}
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">Nom de l'entreprise</label>
+                            <input type="text" wire:model="name"
+                                class="tw-mt-1 tw-block tw-w-full tw-rounded-lg tw-border-gray-300 focus:tw-ring-primary-500 focus:tw-border-primary-500"
+                                placeholder="Ex: ERP INNOV">
+                            @error('name')
+                                <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- NIF et Nombre d'employés --}}
+                        <div class="tw-grid tw-grid-cols-2 tw-gap-6">
+                            <div>
+                                <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">
+                                    NIF <span class="tw-text-gray-400">(facultatif)</span>
+                                </label>
+                                <input type="text" wire:model="nif"
+                                    class="tw-mt-1 tw-block tw-w-full tw-rounded-lg tw-border-gray-300 focus:tw-ring-primary-500 focus:tw-border-primary-500"
+                                    placeholder="Numéro fiscal">
+                                @error('nif')
+                                    <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            @if($entreprises->isNotEmpty())
-                                <div class="tw-bg-blue-50 tw-border tw-border-blue-200 tw-text-blue-800 tw-p-4 tw-rounded-lg tw-flex tw-items-center tw-mt-3">
-                                    <svg class="tw-w-5 tw-h-5 tw-mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <div>
-                                        Vous avez déjà ajouté <strong>{{ $entreprises->count() }}</strong> entreprise(s).
-                                        @if($entreprises->count() == 1)
-                                            Vous pouvez en ajouter d'autres ou terminer.
-                                        @else
-                                            Vous pouvez continuer à en ajouter ou terminer.
-                                        @endif
-                                    </div>
-                                </div>
+                            <div>
+                                <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">Nombre d'employés</label>
+                                <select wire:model="employees_count"
+                                    class="tw-mt-1 tw-block tw-w-full tw-rounded-lg tw-border-gray-300 focus:tw-ring-primary-500 focus:tw-border-primary-500">
+                                    <option value="">Sélectionnez</option>
+                                    <option value="1-10">1-10 employés</option>
+                                    <option value="11-50">11-50 employés</option>
+                                    <option value="51-200">51-200 employés</option>
+                                    <option value="201+">201+ employés</option>
+                                </select>
+                                @error('employees_count')
+                                    <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Téléphone --}}
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">Téléphone</label>
+                            <input type="tel" wire:model="phone"
+                                class="tw-mt-1 tw-block tw-w-full tw-rounded-lg tw-border-gray-300 focus:tw-ring-primary-500 focus:tw-border-primary-500"
+                                placeholder="+261 xx xx xxx xx">
+                            @error('phone')
+                                <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Adresse --}}
+                        <div>
+                            <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">Adresse complète</label>
+                            <textarea wire:model="adresse" rows="3"
+                                class="tw-mt-1 tw-block tw-w-full tw-rounded-lg tw-border-gray-300 focus:tw-ring-primary-500 focus:tw-border-primary-500"
+                                placeholder="Adresse de l'entreprise"></textarea>
+                            @error('adresse')
+                                <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Ville et Pays --}}
+                        <div class="tw-grid tw-grid-cols-2 tw-gap-6">
+                            <div>
+                                <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">Ville</label>
+                                <input type="text" wire:model="ville"
+                                    class="tw-mt-1 tw-block tw-w-full tw-rounded-lg tw-border-gray-300 focus:tw-ring-primary-500 focus:tw-border-primary-500"
+                                    placeholder="Ex: Antananarivo">
+                                @error('ville')
+                                    <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700">Pays</label>
+                                <x-country-select :selected="$pays" class="tw-mt-1" />
+                                @error('pays')
+                                    <p class="tw-mt-1 tw-text-sm tw-text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Boutons d'action --}}
+                        <div class="tw-flex tw-justify-between tw-pt-6 tw-mt-6 tw-border-t tw-border-gray-200">
+                            <button type="submit"
+                                class="tw-inline-flex tw-items-center tw-px-6 tw-py-2.5 tw-bg-primary-600 tw-text-white tw-rounded-lg hover:tw-bg-primary-700 focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-primary-500">
+                                <span>Ajouter l'entreprise</span>
+                                <svg class="tw-w-5 tw-h-5 tw-ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+
+                            @if($showTerminerButton)
+                            <button type="button" wire:click="terminer"
+                                class="tw-inline-flex tw-items-center tw-px-6 tw-py-2.5 tw-bg-success-600 tw-text-white tw-rounded-lg hover:tw-bg-success-700 focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-success-500">
+                                <span>Terminer</span>
+                                <svg class="tw-w-5 tw-h-5 tw-ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </button>
                             @endif
-
-                            <div class="tw-grid tw-gap-6">
-                                <div class="tw-col-span-full">
-                                    <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700" for="name">Nom de l'entreprise</label>
-                                    <input type="text" id="name" wire:model="name" 
-                                           class="tw-mt-1 tw-block tw-w-full tw-rounded-md tw-border-gray-300 tw-shadow-sm focus:tw-border-indigo-500 focus:tw-ring-indigo-500" 
-                                           placeholder="SpaceX" required />
-                                    @error('name') <span class="tw-text-red-500 tw-text-sm">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 tw-gap-6">
-                                    <div>
-                                        <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700" for="nif">NIF <small>(facultatif)</small></label>
-                                        <input type="text" id="nif" wire:model="nif" 
-                                               class="tw-mt-1 tw-block tw-w-full tw-rounded-md tw-border-gray-300 tw-shadow-sm focus:tw-border-indigo-500 focus:tw-ring-indigo-500" 
-                                               placeholder="4789206500022" maxlength="18"/>
-                                        @error('nif') <span class="tw-text-red-500 tw-text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div>
-                                        <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700" for="phone">Téléphone</label>
-                                        <input type="text" id="phone" wire:model="phone" 
-                                               class="tw-mt-1 tw-block tw-w-full tw-rounded-md tw-border-gray-300 tw-shadow-sm focus:tw-border-indigo-500 focus:tw-ring-indigo-500" 
-                                               placeholder="202 555 0111" required />
-                                        @error('phone') <span class="tw-text-red-500 tw-text-sm">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-
-                                <div class="tw-col-span-full">
-                                    <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700" for="adresse">Adresse</label>
-                                    <input type="text" id="adresse" wire:model="adresse" 
-                                           class="tw-mt-1 tw-block tw-w-full tw-rounded-md tw-border-gray-300 tw-shadow-sm focus:tw-border-indigo-500 focus:tw-ring-indigo-500" 
-                                           placeholder="Address" required />
-                                    @error('adresse') <span class="tw-text-red-500 tw-text-sm">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div class="tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 tw-gap-6">
-                                    <div>
-                                        <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700" for="ville">Ville</label>
-                                        <input type="text" id="ville" wire:model="ville" 
-                                               class="tw-mt-1 tw-block tw-w-full tw-rounded-md tw-border-gray-300 tw-shadow-sm focus:tw-border-indigo-500 focus:tw-ring-indigo-500" 
-                                               placeholder="Mahajanga" required />
-                                        @error('ville') <span class="tw-text-red-500 tw-text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div>
-                                        <label class="tw-block tw-text-sm tw-font-medium tw-text-gray-700" for="pays">Pays</label>
-                                        <x-country-select :selected="$pays" />
-                                        @error('pays') <span class="tw-text-red-500 tw-text-sm">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-
-                                <div class="tw-flex tw-justify-between tw-mt-4">
-                                    <button type="submit" 
-                                            class="tw-inline-flex tw-items-center tw-px-4 tw-py-2 tw-border tw-border-transparent tw-text-sm tw-font-medium tw-rounded-md tw-text-white tw-bg-indigo-600 hover:tw-bg-indigo-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-indigo-500">
-                                        <span class="tw-mr-2">Ajouter</span>
-                                        <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                        </svg>
-                                    </button>
-
-                                    @if($showTerminerButton)
-                                        <button type="button" wire:click="terminer"
-                                                class="tw-inline-flex tw-items-center tw-px-4 tw-py-2 tw-border tw-border-transparent tw-text-sm tw-font-medium tw-rounded-md tw-text-white tw-bg-green-600 hover:tw-bg-green-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-green-500">
-                                            <span class="tw-mr-2">Terminer</span>
-                                            <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
                         </div>
                     </form>
                 </div>

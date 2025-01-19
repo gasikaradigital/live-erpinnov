@@ -18,6 +18,7 @@ class CreateEntreprise extends Component
     public $pays;
     public $phone;
     public $adresse;
+    public $employees_count;
     public $entreprises = [];
     public $showTerminerButton = false;
 
@@ -28,6 +29,7 @@ class CreateEntreprise extends Component
         'pays' => 'nullable|string|max:255',
         'phone' => 'required|string|max:255',
         'adresse' => 'required|string',
+        'employees_count' => 'required|string'
     ];
 
     public function mount()
@@ -48,12 +50,13 @@ class CreateEntreprise extends Component
                 'pays' => $this->pays ?? '',
                 'phone' => $this->phone,
                 'adresse' => $this->adresse,
+                'employees_count' => $this->employees_count
             ]);
 
             $this->entreprises->push($entreprise);
             $this->showTerminerButton = true;
 
-            $this->reset(['name', 'nif', 'ville', 'pays', 'phone', 'adresse']);
+            $this->reset();
             $this->alert('success', 'Entreprise ajoutée avec succès. Vous pouvez en ajouter une autre ou terminer.');
             return redirect()->route('entreprise.create');
         } catch (\Exception $e) {

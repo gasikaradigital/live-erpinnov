@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price_monthly', 12, 2);
             $table->decimal('price_yearly', 12, 2);
+            $table->decimal('price_local', 8, 2);
             $table->integer('instance_limit')->nullable();
             $table->integer('duration_days')->nullable(); // Ajout pour la période d'essai
             $table->boolean('is_free')->default(false);

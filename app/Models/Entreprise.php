@@ -17,6 +17,7 @@ class Entreprise extends Model
         'pays',
         'phone',
         'adresse',
+        'employees_count',
     ];
 
     public function user()

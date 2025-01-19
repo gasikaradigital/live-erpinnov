@@ -18,6 +18,7 @@ class Plan extends Model
         'description',
         'price_monthly',
         'price_yearly',
+        'price_local',
         'instance_limit',
         'duration_days',
         'is_free',
@@ -28,6 +29,7 @@ class Plan extends Model
     protected $casts = [
         'price_monthly' => 'decimal:2',
         'price_yearly' => 'decimal:2',
+        'price_local' => 'decimal:2',
         'instance_limit' => 'integer',
         'duration_days' => 'integer',
         'is_free' => 'boolean',

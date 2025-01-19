@@ -32,11 +32,11 @@
                             Email
                         </label>
                         <div class="tw-mt-1">
-                            <input 
-                                id="email" 
-                                name="email" 
-                                type="email" 
-                                required 
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                required
                                 autocomplete="email"
                                 placeholder="Entrer votre email"
                                 value="{{ old('email') }}"
@@ -58,15 +58,15 @@
                             @endif
                         </div>
                         <div class="tw-mt-1 tw-relative">
-                            <input 
-                                id="password" 
-                                name="password" 
-                                type="password" 
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
                                 required
                                 placeholder="Mot de passe"
                                 class="tw-block tw-w-full tw-appearance-none tw-rounded-md tw-border tw-border-gray-300 tw-px-3 tw-py-2 tw-placeholder-gray-400 tw-shadow-sm focus:tw-border-blue-500 focus:tw-outline-none focus:tw-ring-blue-500 sm:tw-text-sm"
                             />
-                            <button 
+                            <button
                                 type="button"
                                 onclick="togglePassword()"
                                 class="tw-absolute tw-inset-y-0 tw-right-0 tw-pr-3 tw-flex tw-items-center tw-text-gray-400 hover:tw-text-gray-500">
@@ -80,9 +80,9 @@
 
                     <!-- Remember Me -->
                     <div class="tw-flex tw-items-center">
-                        <input 
-                            id="remember" 
-                            name="remember" 
+                        <input
+                            id="remember"
+                            name="remember"
                             type="checkbox"
                             class="tw-h-4 tw-w-4 tw-text-blue-600 focus:tw-ring-blue-500 tw-border-gray-300 tw-rounded"
                         />
@@ -93,7 +93,7 @@
 
                     <!-- Submit Button -->
                     <div>
-                        <button 
+                        <button
                             type="submit"
                             class="tw-w-full tw-flex tw-justify-center tw-py-2 tw-px-4 tw-border tw-border-transparent tw-rounded-md tw-shadow-sm tw-text-sm tw-font-medium tw-text-white tw-bg-blue-600 hover:tw-bg-blue-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-blue-500 tw-transition">
                             Se connecter
@@ -117,7 +117,7 @@
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eye-icon');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeIcon.innerHTML = `<path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" /><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />`;
