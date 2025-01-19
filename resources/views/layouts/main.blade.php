@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
-
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
-
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    @stack("styles")
 </head>
 <body class="tw-min-h-screen tw-flex tw-flex-col tw-bg-gray-50 dark:tw-bg-gray-900 tw-transition-colors tw-duration-200">
 
@@ -45,6 +44,7 @@
     @endauth
 
     @stack('modals')
+    @stack("scripts")
     @livewireScripts
 </body>
 </html>

@@ -42,7 +42,7 @@
                                     <div class="tw-flex tw-items-center tw-gap-3">
                                         <div class="tw-relative">
                                             <img class="tw-h-10 tw-w-10 tw-rounded-lg tw-object-cover tw-ring-2 tw-ring-gray-100 dark:tw-ring-gray-800 group-hover:tw-ring-primary-100 dark:group-hover:tw-ring-primary-900/30 tw-transition-all"
-                                                 src="{{ asset('assets/img/flags/' . ($instance->pays === 0 ? '0.png' : '1.png')) }}"
+                                                 src="{{ asset('client/assets/img/flags/' . ($instance->pays === 0 ? '0.png' : '1.png')) }}"
                                                  alt="{{ $instance->getPaysNomAttribute() }}">
                                             <div class="tw-absolute tw-bottom-0 tw-right-0 tw-transform tw-translate-x-1/4 tw-translate-y-1/4">
                                                 <span class="tw-flex tw-h-3 tw-w-3">
