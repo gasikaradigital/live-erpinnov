@@ -1,11 +1,6 @@
-@php
-    // Vérifier le statut initial de l'instance
-    $instance = App\Models\Instance::where('name', $newInstanceInfo['name'])->first();
-    $isStillPending = $instance->status === 'pending';
-@endphp
 <div x-data="{
     showPassword: false,
-    isVerifying: {{ $isStillPending ? 'true' : 'false' }},
+    isVerifying: true,
     copyFeedback: {
         password: false,
         url: false
@@ -22,8 +17,8 @@
         }
     }
 }"
-    class="tw-bg-white dark:tw-bg-gray-800 tw-shadow tw-rounded-lg tw-p-6 tw-relative"
-    wire:poll.5s="checkInstanceStatus">
+x-init="setTimeout(() => { isVerifying = false; }, 60000)"
+class="tw-bg-white dark:tw-bg-gray-800 tw-shadow tw-rounded-lg tw-p-6 tw-relative">
     <div x-show="isVerifying"
         class="tw-absolute tw-inset-0 tw-bg-white/90 dark:tw-bg-gray-800/90 tw-flex tw-items-center tw-justify-center tw-z-50 tw-rounded-lg">
         <div class="tw-text-center">

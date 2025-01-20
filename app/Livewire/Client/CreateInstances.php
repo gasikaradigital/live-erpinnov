@@ -27,7 +27,6 @@ class CreateInstances extends Component
     public $entreprise_id;
     public $showPlanSelection = false;
     public $selectedPays = null;
-    public $isVerifying = true;
 
     public function updatedEntrepriseId($value)
     {
@@ -154,18 +153,6 @@ class CreateInstances extends Component
             'end_date' => now()->addDays($freePlan->duration_days),
             'status' => 'active'
         ]);
-    }
-
-    public function checkInstanceStatus()
-    {
-        if ($this->newInstanceInfo) {
-            $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
-            if ($instance && $instance->status === 'active') {
-                $this->isVerifying = false;
-                return true;
-            }
-        }
-        return false;
     }
 
     public function render()
