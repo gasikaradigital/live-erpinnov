@@ -1,6 +1,6 @@
 <div x-data="{
     showPassword: false,
-    isVerifying: true,
+    isVerifying: @entangle('isVerifying'),
     copyFeedback: {
         password: false,
         url: false
@@ -18,28 +18,24 @@
     }
 }"
     class="tw-bg-white dark:tw-bg-gray-800 tw-shadow tw-rounded-lg tw-p-6 tw-relative"
-    wire:poll.5s="checkInstanceStatus"
-    x-init="$wire.checkInstanceStatus().then(status => { if(status) isVerifying = false })">
-
-    <template x-if="isVerifying">
-        <div class="tw-absolute tw-inset-0 tw-bg-white/90 dark:tw-bg-gray-800/90 tw-flex tw-items-center tw-justify-center tw-z-50 tw-rounded-lg">
-            <div class="tw-text-center">
-                <div class="tw-flex tw-justify-center tw-mb-4">
-                    <svg class="tw-animate-spin tw-h-10 tw-w-10 tw-text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                </div>
-                <h3 class="tw-text-lg tw-font-medium tw-text-gray-900 dark:tw-text-white">
-                    Vérification de votre instance en cours
-                </h3>
-                <p class="tw-mt-2 tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">
-                    Veuillez patienter pendant que nous finalisons la configuration...
-                </p>
+    wire:poll.5s="checkInstanceStatus">
+    <div x-show="isVerifying"
+        class="tw-absolute tw-inset-0 tw-bg-white/90 dark:tw-bg-gray-800/90 tw-flex tw-items-center tw-justify-center tw-z-50 tw-rounded-lg">
+        <div class="tw-text-center">
+            <div class="tw-flex tw-justify-center tw-mb-4">
+                <svg class="tw-animate-spin tw-h-10 tw-w-10 tw-text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
             </div>
+            <h3 class="tw-text-lg tw-font-medium tw-text-gray-900 dark:tw-text-white">
+                Configuration de votre instance en cours
+            </h3>
+            <p class="tw-mt-2 tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">
+                Veuillez patienter pendant la finalisation...
+            </p>
         </div>
-    </template>
-
+    </div>
     <!-- En-tête avec icône de succès -->
     <div class="tw-text-center tw-mb-6">
         <div class="tw-mb-4">

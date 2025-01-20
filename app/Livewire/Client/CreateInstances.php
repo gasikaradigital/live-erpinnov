@@ -27,6 +27,7 @@ class CreateInstances extends Component
     public $entreprise_id;
     public $showPlanSelection = false;
     public $selectedPays = null;
+    public $isVerifying = true;
 
     public function updatedEntrepriseId($value)
     {
@@ -47,6 +48,11 @@ class CreateInstances extends Component
 
         if ($this->entreprise_id) {
             $this->updatedEntrepriseId($this->entreprise_id);
+        }
+
+        if ($this->newInstanceInfo) {
+            $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
+            $this->isVerifying = $instance->status === 'pending';
         }
     }
 
@@ -154,7 +160,10 @@ class CreateInstances extends Component
     {
         if ($this->newInstanceInfo) {
             $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
-            return $instance->status === 'active';
+            if ($instance && $instance->status === 'active') {
+                $this->isVerifying = false;
+                return true;
+            }
         }
         return false;
     }
