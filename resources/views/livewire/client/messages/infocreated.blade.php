@@ -4,94 +4,95 @@
     copyFeedback: {
         password: false,
         url: false
-        },
-        async copyToClipboard(text, type) {
-            try {
-                await navigator.clipboard.writeText(text);
-                this.copyFeedback[type] = true;
-                setTimeout(() => {
-                    this.copyFeedback[type] = false;
-                }, 1500);
-            } catch (err) {
-                console.error('Erreur de copie:', err);
-            }
+    },
+    async copyToClipboard(text, type) {
+        try {
+            await navigator.clipboard.writeText(text);
+            this.copyFeedback[type] = true;
+            setTimeout(() => {
+                this.copyFeedback[type] = false;
+            }, 1500);
+        } catch (err) {
+            console.error('Erreur de copie:', err);
         }
-    }">
+    }
+}">
     <!-- En-tête avec icône de succès -->
-    <div class="tw-text-center tw-mb-6">
-        <div class="tw-mb-4">
-            <div class="tw-w-16 tw-h-16 tw-mx-auto tw-bg-success-50 tw-rounded-full tw-flex tw-items-center tw-justify-center">
-                <svg class="tw-w-8 tw-h-8 tw-text-success-500" viewBox="0 0 24 24">
+    <div class="text-center mb-6">
+        <div class="mb-4">
+            <div class="w-16 h-16 mx-auto bg-success-50 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-success-500" viewBox="0 0 24 24">
                     <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
                 </svg>
             </div>
         </div>
-        <h4 class="tw-text-xl tw-font-semibold tw-mb-2 tw-text-gray-900 dark:tw-text-white">Instance créée avec succès !</h4>
-        <p class="tw-text-gray-500 dark:tw-text-gray-400">Voici les informations de connexion de votre nouvelle instance</p>
+        <h4 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Instance créée avec succès !</h4>
+        <p class="text-gray-500 dark:text-gray-400">Voici les informations de connexion de votre nouvelle instance</p>
     </div>
 
     <!-- Grille d'informations -->
-    <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-6 tw-bg-gray-50 dark:tw-bg-gray-700/50 tw-rounded-xl tw-p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6">
         <!-- Nom de l'instance -->
-        <div class="tw-flex tw-items-start tw-gap-4">
-            <div class="tw-w-10 tw-h-10 tw-rounded-lg tw-bg-primary-50 dark:tw-bg-primary-900/50 tw-flex tw-items-center tw-justify-center">
-                <svg class="tw-w-5 tw-h-5 tw-text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
             </div>
             <div>
-                <span class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">Nom de l'instance</span>
-                <div class="tw-font-medium tw-text-gray-900 dark:tw-text-white">{{ $newInstanceInfo['name'] }}</div>
+                <span class="text-sm text-gray-500 dark:text-gray-400">Nom de l'instance</span>
+                <div class="font-medium text-gray-900 dark:text-white">{{ $newInstanceInfo['name'] }}</div>
             </div>
         </div>
 
         <!-- Login -->
-        <div class="tw-flex tw-items-start tw-gap-4">
-            <div class="tw-w-10 tw-h-10 tw-rounded-lg tw-bg-primary-50 dark:tw-bg-primary-900/50 tw-flex tw-items-center tw-justify-center">
-                <svg class="tw-w-5 tw-h-5 tw-text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
             </div>
             <div>
-                <span class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">Login</span>
-                <div class="tw-font-medium tw-text-gray-900 dark:tw-text-white">{{ $newInstanceInfo['login'] }}</div>
+                <span class="text-sm text-gray-500 dark:text-gray-400">Login</span>
+                <div class="font-medium text-gray-900 dark:text-white">{{ $newInstanceInfo['login'] }}</div>
             </div>
         </div>
 
         <!-- Mot de passe -->
-        <div class="tw-flex tw-items-start tw-gap-4">
-            <div class="tw-w-10 tw-h-10 tw-rounded-lg tw-bg-primary-50 dark:tw-bg-primary-900/50 tw-flex tw-items-center tw-justify-center">
-                <svg class="tw-w-5 tw-h-5 tw-text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                 </svg>
             </div>
-            <div class="tw-flex-1">
-                <span class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">Mot de passe</span>
-                <div class="tw-flex tw-items-center tw-gap-2">
+            <div class="flex-1">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Mot de passe</span>
+                <div class="flex items-center gap-2">
                     <input
                         :type="showPassword ? 'text' : 'password'"
                         value="{{ $newInstanceInfo['password'] }}"
-                        class="tw-bg-transparent tw-border-none tw-p-0 tw-font-medium tw-text-gray-900 dark:tw-text-white tw-outline-none"
+                        class="bg-transparent border-none p-0 font-medium text-gray-900 dark:text-white outline-none"
                         readonly>
                     <button
                         @click="showPassword = !showPassword"
-                        class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded-lg hover:tw-bg-gray-100 dark:hover:tw-bg-gray-600 tw-text-gray-500">
-                        <svg x-show="!showPassword" class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500">
+                        <svg x-show="!showPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
-                        <svg x-show="showPassword" class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg x-show="showPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
                         </svg>
                     </button>
                     <button
                         @click="copyToClipboard('{{ $newInstanceInfo['password'] }}', 'password')"
-                        class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded-lg hover:tw-bg-gray-100 dark:hover:tw-bg-gray-600 tw-text-gray-500"
-                        :class="{ 'tw-text-success-500': copyFeedback.password }">
-                        <svg x-show="!copyFeedback.password" class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500"
+                        :class="{ 'text-success-500': copyFeedback.password }">
+                        <!-- SVG pour copier et confirmation -->
+                        <svg x-show="!copyFeedback.password" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
                         </svg>
-                        <svg x-show="copyFeedback.password" class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg x-show="copyFeedback.password" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                     </button>
@@ -100,28 +101,28 @@
         </div>
 
         <!-- URL -->
-        <div class="tw-flex tw-items-start tw-gap-4">
-            <div class="tw-w-10 tw-h-10 tw-rounded-lg tw-bg-primary-50 dark:tw-bg-primary-900/50 tw-flex tw-items-center tw-justify-center">
-                <svg class="tw-w-5 tw-h-5 tw-text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                 </svg>
             </div>
-            <div class="tw-flex-1">
-                <span class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">URL de connexion</span>
-                <div class="tw-flex tw-items-center tw-gap-2">
+            <div class="flex-1">
+                <span class="text-sm text-gray-500 dark:text-gray-400">URL de connexion</span>
+                <div class="flex items-center gap-2">
                     <a href="{{ $newInstanceInfo['url'] }}"
                        target="_blank"
-                       class="tw-text-primary-600 hover:tw-text-primary-700 tw-font-medium">
+                       class="text-primary-600 hover:text-primary-700 font-medium">
                         {{ $newInstanceInfo['url'] }}
                     </a>
                     <button
                         @click="copyToClipboard('{{ $newInstanceInfo['url'] }}', 'url')"
-                        class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded-lg hover:tw-bg-gray-100 dark:hover:tw-bg-gray-600 tw-text-gray-500"
-                        :class="{ 'tw-text-success-500': copyFeedback.url }">
-                        <svg x-show="!copyFeedback.url" class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500"
+                        :class="{ 'text-success-500': copyFeedback.url }">
+                        <svg x-show="!copyFeedback.url" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
                         </svg>
-                        <svg x-show="copyFeedback.url" class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg x-show="copyFeedback.url" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                     </button>
@@ -131,22 +132,22 @@
     </div>
 
     <!-- Alerte -->
-    <div class="tw-mt-6 tw-flex tw-items-start tw-gap-3 tw-p-4 tw-bg-warning-50 dark:tw-bg-warning-900/50 tw-rounded-lg">
-        <svg class="tw-w-5 tw-h-5 tw-text-warning-500 tw-flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="mt-6 flex items-start gap-3 p-4 bg-warning-50 dark:bg-warning-900/50 rounded-lg">
+        <svg class="w-5 h-5 text-warning-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
-        <p class="tw-text-sm tw-text-warning-800 dark:tw-text-warning-200">
+        <p class="text-sm text-warning-800 dark:text-warning-200">
             Veuillez sauvegarder ces informations dans un endroit sûr. Vous les recevrez également par email.
         </p>
     </div>
 
     <!-- Bouton d'accès -->
-    <div class="tw-mt-6 tw-text-center">
+    <div class="mt-6 text-center">
         <a href="{{ $newInstanceInfo['url'] }}"
            target="_blank"
-           class="tw-inline-flex tw-items-center tw-gap-2 tw-px-6 tw-py-3 tw-bg-primary-600 hover:tw-bg-primary-700 tw-text-white tw-font-medium tw-rounded-lg tw-transition-colors">
+           class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
             Accéder à mon instance
-            <svg class="tw-w-5 tw-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
             </svg>
         </a>

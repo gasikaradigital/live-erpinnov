@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="tw-h-full tw-scroll-smooth dark:tw-color-scheme-dark">
+<html lang="fr" class="h-full scroll-smooth dark:color-scheme-dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,29 +13,29 @@
     @livewireStyles
     @stack("styles")
 </head>
-<body class="tw-min-h-screen tw-flex tw-flex-col tw-bg-gray-50 dark:tw-bg-gray-900 tw-transition-colors tw-duration-200">
+<body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
 
     <x-navbar/>
 
     <!-- Main Content -->
-    <main class="tw-flex-1 tw-mt-0">
+    <main class="flex-1 mt-0">
         {{ $slot }}
     </main>
 
     <!-- Footer -->
     @auth
     <!-- Footer -->
-    <footer class="tw-mt-auto tw-w-full tw-bg-white/80 dark:tw-bg-gray-800/80 tw-backdrop-blur-lg tw-border-t tw-border-gray-200 dark:tw-border-gray-700">
-        <div class="tw-max-w-7xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8">
-            <div class="tw-h-16 tw-flex tw-items-center tw-justify-between">
+    <footer class="mt-auto w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="h-16 flex items-center justify-between">
                 <!-- Left side -->
-                <div class="tw-flex tw-items-center tw-gap-6">
-                    <a href="#" class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400 hover:tw-text-gray-900 dark:hover:tw-text-white">Support</a>
-                    <a href="#" class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400 hover:tw-text-gray-900 dark:hover:tw-text-white">Contact</a>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Support</a>
+                    <a href="#" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Contact</a>
                 </div>
 
                 <!-- Right side -->
-                <div class="tw-text-sm tw-text-gray-500 dark:tw-text-gray-400">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
                     © {{ date('Y') }} ERP INNOV
                 </div>
             </div>

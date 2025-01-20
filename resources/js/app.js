@@ -4,7 +4,7 @@ import { createApp } from 'vue';
 import App from './components/App.vue';
 
 // Styles
-import '../css/app.css';
+//import '../css/app.css';
 
 // Création et montage de l'application Vue
 const app = createApp(App);

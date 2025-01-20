@@ -1,5 +1,4 @@
-<x-verify-layout>
-
+<x-main-layout>
     <x-authentication-card>
         <x-slot name="logo">
             <x-authentication-card-logo />
@@ -42,4 +41,4 @@
         </div>
     </x-authentication-card>
       <!-- / Content -->
-</x-verify-layout>
+</x-main-layout>

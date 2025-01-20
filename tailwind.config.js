@@ -95,7 +95,7 @@ export default {
         }),
     ],
 
-    prefix: 'tw-',
+    //prefix: 'tw-',
     important: true,
     darkMode: 'class',
 };
