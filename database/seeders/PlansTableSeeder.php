@@ -41,7 +41,7 @@ class PlansTableSeeder extends Seeder
                 'price_local' => 25500.00, // Ar
                 'is_free' => false,
                 'is_default' => false,
-                'instance_limit' => 1,
+                'instance_limit' => 2,
                 'duration_days' => null,
                 'features' => json_encode([
                     'Gestion des tiers',
@@ -63,7 +63,7 @@ class PlansTableSeeder extends Seeder
                 'price_local' => 77500.00,
                 'is_free' => false,
                 'is_default' => false,
-                'instance_limit' => 1,
+                'instance_limit' => 5,
                 'duration_days' => null,
                 'features' => json_encode([
                     'Modules Artisan',
@@ -82,7 +82,7 @@ class PlansTableSeeder extends Seeder
                 'price_local' => 225000.00,
                 'is_free' => false,
                 'is_default' => false,
-                'instance_limit' => 1,
+                'instance_limit' => 1000,
                 'duration_days' => null,
                 'features' => json_encode([
                     'Modules Standard',
