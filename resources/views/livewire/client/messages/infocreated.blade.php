@@ -44,17 +44,33 @@
                 <div class="font-medium text-gray-900 dark:text-white">{{ $newInstanceInfo['name'] }}</div>
             </div>
         </div>
-
-        <!-- Login -->
+        <!-- URL -->
         <div class="flex items-start gap-4">
             <div class="w-12 h-12 rounded-lg bg-indigo-100 dark:bg-indigo-700 flex items-center justify-center">
                 <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-300">
-                    <use href="#user"></use>
+                    <use href="#link"></use>
                 </svg>
             </div>
-            <div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">Login</span>
-                <div class="font-medium text-gray-900 dark:text-white">{{ $newInstanceInfo['login'] }}</div>
+            <div class="flex-1">
+                <span class="text-sm text-gray-500 dark:text-gray-400">URL de connexion</span>
+                <div class="flex items-center gap-2">
+                    <a href="{{ $newInstanceInfo['url'] }}"
+                       target="_blank"
+                       class="text-indigo-600 hover:text-indigo-800 font-medium">
+                        {{ $newInstanceInfo['url'] }}
+                    </a>
+                    <button
+                        @click="copyToClipboard('{{ $newInstanceInfo['url'] }}', 'url')"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500"
+                        :class="{ 'text-green-500': copyFeedback.url }">
+                        <svg x-show="!copyFeedback.url" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2"/>
+                        </svg>
+                        <svg x-show="copyFeedback.url" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -98,34 +114,16 @@
                 </div>
             </div>
         </div>
-
-        <!-- URL -->
+        <!-- Login -->
         <div class="flex items-start gap-4">
             <div class="w-12 h-12 rounded-lg bg-indigo-100 dark:bg-indigo-700 flex items-center justify-center">
                 <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-300">
-                    <use href="#link"></use>
+                    <use href="#user"></use>
                 </svg>
             </div>
-            <div class="flex-1">
-                <span class="text-sm text-gray-500 dark:text-gray-400">URL de connexion</span>
-                <div class="flex items-center gap-2">
-                    <a href="{{ $newInstanceInfo['url'] }}"
-                       target="_blank"
-                       class="text-indigo-600 hover:text-indigo-800 font-medium">
-                        {{ $newInstanceInfo['url'] }}
-                    </a>
-                    <button
-                        @click="copyToClipboard('{{ $newInstanceInfo['url'] }}', 'url')"
-                        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500"
-                        :class="{ 'text-green-500': copyFeedback.url }">
-                        <svg x-show="!copyFeedback.url" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2"/>
-                        </svg>
-                        <svg x-show="copyFeedback.url" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                    </button>
-                </div>
+            <div>
+                <span class="text-sm text-gray-500 dark:text-gray-400">Login</span>
+                <div class="font-medium text-gray-900 dark:text-white">{{ $newInstanceInfo['login'] }}</div>
             </div>
         </div>
     </div>
