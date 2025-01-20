@@ -17,7 +17,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Contenu principal -->
         <div class="tw-flex-1 tw-bg-gray-50 dark:tw-bg-gray-900">
             <div class="tw-max-w-7xl tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8 tw-py-8">
