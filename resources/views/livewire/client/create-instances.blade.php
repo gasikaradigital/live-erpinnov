@@ -96,9 +96,11 @@
                                                         Annuler
                                                     </a>
                                                     <button type="submit"
-                                                            class="tw-btn-primary tw-py-2.5 tw-px-6 tw-rounded-lg tw-text-sm tw-font-semibold focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-primary-500 tw-inline-flex tw-items-center tw-gap-2 disabled:tw-opacity-50 disabled:tw-cursor-not-allowed"
-                                                            wire:loading.attr="disabled"
-                                                            wire:target="store">
+                                                        class="tw-btn-primary tw-py-2.5 tw-px-6 tw-rounded-lg tw-text-sm tw-font-semibold focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-primary-500 tw-inline-flex tw-items-center tw-gap-2">
+                                                        <span>Créer l'instance</span>
+                                                        <svg class="tw-w-4 tw-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                                        </svg>
                                                     </button>
                                                 </div>
                                             </div>
