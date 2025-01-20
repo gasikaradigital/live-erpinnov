@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('entreprise_id');
             $table->boolean('pays')->default(0); // 0 pour Madagascar, 1 pour France
             $table->string('url')->unique();
-            $table->enum('status', ['active', 'expired'])->default('active');
+            $table->enum('status', ['active', 'expired', 'pending', 'failed'])->default('active');
             $table->string('auth_token', 64)->nullable();
             $table->timestamp('token_expires_at')->nullable();
             $table->string('dolibarr_username');

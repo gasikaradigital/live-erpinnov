@@ -15,6 +15,8 @@ class Instance extends Model
 
     const STATUS_ACTIVE = 'active';
     const STATUS_EXPIRED = 'expired';
+    const STATUS_PENDING = 'pending';
+    const STATUS_FAILED = 'failed';
 
     protected $fillable = [
         'user_id',
@@ -140,7 +142,7 @@ class Instance extends Model
         // Si vous utilisez des valeurs numériques
         return $this->pays === 0 ? 'Madagascar' : 'France';
     }
-    
+
     public function getFormattedDate()
     {
         return Carbon::parse($this->created_at)->format('d/m/Y');
