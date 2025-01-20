@@ -20,7 +20,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CreateInstances extends Component
 {
     use WithPagination, LivewireAlert, AuthorizesRequests;
-
+    protected $listeners = ['refreshComponent' => '$refresh'];
     public $newInstanceInfo = null;
     public $name = '';
     public $entreprises;
@@ -91,13 +91,21 @@ class CreateInstances extends Component
                 'api_key_dolibarr' => Str::random(32),
             ];
 
-            // Créer l'enregistrement Instance immédiatement
+            // Créer l'instance immédiatement avec les informations de base
             $instance = $this->createInstanceRecord($user, $instanceData);
 
-            // Dispatch le job pour le traitement en arrière-plan
+            // Mettre à jour newInstanceInfo immédiatement
+            $this->newInstanceInfo = [
+                'name' => $instance->name,
+                'login' => $user->email,
+                'password' => $instanceData['password_dolibarr'],
+                'url' => "http://" . $instance->name . ".erpinnov.com",
+            ];
+
+            // Lancer le job en arrière-plan
             CreateDolibarrInstance::dispatch($instanceData, $user, $instance);
 
-            $this->alert('success', 'La création de votre instance a démarré. Vous recevrez un email une fois terminée.');
+            $this->alert('success', 'Votre instance a été créée avec succès.');
             $this->reset(['name']);
 
         } catch (\Exception $e) {

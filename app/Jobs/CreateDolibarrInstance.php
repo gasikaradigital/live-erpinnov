@@ -42,6 +42,7 @@ class CreateDolibarrInstance implements ShouldQueue
                 $this->user->email
             );
 
+
             if ($instanceDetails) {
                 // Créer les credentials Dolibarr
                 DolibarrCredential::create([
@@ -65,6 +66,9 @@ class CreateDolibarrInstance implements ShouldQueue
                     $this->instanceData['password_dolibarr'],
                     "http://" . $instanceDetails['url']
                 );
+
+                 // Dispatch un événement pour rafraîchir le composant
+                broadcast(new InstanceCreated($this->instance));
 
                 // Envoyer la notification
                 $this->user->notify(new InstanceCreated([
