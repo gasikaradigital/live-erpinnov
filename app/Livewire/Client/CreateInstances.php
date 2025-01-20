@@ -78,17 +78,14 @@ class CreateInstances extends Component
 
     public function store()
     {
+        \Log::info('Début de la création de l\'instance');
+
         $this->dispatch('instanceCreationStarted');
         $this->validate();
 
-        $user = Auth::user();
-
-        if (!$user->canCreateInstance()) {
-            $this->alert('error', 'Vous avez atteint votre limite de création d\'instances.');
-            return;
-        }
-
         try {
+            \Log::info('Validation passée, préparation des données');
+
             $instanceData = [
                 'name' => $this->name,
                 'password_dolibarr' => Str::random(16),
@@ -97,12 +94,16 @@ class CreateInstances extends Component
                 'api_key_dolibarr' => Str::random(32),
             ];
 
-            $instance = $this->createInstanceRecord($user, $instanceData);
+            \Log::info('Création de l\'enregistrement instance');
+            $instance = $this->createInstanceRecord(Auth::user(), $instanceData);
+
+            \Log::info('Instance créée avec ID: ' . $instance->id);
 
             $this->isVerifying = true;
             $this->instanceVerificationId = $instance->id;
 
-            CreateDolibarrInstance::dispatch($instanceData, $user, $instance);
+            \Log::info('Dispatch du job');
+            CreateDolibarrInstance::dispatch($instanceData, Auth::user(), $instance);
 
             $this->reset(['name']);
 
@@ -111,6 +112,7 @@ class CreateInstances extends Component
             $this->alert('error', 'Une erreur est survenue lors de la création de l\'instance.');
         }
 
+        \Log::info('Fin de la méthode store');
         $this->dispatch('instanceCreationEnded');
     }
 
@@ -124,9 +126,21 @@ class CreateInstances extends Component
 
     public function checkInstanceStatus()
     {
-        if (!$this->instanceVerificationId) return;
+        \Log::info('Vérification du statut de l\'instance: ' . $this->instanceVerificationId);
+
+        if (!$this->instanceVerificationId) {
+            \Log::info('Pas d\'ID d\'instance à vérifier');
+            return;
+        }
 
         $instance = Instance::find($this->instanceVerificationId);
+
+        if (!$instance) {
+            \Log::error('Instance non trouvée: ' . $this->instanceVerificationId);
+            return;
+        }
+
+        \Log::info('Statut de l\'instance: ' . $instance->status);
 
         if ($instance->status === 'active') {
             $this->isVerifying = false;

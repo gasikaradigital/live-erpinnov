@@ -25,6 +25,15 @@
         </div>
     </div>
 
+    <div class="mt-4 p-4 bg-gray-100">
+        <p>Debug:</p>
+        <pre>
+            isVerifying: {{ $isVerifying ? 'true' : 'false' }}
+            instanceVerificationId: {{ $instanceVerificationId ?? 'null' }}
+            newInstanceInfo: {{ print_r($newInstanceInfo, true) }}
+        </pre>
+    </div>
+
     <script>
         // Vérifier toutes les 5 secondes
         let checkInterval = setInterval(() => {
