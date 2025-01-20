@@ -150,6 +150,15 @@ class CreateInstances extends Component
         ]);
     }
 
+    public function checkInstanceStatus()
+    {
+        if ($this->newInstanceInfo) {
+            $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
+            return $instance->status === 'active';
+        }
+        return false;
+    }
+
     public function render()
     {
         $user = Auth::user();
