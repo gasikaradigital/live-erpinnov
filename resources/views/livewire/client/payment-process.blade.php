@@ -12,7 +12,7 @@
                     <!-- Modes de paiement -->
                     <div class="mb-6 flex space-x-4">
                         <button wire:click="$set('paymentMethod', 'VISA')" class="px-4 py-2 rounded-lg flex items-center space-x-2 {{ $paymentMethod === 'VISA' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-700' }}">
-                            <img src="{{ asset('/client/assets/img/logo/VISA.svg') }}" alt="VISA" class="w-10 h-10">
+                            <img src="{{ asset('/client/assets/img/logo/visa.svg') }}" alt="VISA" class="w-10 h-10">
                             <span>VISA</span>
                         </button>
                         <button wire:click="$set('paymentMethod', 'OrangeMoney')" class="px-4 py-2 rounded-lg flex items-center space-x-2 {{ $paymentMethod === 'OrangeMoney' ? 'bg-orange-600 text-white' : 'bg-gray-300 text-gray-700' }}">
