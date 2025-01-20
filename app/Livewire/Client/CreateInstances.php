@@ -120,7 +120,8 @@ class CreateInstances extends Component
             'reference' => $reference,
             'name' => $instanceData['name'],
             'entreprise_id' => $entreprise->id,
-            'status' => 'pending', // Nouveau statut initial
+            'status' => 'pending',
+            'url' => $instanceData['name'] . '.erpinnov.com', // Ajout de l'URL
             'auth_token' => Instance::generateUniqueAuthToken(),
             'dolibarr_username' => $instanceData['login_dolibarr'],
             'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),
