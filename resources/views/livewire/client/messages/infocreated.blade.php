@@ -1,6 +1,11 @@
+@php
+    // Vérifier le statut initial de l'instance
+    $instance = App\Models\Instance::where('name', $newInstanceInfo['name'])->first();
+    $isStillPending = $instance->status === 'pending';
+@endphp
 <div x-data="{
     showPassword: false,
-    isVerifying: @entangle('isVerifying'),
+    isVerifying: {{ $isStillPending ? 'true' : 'false' }},
     copyFeedback: {
         password: false,
         url: false
