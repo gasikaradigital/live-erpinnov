@@ -130,6 +130,16 @@
         </div>
     </div>
 
+    <!-- Alerte -->
+    <div class="mt-6 flex items-center gap-3 p-4 bg-yellow-100 dark:bg-yellow-700 rounded-lg shadow">
+        <svg class="w-6 h-6 text-yellow-500 dark:text-yellow-300 flex-shrink-0">
+            <use href="#alert-triangle"></use>
+        </svg>
+        <p class="text-sm text-gray-800 dark:text-gray-200">
+            Veuillez sauvegarder ces informations dans un endroit sûr. Vous les recevrez également par email.
+        </p>
+    </div>
+
     <!-- Bouton d'accès -->
     <div class="mt-8 text-center">
         <a href="{{ $newInstanceInfo['url'] }}"
@@ -142,3 +152,18 @@
         </a>
     </div>
 </div>
+<!-- Script pour les icônes -->
+<svg class="hidden">
+    <symbol id="grid" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+    </symbol>
+    <symbol id="user" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+    </symbol>
+    <symbol id="lock" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+    </symbol>
+    <symbol id="link" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+    </symbol>
+</svg>
