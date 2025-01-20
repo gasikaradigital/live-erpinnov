@@ -1,4 +1,3 @@
-// app/Events/InstanceCreated.php
 <?php
 
 namespace App\Events;
