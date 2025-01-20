@@ -20,13 +20,20 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CreateInstances extends Component
 {
     use WithPagination, LivewireAlert, AuthorizesRequests;
-    protected $listeners = ['refreshComponent' => '$refresh'];
+
+    protected $listeners = [
+        'refreshComponent' => '$refresh',
+        'echo-private:instance.*,InstanceCreated' => 'handleInstanceCreated'
+    ];
+
     public $newInstanceInfo = null;
     public $name = '';
     public $entreprises;
     public $entreprise_id;
     public $showPlanSelection = false;
     public $selectedPays = null;
+    public $isVerifying = false;
+    public $instanceVerificationId = null;
 
     public function updatedEntrepriseId($value)
     {
@@ -47,11 +54,6 @@ class CreateInstances extends Component
 
         if ($this->entreprise_id) {
             $this->updatedEntrepriseId($this->entreprise_id);
-        }
-
-        if ($this->newInstanceInfo) {
-            $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
-            $this->isVerifying = $instance->status === 'pending';
         }
     }
 
@@ -87,7 +89,6 @@ class CreateInstances extends Component
         }
 
         try {
-            // Préparer les données d'instance
             $instanceData = [
                 'name' => $this->name,
                 'password_dolibarr' => Str::random(16),
@@ -96,21 +97,13 @@ class CreateInstances extends Component
                 'api_key_dolibarr' => Str::random(32),
             ];
 
-            // Créer l'instance immédiatement avec les informations de base
             $instance = $this->createInstanceRecord($user, $instanceData);
 
-            // Mettre à jour newInstanceInfo immédiatement
-            $this->newInstanceInfo = [
-                'name' => $instance->name,
-                'login' => $user->email,
-                'password' => $instanceData['password_dolibarr'],
-                'url' => "http://" . $instance->name . ".erpinnov.com",
-            ];
+            $this->isVerifying = true;
+            $this->instanceVerificationId = $instance->id;
 
-            // Lancer le job en arrière-plan
             CreateDolibarrInstance::dispatch($instanceData, $user, $instance);
 
-            $this->alert('success', 'Votre instance a été créée avec succès.');
             $this->reset(['name']);
 
         } catch (\Exception $e) {
@@ -119,6 +112,37 @@ class CreateInstances extends Component
         }
 
         $this->dispatch('instanceCreationEnded');
+    }
+
+    public function handleInstanceCreated($event)
+    {
+        $instance = Instance::find($event['instance']['id']);
+        if ($instance && $instance->id === $this->instanceVerificationId) {
+            $this->checkInstanceStatus();
+        }
+    }
+
+    public function checkInstanceStatus()
+    {
+        if (!$this->instanceVerificationId) return;
+
+        $instance = Instance::find($this->instanceVerificationId);
+
+        if ($instance->status === 'active') {
+            $this->isVerifying = false;
+            $this->instanceVerificationId = null;
+            $this->newInstanceInfo = [
+                'name' => $instance->name,
+                'login' => Auth::user()->email,
+                'password' => $instance->dolibarr_password,
+                'url' => $instance->url
+            ];
+            $this->alert('success', 'Votre instance est maintenant prête !');
+        } elseif ($instance->status === 'failed') {
+            $this->isVerifying = false;
+            $this->instanceVerificationId = null;
+            $this->alert('error', 'La création de l\'instance a échoué.');
+        }
     }
 
     private function createInstanceRecord($user, $instanceData)
@@ -134,7 +158,7 @@ class CreateInstances extends Component
             'name' => $instanceData['name'],
             'entreprise_id' => $entreprise->id,
             'status' => 'pending',
-            'url' => $instanceData['name'] . '.erpinnov.com', // Ajout de l'URL
+            'url' => $instanceData['name'] . '.erpinnov.com',
             'auth_token' => Instance::generateUniqueAuthToken(),
             'dolibarr_username' => $instanceData['login_dolibarr'],
             'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),

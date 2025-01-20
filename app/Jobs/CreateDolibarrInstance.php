@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\InstanceCreated;
 use App\Models\DolibarrCredential;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -10,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Services\InstanceProvisioningService;
 use App\Services\CreateUsersInnov;
-use App\Notifications\InstanceCreated;
+use App\Notifications\InstanceCreated as InstanceCreatedNotification;
 use Illuminate\Support\Facades\Hash;
 
 class CreateDolibarrInstance implements ShouldQueue
@@ -42,7 +43,6 @@ class CreateDolibarrInstance implements ShouldQueue
                 $this->user->email
             );
 
-
             if ($instanceDetails) {
                 // Créer les credentials Dolibarr
                 DolibarrCredential::create([
@@ -67,11 +67,11 @@ class CreateDolibarrInstance implements ShouldQueue
                     "http://" . $instanceDetails['url']
                 );
 
-                 // Dispatch un événement pour rafraîchir le composant
+                // Broadcaster l'événement
                 broadcast(new InstanceCreated($this->instance));
 
                 // Envoyer la notification
-                $this->user->notify(new InstanceCreated([
+                $this->user->notify(new InstanceCreatedNotification([
                     'name' => $this->instanceData['name'],
                     'login' => $this->user->email,
                     'password' => $this->instanceData['password_dolibarr'],
