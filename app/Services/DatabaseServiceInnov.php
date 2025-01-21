@@ -119,7 +119,7 @@ class DatabaseServiceInnov
                 ->update([
                     'name' => $instanceName,
                     'api_key' => $api_key_dolibarr,
-                    'url_dolibarr' => 'http://'. $instanceName . '.erpinnov.com',
+                    'url_dolibarr' => 'http://'. $instanceName . '-dolibarr.erpinnov.com',
                     'email' => $userEmail,
                     'password' => Hash::make($password)
                 ]);
