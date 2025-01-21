@@ -1,6 +1,6 @@
 <button type="submit"
         wire:loading.attr="disabled"
-        wire:target="submit" <!-- Ajout de wire:target pour spécifier quand le loading doit s'activer -->
+        wire:target="submit"
         class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 rounded-xl text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed">
 
     <span wire:loading.remove wire:target="submit">Créer l'instance</span>
