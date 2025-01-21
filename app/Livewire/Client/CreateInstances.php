@@ -20,20 +20,14 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CreateInstances extends Component
 {
     use WithPagination, LivewireAlert, AuthorizesRequests;
-
-    protected $listeners = [
-        'refreshComponent' => '$refresh',
-        'echo-private:instance.*,InstanceCreated' => 'handleInstanceCreated'
-    ];
-
+    protected $listeners = ['refreshComponent' => '$refresh'];
     public $newInstanceInfo = null;
     public $name = '';
     public $entreprises;
     public $entreprise_id;
     public $showPlanSelection = false;
     public $selectedPays = null;
-    public $isVerifying = false;
-    public $instanceVerificationId = null;
+
 
     public function updatedEntrepriseId($value)
     {
@@ -54,6 +48,11 @@ class CreateInstances extends Component
 
         if ($this->entreprise_id) {
             $this->updatedEntrepriseId($this->entreprise_id);
+        }
+
+        if ($this->newInstanceInfo) {
+            $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
+            $this->isVerifying = $instance->status === 'pending';
         }
     }
 
@@ -78,14 +77,18 @@ class CreateInstances extends Component
 
     public function store()
     {
-        \Log::info('Début de la création de l\'instance');
-
         $this->dispatch('instanceCreationStarted');
         $this->validate();
 
-        try {
-            \Log::info('Validation passée, préparation des données');
+        $user = Auth::user();
 
+        if (!$user->canCreateInstance()) {
+            $this->alert('error', 'Vous avez atteint votre limite de création d\'instances.');
+            return;
+        }
+
+        try {
+            // Préparer les données d'instance
             $instanceData = [
                 'name' => $this->name,
                 'password_dolibarr' => Str::random(16),
@@ -94,17 +97,21 @@ class CreateInstances extends Component
                 'api_key_dolibarr' => Str::random(32),
             ];
 
-            \Log::info('Création de l\'enregistrement instance');
-            $instance = $this->createInstanceRecord(Auth::user(), $instanceData);
+            // Créer l'instance immédiatement avec les informations de base
+            $instance = $this->createInstanceRecord($user, $instanceData);
 
-            \Log::info('Instance créée avec ID: ' . $instance->id);
+            // Mettre à jour newInstanceInfo immédiatement
+            $this->newInstanceInfo = [
+                'name' => $instance->name,
+                'login' => $user->email,
+                'password' => $instanceData['password_dolibarr'],
+                'url' => "http://" . $instance->name . ".erpinnov.com",
+            ];
 
-            $this->isVerifying = true;
-            $this->instanceVerificationId = $instance->id;
+            // Lancer le job en arrière-plan
+            CreateDolibarrInstance::dispatch($instanceData, $user, $instance);
 
-            \Log::info('Dispatch du job');
-            CreateDolibarrInstance::dispatch($instanceData, Auth::user(), $instance);
-
+            $this->alert('success', 'Votre instance a été créée avec succès.');
             $this->reset(['name']);
 
         } catch (\Exception $e) {
@@ -112,51 +119,7 @@ class CreateInstances extends Component
             $this->alert('error', 'Une erreur est survenue lors de la création de l\'instance.');
         }
 
-        \Log::info('Fin de la méthode store');
         $this->dispatch('instanceCreationEnded');
-    }
-
-    public function handleInstanceCreated($event)
-    {
-        $instance = Instance::find($event['instance']['id']);
-        if ($instance && $instance->id === $this->instanceVerificationId) {
-            $this->checkInstanceStatus();
-        }
-    }
-
-    public function checkInstanceStatus()
-    {
-        \Log::info('Vérification du statut de l\'instance: ' . $this->instanceVerificationId);
-
-        if (!$this->instanceVerificationId) {
-            \Log::info('Pas d\'ID d\'instance à vérifier');
-            return;
-        }
-
-        $instance = Instance::find($this->instanceVerificationId);
-
-        if (!$instance) {
-            \Log::error('Instance non trouvée: ' . $this->instanceVerificationId);
-            return;
-        }
-
-        \Log::info('Statut de l\'instance: ' . $instance->status);
-
-        if ($instance->status === 'active') {
-            $this->isVerifying = false;
-            $this->instanceVerificationId = null;
-            $this->newInstanceInfo = [
-                'name' => $instance->name,
-                'login' => Auth::user()->email,
-                'password' => $instance->dolibarr_password,
-                'url' => $instance->url
-            ];
-            $this->alert('success', 'Votre instance est maintenant prête !');
-        } elseif ($instance->status === 'failed') {
-            $this->isVerifying = false;
-            $this->instanceVerificationId = null;
-            $this->alert('error', 'La création de l\'instance a échoué.');
-        }
     }
 
     private function createInstanceRecord($user, $instanceData)
@@ -172,7 +135,7 @@ class CreateInstances extends Component
             'name' => $instanceData['name'],
             'entreprise_id' => $entreprise->id,
             'status' => 'pending',
-            'url' => $instanceData['name'] . '.erpinnov.com',
+            'url' => $instanceData['name'] . '.erpinnov.com', // Ajout de l'URL
             'auth_token' => Instance::generateUniqueAuthToken(),
             'dolibarr_username' => $instanceData['login_dolibarr'],
             'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),
