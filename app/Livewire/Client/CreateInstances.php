@@ -20,14 +20,42 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CreateInstances extends Component
 {
     use WithPagination, LivewireAlert, AuthorizesRequests;
+
     protected $listeners = ['refreshComponent' => '$refresh'];
+
     public $newInstanceInfo = null;
     public $name = '';
     public $entreprises;
     public $entreprise_id;
     public $showPlanSelection = false;
     public $selectedPays = null;
+    public $currentDateTime;
+    public $currentUser;
+    public $isVerifying = false;
 
+    protected function rules()
+    {
+        return [
+            'name' => [
+                'required',
+                'unique:instances,name',
+                'min:3',
+                'max:15',
+                'regex:/^[a-zA-Z0-9_-]*$/'
+            ],
+            'entreprise_id' => 'required|exists:entreprises,id',
+        ];
+    }
+
+    protected $messages = [
+        'name.required' => 'Le nom de l\'instance est requis.',
+        'name.unique' => 'Ce nom d\'instance est déjà utilisé.',
+        'name.min' => 'Le nom doit contenir au moins 3 caractères.',
+        'name.max' => 'Le nom ne peut pas dépasser 15 caractères.',
+        'name.regex' => 'Le nom ne peut contenir que des lettres, des chiffres, des tirets et des underscores.',
+        'entreprise_id.required' => 'Veuillez sélectionner une entreprise.',
+        'entreprise_id.exists' => 'L\'entreprise sélectionnée n\'existe pas.',
+    ];
 
     public function updatedEntrepriseId($value)
     {
@@ -43,6 +71,22 @@ class CreateInstances extends Component
 
     public function mount()
     {
+        // Initialiser la date et l'utilisateur actuels
+        $this->currentDateTime = Carbon::now('UTC')->format('Y-m-d H:i:s');
+        $this->currentUser = Auth::user()->email;
+
+        // Vérifier si un plan a été sélectionné
+        if (!session()->has('selected_plan')) {
+            return redirect()->route('plans.selection');
+        }
+
+        $selectedPlan = session()->get('selected_plan');
+
+        // Si c'est un plan payant, vérifier le paiement
+        if (!$selectedPlan['is_free'] && !session()->has('payment_completed')) {
+            return redirect()->route('payment.process', ['uuid' => $selectedPlan['uuid']]);
+        }
+
         $this->checkInstanceCreationEligibility();
         $this->loadEnterprises();
 
@@ -52,7 +96,7 @@ class CreateInstances extends Component
 
         if ($this->newInstanceInfo) {
             $instance = Instance::where('name', $this->newInstanceInfo['name'])->first();
-            $this->isVerifying = $instance->status === 'pending';
+            $this->isVerifying = $instance && $instance->status === 'pending';
         }
     }
 
@@ -67,12 +111,75 @@ class CreateInstances extends Component
         $this->showPlanSelection = !$user->canCreateInstance();
     }
 
-    protected function rules()
+    private function generateInstanceName()
     {
-        return [
-            'name' => ['required', 'unique:instances,name', 'min:3', 'max:15'],
-            'entreprise_id' => 'required|exists:entreprises,id',
-        ];
+        $prefix = strtolower(Str::slug(Auth::user()->name));
+        $randomString = Str::random(4);
+        return $prefix . '-' . $randomString;
+    }
+
+    private function createInstanceRecord($user, $instanceData)
+    {
+        $reference = Instance::generateNextReference();
+
+        // Récupérer le plan sélectionné depuis la session
+        $selectedPlan = session()->get('selected_plan');
+
+        // Obtenir ou créer l'abonnement en fonction du type de plan
+        $activeSubscription = $selectedPlan['is_free']
+            ? $this->createFreeSubscription($user)
+            : $user->activeSubscription();
+
+        $entreprise = Entreprise::find($this->entreprise_id);
+
+        $instance = Instance::create([
+            'user_id' => $user->id,
+            'subscription_id' => $activeSubscription->id,
+            'reference' => $reference,
+            'name' => $instanceData['name'],
+            'entreprise_id' => $entreprise->id,
+            'status' => 'pending',
+            'url' => $instanceData['name'] . '.erpinnov.com',
+            'auth_token' => Instance::generateUniqueAuthToken(),
+            'dolibarr_username' => $instanceData['login_dolibarr'],
+            'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),
+            'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
+            'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
+            'created_at' => $this->currentDateTime,
+            'created_by' => $this->currentUser,
+        ]);
+
+        // Si c'est un plan gratuit, nettoyer la session après la création
+        if ($selectedPlan['is_free']) {
+            session()->forget(['selected_plan']);
+        }
+
+        return $instance;
+    }
+
+    private function createFreeSubscription($user)
+    {
+        $freePlan = Plan::where('is_free', true)->where('is_default', true)->first();
+
+        // Vérifier si l'utilisateur a déjà un abonnement gratuit actif
+        $existingFreeSubscription = $user->subscriptions()
+            ->where('plan_id', $freePlan->id)
+            ->where('status', 'active')
+            ->first();
+
+        if ($existingFreeSubscription) {
+            return $existingFreeSubscription;
+        }
+
+        // Créer un nouvel abonnement gratuit
+        return Subscription::create([
+            'user_id' => $user->id,
+            'plan_id' => $freePlan->id,
+            'start_date' => $this->currentDateTime,
+            'end_date' => Carbon::parse($this->currentDateTime)->addDays($freePlan->duration_days ?? 30),
+            'status' => 'active',
+            'created_by' => $this->currentUser
+        ]);
     }
 
     public function store()
@@ -88,27 +195,25 @@ class CreateInstances extends Component
         }
 
         try {
-            // Préparer les données d'instance
             $instanceData = [
-                'name' => $this->name,
+                'name' => $this->name ?: $this->generateInstanceName(),
                 'password_dolibarr' => Str::random(16),
                 'login_dolibarr' => 'admin',
                 'url_suffix' => Str::slug($this->name),
                 'api_key_dolibarr' => Str::random(32),
             ];
 
-            // Créer l'instance immédiatement avec les informations de base
             $instance = $this->createInstanceRecord($user, $instanceData);
 
-            // Mettre à jour newInstanceInfo immédiatement
             $this->newInstanceInfo = [
                 'name' => $instance->name,
                 'login' => $user->email,
                 'password' => $instanceData['password_dolibarr'],
                 'url' => "http://" . $instance->name . ".erpinnov.com",
+                'created_at' => $this->currentDateTime,
+                'created_by' => $this->currentUser
             ];
 
-            // Lancer le job en arrière-plan
             CreateDolibarrInstance::dispatch($instanceData, $user, $instance);
 
             $this->alert('success', 'Votre instance a été créée avec succès.');
@@ -120,40 +225,6 @@ class CreateInstances extends Component
         }
 
         $this->dispatch('instanceCreationEnded');
-    }
-
-    private function createInstanceRecord($user, $instanceData)
-    {
-        $reference = Instance::generateNextReference();
-        $activeSubscription = $user->activeSubscription() ?? $this->createFreeSubscription($user);
-        $entreprise = Entreprise::find($this->entreprise_id);
-
-        return Instance::create([
-            'user_id' => $user->id,
-            'subscription_id' => $activeSubscription->id,
-            'reference' => $reference,
-            'name' => $instanceData['name'],
-            'entreprise_id' => $entreprise->id,
-            'status' => 'pending',
-            'url' => $instanceData['name'] . '.erpinnov.com', // Ajout de l'URL
-            'auth_token' => Instance::generateUniqueAuthToken(),
-            'dolibarr_username' => $instanceData['login_dolibarr'],
-            'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),
-            'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
-            'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
-        ]);
-    }
-
-    private function createFreeSubscription($user)
-    {
-        $freePlan = Plan::where('is_free', true)->where('is_default', true)->first();
-        return Subscription::create([
-            'user_id' => $user->id,
-            'plan_id' => $freePlan->id,
-            'start_date' => now(),
-            'end_date' => now()->addDays($freePlan->duration_days),
-            'status' => 'active'
-        ]);
     }
 
     public function render()
@@ -170,6 +241,14 @@ class CreateInstances extends Component
             'canCreate' => $canCreate,
             'remainingInstances' => $remainingInstances,
             'showPlanSelection' => $this->showPlanSelection,
+            'currentDateTime' => $this->currentDateTime,
+            'currentUser' => $this->currentUser,
         ])->layout('layouts.main');
+    }
+
+    public function getInstanceStatus($instanceName)
+    {
+        $instance = Instance::where('name', $instanceName)->first();
+        return $instance ? $instance->status : null;
     }
 }

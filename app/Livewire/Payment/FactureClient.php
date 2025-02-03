@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Client;
+namespace App\Livewire\Payment;
 
 use Livewire\Component;
 

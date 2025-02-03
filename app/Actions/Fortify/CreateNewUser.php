@@ -33,6 +33,8 @@ class CreateNewUser implements CreatesNewUsers
         ]);
 
         $user->assignRole('client');
+
+        // Forcer la redirection vers la vérification email
         return $user;
     }
 }

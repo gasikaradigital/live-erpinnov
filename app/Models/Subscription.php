@@ -9,6 +9,11 @@ class Subscription extends Model
 {
     use HasFactory;
 
+    const STATUS_TRIAL = 'trial';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_EXPIRED = 'expired';
+    const STATUS_CANCELLED = 'cancelled';
+
     protected $fillable = [
         'user_id',
         'plan_id',
@@ -40,5 +45,10 @@ class Subscription extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function isTrialPeriod()
+    {
+        return $this->status === self::STATUS_TRIAL;
     }
 }

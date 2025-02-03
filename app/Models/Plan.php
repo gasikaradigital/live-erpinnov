@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
-use Laravel\Paddle\Subscription;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,7 +11,6 @@ class Plan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'paddle_plan_id',
         'uuid',
         'name',
         'description',
@@ -39,11 +37,9 @@ class Plan extends Model
 
     public function getDiscountedYearlyPriceAttribute()
     {
-        // Si le prix annuel est déjà réduit, averina tsotra'izao
         if ($this->price_yearly <= $this->price_monthly * 12 * 0.9) {
             return $this->price_yearly;
         }
-        // Sinon, applique la réduction de 10%
         return $this->price_monthly * 12 * 0.9;
     }
 
@@ -52,7 +48,9 @@ class Plan extends Model
         parent::boot();
         static::saving(function ($plan) {
             if ($plan->is_default) {
-                self::where('is_default', true)->where('id', '!=', $plan->id)->update(['is_default' => false]);
+                self::where('is_default', true)
+                    ->where('id', '!=', $plan->id)
+                    ->update(['is_default' => false]);
             }
         });
 
@@ -68,11 +66,34 @@ class Plan extends Model
 
     public function subscriptions()
     {
-        return $this->hasMany(Subscription::class, 'paddle_id', 'paddle_plan_id');
+        return $this->hasMany(Subscription::class);
     }
 
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function hasSubPlans(): bool
+    {
+        return $this->has_sub_plans;
+    }
+
+    public function subPlans()
+    {
+        return $this->hasMany(SubPlan::class);
+    }
+
+    // Méthode helper pour vérifier si un utilisateur a une souscription active pour ce plan
+    public function hasActiveSubscription(User $user)
+    {
+        return $this->subscriptions()
+            ->where('user_id', $user->id)
+            ->where('status', 'active')
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>', now());
+            })
+            ->exists();
     }
 }

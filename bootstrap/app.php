@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'role.redirect' => \App\Http\Middleware\RedirectIfAuthenticatedByRole::class,
             'has.entreprise' => \App\Http\Middleware\RedirectIfNoEntreprise::class,
+            'plan.flow' => \App\Http\Middleware\PlanFlowMiddleware::class,
+            'instance.limit' => \App\Http\Middleware\InstanceLimitMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

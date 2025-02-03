@@ -107,7 +107,8 @@
                      x-transition:enter-start="opacity-0 transform translate-y-4"
                      x-transition:enter-end="opacity-100 transform translate-y-0"
                      x-cloak>
-                    @include('livewire.client.sections.pricing-plans')
+                    {{-- @include('livewire.payment.pricing-plan') --}}
+                    <livewire:payment.pricing-plan>
                 </div>
             </div>
         </div>

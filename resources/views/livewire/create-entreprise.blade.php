@@ -21,7 +21,7 @@
                     <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                         <span class="text-sm">2</span>
                     </div>
-                    <span class="ml-3 text-sm">Configuration des services</span>
+                    <span class="ml-3 text-sm">Choix des offres d'abonnement</span>
                 </div>
             </div>
         </div>
@@ -53,10 +53,10 @@
                     <form wire:submit.prevent="store" class="space-y-6">
                         {{-- Nom entreprise --}}
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Nom de l'entreprise</label>
+                            <label class="block text-sm font-medium text-gray-700">Nom de l'orgnaisation</label>
                             <input type="text" wire:model="name"
                                 class="mt-1 block w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                                placeholder="Ex: ERP INNOV">
+                                placeholder="Ex: Space X">
                             @error('name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -66,7 +66,7 @@
                         <div class="grid grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">
-                                    NIF <span class="text-gray-400">(facultatif)</span>
+                                    NIF ou SIREN <span class="text-gray-400">(facultatif)</span>
                                 </label>
                                 <input type="text" wire:model="nif"
                                     class="mt-1 block w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500"
@@ -81,6 +81,7 @@
                                 <select wire:model="employees_count"
                                     class="mt-1 block w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                                     <option value="">Sélectionnez</option>
+                                    <option value="1-10">0-5 employés</option>
                                     <option value="1-10">1-10 employés</option>
                                     <option value="11-50">11-50 employés</option>
                                     <option value="51-200">51-200 employés</option>
@@ -91,7 +92,6 @@
                                 @enderror
                             </div>
                         </div>
-
                         {{-- Téléphone --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Téléphone</label>

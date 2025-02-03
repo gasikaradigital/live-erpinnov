@@ -70,9 +70,6 @@ class InstanceListes extends Component
             return;
         }
 
-        // Ici, vous devriez implémenter la logique de paiement
-        // Pour cet exemple, nous supposons que le paiement a réussi
-
         $instance->subscription->update([
             'plan_id' => $proPlan->id,
             'start_date' => now(),

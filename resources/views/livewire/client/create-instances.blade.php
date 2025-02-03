@@ -108,7 +108,7 @@
                                 </div>
                             @else
                                 <div class="p-8 text-center">
-                                    @include('livewire.client.sections.free_expired')
+                                    @include('livewire.payment.free_expired')
                                 </div>
                             @endif
                         </div>

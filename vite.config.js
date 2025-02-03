@@ -43,6 +43,7 @@ export default defineConfig({
             '@assets': path.resolve(__dirname, './public/assets'),
             '~': path.resolve(__dirname, './resources'),
             'vue': 'vue/dist/vue.esm-bundler.js',
+            'alpinejs': 'alpinejs'
         },
     },
     build: {

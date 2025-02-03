@@ -54,22 +54,22 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_active' => 'boolean'
         ];
     }
+    // protected static function booted()
+    // {
+    //     static::created(function ($user) {
+    //         $freePlan = Plan::where('is_free', true)->where('is_default', true)->first();
+    //         if ($freePlan) {
+    //             Subscription::create([
+    //                 'user_id' => $user->id,
+    //                 'plan_id' => $freePlan->id,
+    //                 'start_date' => now(),
+    //                 'end_date' => now()->addDays($freePlan->duration_days),
+    //                 'status' => 'active'
+    //             ]);
+    //         }
+    //     });
+    // }
 
-    protected static function booted()
-    {
-        static::created(function ($user) {
-            $freePlan = Plan::where('is_free', true)->where('is_default', true)->first();
-            if ($freePlan) {
-                Subscription::create([
-                    'user_id' => $user->id,
-                    'plan_id' => $freePlan->id,
-                    'start_date' => now(),
-                    'end_date' => now()->addDays($freePlan->duration_days),
-                    'status' => 'active'
-                ]);
-            }
-        });
-    }
 
     public function entreprises()
     {
@@ -93,13 +93,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function activeSubscription()
     {
-        return $this->subscriptions()->where('status', 'active')->first();
+        return $this->subscriptions()
+            ->where(function($query) {
+                $query->where('status', 'active')
+                      ->orWhere('status', 'trial');
+            })
+            ->whereDate('end_date', '>=', now())
+            ->first();
     }
 
     public function activePlan()
     {
-        $activeSubscription = $this->activeSubscription();
-        return $activeSubscription ? $activeSubscription->plan : null;
+        return $this->activeSubscription()?->plan;
     }
 
     public function canCreateInstance()

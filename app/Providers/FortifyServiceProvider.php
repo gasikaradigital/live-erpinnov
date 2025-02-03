@@ -2,27 +2,38 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Auth;
 use App\Actions\Fortify\CreateNewUser;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
-use App\Actions\Fortify\UpdateUserProfileInformation;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\VerifyEmailResponse;
+use App\Actions\Fortify\UpdateUserProfileInformation;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->instance(VerifyEmailResponse::class, new class implements VerifyEmailResponse {
-            public function toResponse($request)
-            {
-                return redirect()->route('entreprise.create');
-            }
+        $this->app->singleton(VerifyEmailResponse::class, function () {
+            return new class implements VerifyEmailResponse {
+                public function toResponse($request)
+                {
+                    // S'assurer que l'utilisateur est authentifié
+                    if (Auth::check()) {
+                        return redirect()->route('entreprise.create');
+                    }
+
+                    // Si non authentifié, rediriger vers login avec message
+                    return redirect()->route('login')
+                        ->with('status', 'Votre email a été vérifié. Veuillez vous connecter.');
+                }
+            };
         });
     }
 

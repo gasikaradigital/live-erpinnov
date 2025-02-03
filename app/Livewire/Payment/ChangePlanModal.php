@@ -1,7 +1,7 @@
 <?php
 // app/Http/Livewire/ChangePlanModal.php
 
-namespace App\Livewire\Client;
+namespace App\Livewire\Payment;
 
 use Livewire\Component;
 use App\Models\Plan;

@@ -1,11 +1,12 @@
 import './bootstrap';
-
+// import Alpine from 'alpinejs'
 import { createApp } from 'vue';
 import App from './components/App.vue';
 
-// Styles
-//import '../css/app.css';
+// // Initialize Alpine
+// window.Alpine = Alpine
+// Alpine.start()
 
-// Création et montage de l'application Vue
+// Vue initialization
 const app = createApp(App);
 app.mount('#app');
