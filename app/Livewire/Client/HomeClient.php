@@ -38,9 +38,9 @@ class HomeClient extends Component
     {
         $this->user = Auth::user();
         $this->loadStatistics();
-        $this->currentPlan = Auth::user()->activePlan();
+        $this->currentPlan = $this->user->activePlan();
         $this->plans = Plan::all();
-        $this->loadSubscriptionInfo(); // Ajoutez cet appel
+        $this->loadSubscriptionInfo();
     }
 
     private function loadStatistics()
@@ -56,13 +56,21 @@ class HomeClient extends Component
     // Ajoutez cette méthode
     private function loadSubscriptionInfo()
     {
-        $activeSubscription = $this->user->subscriptions()->where('status', 'active')->latest()->first();
+        $activeSubscription = $this->user->subscriptions()
+            ->where(function($query) {
+                $query->where('status', 'active')
+                      ->orWhere('status', 'trial');
+            })
+            ->latest()
+            ->first();
+
         if ($activeSubscription) {
             $this->subscriptionEndDate = $activeSubscription->end_date;
         } else {
             $this->subscriptionEndDate = null;
         }
     }
+
 
     // Ajoutez cette méthode
     public function getFormattedEndDate()

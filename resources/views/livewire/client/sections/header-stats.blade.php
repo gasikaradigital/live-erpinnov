@@ -35,9 +35,14 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Plan actuel</p>
-                    <p class="mt-1 text-2xl font-normal text-gray-900 dark:text-white">
-                        {{ $currentPlan ? $currentPlan->name : 'Gratuit' }}
-                    </p>
+                    <div class="mt-1">
+                        <p class="text-2xl font-normal text-gray-900 dark:text-white">
+                            {{ $currentPlan ? $currentPlan->name : 'Gratuit' }}
+                        </p>
+                        @if($user->subscriptions()->where('status', 'trial')->exists())
+                            <span class="text-sm text-red-600 dark:text-red-400">Période d'essai</span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
