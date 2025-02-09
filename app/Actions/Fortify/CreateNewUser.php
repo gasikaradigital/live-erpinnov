@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
+use Illuminate\Support\Facades\Auth;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -34,7 +35,6 @@ class CreateNewUser implements CreatesNewUsers
 
         $user->assignRole('client');
 
-        // Forcer la redirection vers la vérification email
         return $user;
     }
 }

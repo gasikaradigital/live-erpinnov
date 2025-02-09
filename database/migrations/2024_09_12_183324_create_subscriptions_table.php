@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -14,9 +15,15 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('plan_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sub_plan_id')->nullable()->constrained()->onDelete('set null');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->enum('status', ['active', 'expired', 'cancelled', 'trial'])->default('active');
+            $table->enum('status', [
+                Subscription::STATUS_ACTIVE,
+                Subscription::STATUS_EXPIRED,
+                Subscription::STATUS_CANCELLED,
+                Subscription::STATUS_TRIAL
+            ])->default(Subscription::STATUS_TRIAL); // Changé en TRIAL par défaut
             $table->timestamps();
         });
     }

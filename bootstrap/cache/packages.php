@@ -1,13 +1,13 @@
 <?php return array (
   'jantinnerezo/livewire-alert' => 
   array (
-    'aliases' => 
-    array (
-      'LivewireAlert' => 'Jantinnerezo\\LivewireAlert\\LivewireAlertFacade',
-    ),
     'providers' => 
     array (
       0 => 'Jantinnerezo\\LivewireAlert\\LivewireAlertServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'LivewireAlert' => 'Jantinnerezo\\LivewireAlert\\LivewireAlertFacade',
     ),
   ),
   'laravel-lang/actions' => 
@@ -106,6 +106,17 @@
     'providers' => 
     array (
       0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    ),
+  ),
+  'laravel/socialite' => 
+  array (
+    'aliases' => 
+    array (
+      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
     ),
   ),
   'laravel/tinker' => 

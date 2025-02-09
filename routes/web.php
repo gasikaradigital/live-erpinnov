@@ -13,9 +13,15 @@ use App\Livewire\Payment\FactureClient;
 use App\Livewire\Client\CreateInstances;
 use App\Livewire\Payment\PaymentProcess;
 use App\Livewire\Payment\PlansSelection;
+use App\Http\Controllers\SocialiteController;
 
 // Page d'accueil publique
 Route::get('/', HomePage::class)->name('homepage');
+
+Route::controller(SocialiteController::class)->group(function () {
+    Route::get('auth/{provider}', 'redirect')->name('socialite.redirect');
+    Route::get('auth/{provider}/callback', 'callback')->name('socialite.callback');
+});
 
 // Redirection après authentification
 

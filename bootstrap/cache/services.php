@@ -39,16 +39,17 @@
     35 => 'Laravel\\Jetstream\\JetstreamServiceProvider',
     36 => 'Laravel\\Sail\\SailServiceProvider',
     37 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    38 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    39 => 'Livewire\\LivewireServiceProvider',
-    40 => 'Carbon\\Laravel\\ServiceProvider',
-    41 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    42 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    43 => 'Pest\\Laravel\\PestServiceProvider',
-    44 => 'Spatie\\Permission\\PermissionServiceProvider',
-    45 => 'App\\Providers\\AppServiceProvider',
-    46 => 'App\\Providers\\FortifyServiceProvider',
-    47 => 'App\\Providers\\JetstreamServiceProvider',
+    38 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    39 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    40 => 'Livewire\\LivewireServiceProvider',
+    41 => 'Carbon\\Laravel\\ServiceProvider',
+    42 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    43 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    44 => 'Pest\\Laravel\\PestServiceProvider',
+    45 => 'Spatie\\Permission\\PermissionServiceProvider',
+    46 => 'App\\Providers\\AppServiceProvider',
+    47 => 'App\\Providers\\FortifyServiceProvider',
+    48 => 'App\\Providers\\JetstreamServiceProvider',
   ),
   'eager' => 
   array (
@@ -239,6 +240,7 @@
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Laravel\\Sail\\Console\\InstallCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'Laravel\\Sail\\Console\\PublishCommand' => 'Laravel\\Sail\\SailServiceProvider',
+    'Laravel\\Socialite\\Contracts\\Factory' => 'Laravel\\Socialite\\SocialiteServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
   ),
   'when' => 
@@ -283,6 +285,9 @@
     array (
     ),
     'Laravel\\Sail\\SailServiceProvider' => 
+    array (
+    ),
+    'Laravel\\Socialite\\SocialiteServiceProvider' => 
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 

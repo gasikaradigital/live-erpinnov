@@ -16,7 +16,7 @@ class PaymentProcess extends Component
    public $uuid;
    public $plan;
    public $selectedSubPlan;
-   public $paymentMethod = 'VISA';
+   public $paymentMethod = 'VISA'; //payement default
    public $cardInfo = [
        'name' => '',
        'number' => '',
@@ -36,6 +36,12 @@ class PaymentProcess extends Component
 
    public function mount($uuid)
    {
+       // Vérifier si le plan sélectionné correspond à celui en session
+       $selectedPlan = session('selected_plan');
+       if (!$selectedPlan || $selectedPlan['uuid'] !== $uuid) {
+           return redirect()->route('plans.selection');
+       }
+
        $this->uuid = $uuid;
        $subPlanId = request()->query('sub_plan');
 
@@ -49,9 +55,12 @@ class PaymentProcess extends Component
            $this->selectedSubPlan = $this->plan->subPlans
                ->where('id', $subPlanId)
                ->first();
+
+           if (!$this->selectedSubPlan) {
+               return redirect()->route('plans.selection');
+           }
        }
    }
-
 
    protected function loadPlan()
    {

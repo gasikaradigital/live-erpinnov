@@ -3,7 +3,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-xl text-gray-900 dark:text-white">Mes instances</h2>
+                <h2 class="text-xl text-gray-900 dark:text-white">Mes instances ({{ $instances->count() }})</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Liste de vos espaces de travail actifs</p>
             </div>
 
