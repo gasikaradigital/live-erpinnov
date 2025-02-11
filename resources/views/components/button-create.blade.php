@@ -1,6 +1,6 @@
 <button type="submit"
         wire:loading.attr="disabled"
-        class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800 rounded-xl text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        class="inline-flex items-center mt-3 gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 rounded-xl text-white font-medium shadow-lg shadow-primary-600/20 hover:shadow-primary-600/30 transform hover:-translate-y-0.5 transition-all duration-300">
     <!-- Texte normal et loading -->
     <span wire:loading.remove>
         Créer l'instance
@@ -10,7 +10,7 @@
     </span>
 
     <!-- Icône flèche (visible quand pas de loading) -->
-    <svg wire:loading.remove
+    {{-- <svg wire:loading.remove
          class="w-4 h-4"
          fill="none"
          stroke="currentColor"
@@ -19,6 +19,10 @@
               stroke-linejoin="round"
               stroke-width="2"
               d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+    </svg> --}}
+
+    <svg wire:loading.remove class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
     </svg>
 
     <!-- Spinner (visible pendant le loading) -->

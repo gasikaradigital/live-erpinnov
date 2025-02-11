@@ -49,34 +49,63 @@
 
             <!-- Actions à droite -->
             <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <li>
-                    <a href="/login" class="btn btn-primary rounded-pill px-3 px-sm-4">
-                        <i class="tf-icons ri-user-line me-md-1"></i>
-                        <span class="d-none d-md-inline-block">Connexion</span>
-                    </a>
-                </li>
+                <template v-if="!auth">
+                    <li>
+                        <a href="/login" class="btn btn-primary rounded-pill px-3 px-sm-4">
+                            <i class="tf-icons ri-user-line me-md-1"></i>
+                            <span class="d-none d-md-inline-block">Connexion</span>
+                        </a>
+                    </li>
+                </template>
+                <template v-else>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <img :src="auth.profile_photo_url || '/assets/img/avatars/1.png'"
+                            class="rounded-circle fw-bold" width="40" :alt="auth.name">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/client-espace/client"><i class="ri-dashboard-line me-2"></i>Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form @submit.prevent="logout" method="POST">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="ri-logout-box-line me-2"></i>Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </template>
             </ul>
         </div>
     </nav>
-</template>
+ </template>
 
-<script>
-import { ref, onMounted, onUnmounted } from 'vue'
-
-export default {
+ <script>
+ export default {
     name: 'NavSection',
-    setup() {
-        const activeSection = ref('')
-        const menuItems = [
-            { href: '#landingHero', icon: 'ri-home-line', text: 'Accueil' },
-            { href: '#landingPricing', icon: 'ri-price-tag-line', text: 'Tarifs' },
-            { href: '#landingFAQ', icon: 'ri-questionnaire-line', text: 'FAQ' },
-            { href: '#landingCTA', icon: 'ri-play-circle-line', text: 'Démo' 
-}
-        ]
-
-        const handleScroll = () => {
-            const sections = menuItems.map(item => item.href.substring(1))
+    data() {
+        return {
+            auth: window.Laravel.auth,
+            activeSection: '',
+            menuItems: [
+                { href: '#landingHero', icon: 'ri-home-line', text: 'Accueil' },
+                { href: '#landingPricing', icon: 'ri-price-tag-line', text: 'Tarifs' },
+                { href: '#landingFAQ', icon: 'ri-questionnaire-line', text: 'FAQ' },
+                { href: '#landingCTA', icon: 'ri-play-circle-line', text: 'Démo' }
+            ]
+        }
+    },
+    mounted() {
+        this.handleScroll()
+        window.addEventListener('scroll', this.handleScroll)
+    },
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll)
+    },
+    methods: {
+        handleScroll() {
+            const sections = this.menuItems.map(item => item.href.substring(1))
             const scrollPosition = window.scrollY + 100
 
             for (const section of sections) {
@@ -84,38 +113,31 @@ export default {
                 if (element) {
                     const { top, bottom } = element.getBoundingClientRect()
                     if (top <= 100 && bottom >= 100) {
-                        activeSection.value = '#' + section
+                        this.activeSection = '#' + section
                         break
                     }
                 }
             }
-        }
-
-        onMounted(() => {
-            handleScroll()
-            window.addEventListener('scroll', handleScroll)
-        })
-
-        onUnmounted(() => {
-            window.removeEventListener('scroll', handleScroll)
-        })
-
-        return {
-            activeSection,
-            menuItems
+        },
+        async logout() {
+            try {
+                await axios.post('/logout')
+                window.location.reload()
+            } catch (error) {
+                console.error('Erreur de déconnexion:', error)
+            }
         }
     }
-}
-const loginRoute = window.route ? window.route('login') : '/login'
-</script>
+ }
+ </script>
 
-<style scoped>
-.nav-link {
+ <style scoped>
+ .nav-link {
     position: relative;
     transition: all 0.2s ease;
-}
+ }
 
-.nav-link span::after {
+ .nav-link span::after {
     content: '';
     position: absolute;
     width: 0;
@@ -125,27 +147,27 @@ const loginRoute = window.route ? window.route('login') : '/login'
     background-color: #666cff;
     transition: width 0.2s ease;
     opacity: 0;
-}
+ }
 
-.nav-link:hover span::after,
-.nav-link.active span::after {
+ .nav-link:hover span::after,
+ .nav-link.active span::after {
     width: 100%;
     opacity: 1;
-}
+ }
 
-.nav-link:hover {
+ .nav-link:hover {
     color: #666cff;
-}
+ }
 
-.nav-link:hover i {
+ .nav-link:hover i {
     transform: translateY(-1px);
-}
+ }
 
-.nav-link i {
+ .nav-link i {
     transition: transform 0.2s ease;
-}
+ }
 
-@media (max-width: 991.98px) {
+ @media (max-width: 991.98px) {
     .navbar-collapse {
         position: relative;
         background: white;
@@ -158,5 +180,5 @@ const loginRoute = window.route ? window.route('login') : '/login'
         z-index: 10;
         margin: 0.5rem;
     }
-}
-</style>
+ }
+ </style>

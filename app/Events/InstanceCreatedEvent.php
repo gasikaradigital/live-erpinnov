@@ -6,7 +6,7 @@ use App\Models\Instance;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class InstanceCreated
+class InstanceCreatedEvent
 {
     use Dispatchable, SerializesModels;
 

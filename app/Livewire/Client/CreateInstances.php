@@ -4,6 +4,7 @@ namespace App\Livewire\Client;
 
 use Carbon\Carbon;
 use App\Models\Plan;
+use App\Models\User;
 use Livewire\Component;
 use App\Models\Instance;
 use App\Models\Entreprise;
@@ -11,10 +12,11 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Models\Subscription;
 use Livewire\WithPagination;
+use App\Jobs\CreateDolibarrInstance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Jobs\CreateDolibarrInstance;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use App\Services\FastInstanceProvisioningService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CreateInstances extends Component
@@ -186,12 +188,16 @@ class CreateInstances extends Component
     {
         $this->dispatch('instanceCreationStarted');
         $this->validate();
-
         $user = Auth::user();
+          /** @var User $user */
 
-        if (!$user->canCreateInstance()) {
-            $this->alert('error', 'Vous avez atteint votre limite de création d\'instances.');
-            return;
+        $activeSubscription = $user->activeSubscription();
+
+        if ($activeSubscription && $activeSubscription->status === Subscription::STATUS_TRIAL) {
+            if ($user->hasReachedTrialLimit()) {
+                $this->alert('error', 'Limite atteinte pour la période d\'essai. Veuillez mettre à niveau votre plan.');
+                return redirect()->route('payment.process', ['uuid' => $activeSubscription->plan->uuid]);
+            }
         }
 
         try {
@@ -205,23 +211,25 @@ class CreateInstances extends Component
 
             $instance = $this->createInstanceRecord($user, $instanceData);
 
-            $this->newInstanceInfo = [
-                'name' => $instance->name,
-                'login' => $user->email,
-                'password' => $instanceData['password_dolibarr'],
-                'url' => "http://" . $instance->name . ".erpinnov.com",
-                'created_at' => $this->currentDateTime,
-                'created_by' => $this->currentUser
-            ];
+            // Utilisation du nouveau service
+            $fastProvisioning = new FastInstanceProvisioningService();
+            $success = $fastProvisioning->createInstance($instanceData, $user, $instance);
 
-            CreateDolibarrInstance::dispatch($instanceData, $user, $instance);
-
-            $this->alert('success', 'Votre instance a été créée avec succès.');
-            $this->reset(['name']);
-
+            if ($success) {
+                $this->newInstanceInfo = [
+                    'name' => $instance->name,
+                    'login' => $user->email,
+                    'password' => $instanceData['password_dolibarr'],
+                    'url' => "http://" . $instance->name . ".erpinnov.com",
+                    'created_at' => $this->currentDateTime,
+                    'created_by' => $this->currentUser
+                ];
+                $this->alert('success', 'Instance créée avec succès.');
+                $this->reset(['name']);
+            }
         } catch (\Exception $e) {
-            \Log::error('Erreur lors de la création de l\'instance: ' . $e->getMessage());
-            $this->alert('error', 'Une erreur est survenue lors de la création de l\'instance.');
+            \Log::error('Erreur création: ' . $e->getMessage());
+            $this->alert('error', 'Erreur lors de la création.');
         }
 
         $this->dispatch('instanceCreationEnded');

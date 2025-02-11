@@ -3,13 +3,18 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Notifications\Messages\MailMessage;
 
-class InstanceCreated extends Notification
+class SendInstanceCreatedEmail implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $user;
     protected $instanceDetails;
 
     /**
@@ -17,8 +22,10 @@ class InstanceCreated extends Notification
      *
      * @return void
      */
-    public function __construct($instanceDetails)
+
+    public function __construct($user, $instanceDetails)
     {
+        $this->user = $user;
         $this->instanceDetails = $instanceDetails;
     }
 

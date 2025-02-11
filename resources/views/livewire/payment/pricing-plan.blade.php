@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"> {{-- Réduit max-w-7xl à max-w-4xl --}}
         {{-- En-tête --}}
         <div class="text-center">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">
+            <h1 class="text-xl font-bold tracking-tight text-gray-900">
                 Plans tarifaires
             </h1>
             <p class="mt-3 text-lg text-gray-500">

@@ -82,7 +82,7 @@ class InstanceListes extends Component
     public function render()
     {
         $user = Auth::user();
-        return view('livewire.client.instance-listes', [
+        return view('livewire.client.sections.instance-listes', [
             'showPlanSelection' => $this->showPlanSelection,
             'instances' => Instance::where('user_id', $user->id)
                 ->with('subscription.plan')

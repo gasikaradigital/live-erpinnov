@@ -54,6 +54,11 @@ data-template="front-pages">
     <script src="{{ asset('assets/js/front-main.js') }}"></script>
     <!-- Page JS -->
     <script src="{{ asset('assets/js/front-page-landing.js') }}"></script>
+
+    <script>
+        window.Laravel = {!! json_encode(['auth' => auth()->check() ? auth()->user() : null]) !!}
+    </script>
+
 </body>
 </html>
 

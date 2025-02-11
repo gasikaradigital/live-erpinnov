@@ -1,11 +1,16 @@
 {{-- payment-process.blade.php --}}
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 mt-8">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 mt-16">
+    @if($hasUsedTrial)
+        <x-header-nav title="Mode de paiement "/>
+    @endif
     {{-- Contenu principal avec padding ajusté --}}
     <main class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {{-- Colonne principale --}}
             <div class="lg:col-span-8 space-y-8">
                 {{-- Carte d'essai gratuit --}}
+                @if(!$hasUsedTrial)
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     <div class="p-6">
                         <div class="flex items-center justify-between">
@@ -47,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-
+                @endif
                 {{-- Section Paiement avec formulaires cachés --}}
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200/50">
                     {{-- Méthodes de paiement --}}
@@ -195,8 +200,8 @@
                     </div>
 
                     {{-- Bouton de paiement pour mobile --}}
-                    <div class="p-4 bg-gray-50 border-t border-gray-200/80">
-                        <button type="button"
+                    {{-- <div class="p-4 bg-gray-50 border-t border-gray-200/80">
+                        <button type="submit"
                             onclick="document.getElementById('{{ strtolower($paymentMethod) }}Form')?.requestSubmit()"
                             class="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-medium
                                    hover:bg-blue-700 focus:outline-none focus:ring-2
@@ -209,7 +214,7 @@
                                 Payer {{ number_format($this->calculateTotal(), 2) }}€
                             @endif
                         </button>
-                    </div>
+                    </div> --}}
             </div>
         </div>
     </main>

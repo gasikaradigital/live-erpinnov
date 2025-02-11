@@ -6,62 +6,109 @@ use Illuminate\Database\Seeder;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Plan;
+use App\Models\SubPlan;
 use Carbon\Carbon;
 
 class SubscriptionSeeder extends Seeder
 {
-    /**
-     * Exécute les seeds de la table subscriptions.
-     *
-     * @return void
-     */
     public function run()
     {
         // Récupérer tous les utilisateurs ayant le rôle 'client' et tous les plans existants
-        $users = User::role('client')->get(); // Utilisation de la méthode 'role' de Spatie
-        $plans = Plan::all();
+        $users = User::role('client')->get();
+        $plans = Plan::with('subPlans')->get(); // Charger les sous-plans avec les plans
 
         // Vérifier qu'il y a des utilisateurs et des plans disponibles
         if ($users->isEmpty()) {
-            $this->command->warn('Aucun utilisateur avec le rôle "client" trouvé. Veuillez créer des utilisateurs clients avant de lancer ce seeder.');
+            $this->command->warn('Aucun utilisateur avec le rôle "client" trouvé.');
             return;
         }
 
         if ($plans->isEmpty()) {
-            $this->command->warn('Aucun plan trouvé. Veuillez créer des plans avant de lancer ce seeder.');
+            $this->command->warn('Aucun plan trouvé.');
             return;
         }
 
-        // Pour chaque utilisateur client, créer une ou plusieurs souscriptions
+        // Pour chaque utilisateur client
         foreach ($users as $user) {
-            // Par exemple, créer entre 1 et 3 abonnements par utilisateur
             $numberOfSubscriptions = rand(1, 3);
 
             for ($i = 0; $i < $numberOfSubscriptions; $i++) {
                 // Choisir un plan aléatoire
                 $plan = $plans->random();
 
-                // Définir les dates de début et de fin
-                $start_date = Carbon::now()->subMonths(rand(1, 12)); // Date de début aléatoire dans les 12 derniers mois
-                $end_date = (clone $start_date)->addMonths($plan->duration_in_months); // Supposant que le plan a une durée en mois
+                // Choisir un sous-plan si le plan en a
+                $subPlan = null;
+                if ($plan->has_sub_plans && $plan->subPlans->isNotEmpty()) {
+                    $subPlan = $plan->subPlans->random();
+                }
 
-                // Déterminer le statut
-                $statusOptions = ['active', 'expired', 'cancelled'];
-                $status = $statusOptions[array_rand($statusOptions)];
+                // Définir les dates
+                $start_date = Carbon::now()->subMonths(rand(0, 2));
+                $end_date = (clone $start_date)->addDays(14); // Période d'essai de 14 jours
+
+                // Déterminer le statut (privilégier le statut 'trial' pour les nouvelles souscriptions)
+                $isNewSubscription = $start_date->diffInDays(Carbon::now()) < 14;
+                if ($isNewSubscription) {
+                    $status = Subscription::STATUS_TRIAL;
+                } else {
+                    $statusOptions = [
+                        Subscription::STATUS_ACTIVE,
+                        Subscription::STATUS_EXPIRED,
+                        Subscription::STATUS_CANCELLED
+                    ];
+                    $status = $statusOptions[array_rand($statusOptions)];
+                }
+
+                // Si le statut est 'active', ajuster la date de fin
+                if ($status === Subscription::STATUS_ACTIVE) {
+                    $end_date = Carbon::now()->addMonths(rand(1, 12));
+                }
 
                 // Créer l'abonnement
                 Subscription::create([
-                    'user_id'    => $user->id,
-                    'plan_id'    => $plan->id,
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id,
+                    'sub_plan_id' => $subPlan ? $subPlan->id : null,
                     'start_date' => $start_date,
-                    'end_date'   => $end_date,
-                    'status'     => $status,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
+                    'end_date' => $end_date,
+                    'status' => $status,
                 ]);
+
+                // Log pour le débogage
+                $this->command->info(sprintf(
+                    'Créé abonnement pour user %s: Plan %s%s - Status %s',
+                    $user->email,
+                    $plan->name,
+                    $subPlan ? ' - ' . $subPlan->name : '',
+                    $status
+                ));
             }
         }
 
-        $this->command->info('Les abonnements pour les utilisateurs clients ont été créés avec succès.');
+        // Créer au moins une souscription d'essai avec un sous-plan
+        $trialUser = $users->random();
+        $soloPlan = Plan::where('name', 'Solo')->first();
+
+        if ($soloPlan && $soloPlan->subPlans->isNotEmpty()) {
+            $basicSubPlan = $soloPlan->subPlans->where('name', 'Basic')->first();
+
+            Subscription::create([
+                'user_id' => $trialUser->id,
+                'plan_id' => $soloPlan->id,
+                'sub_plan_id' => $basicSubPlan->id,
+                'start_date' => Carbon::now(),
+                'end_date' => Carbon::now()->addDays(14),
+                'status' => Subscription::STATUS_TRIAL,
+            ]);
+
+            $this->command->info(sprintf(
+                'Créé abonnement d\'essai pour user %s: %s - %s',
+                $trialUser->email,
+                $soloPlan->name,
+                $basicSubPlan->name
+            ));
+        }
+
+        $this->command->info('Les abonnements ont été créés avec succès.');
     }
 }

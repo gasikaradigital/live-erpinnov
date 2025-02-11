@@ -85,7 +85,7 @@ Route::middleware(['has.entreprise', 'instance.limit'])->group(function () {
         Route::get('/facturation', FactureClient::class)
             ->name('client.facture');
 
-        Route::get('/instances', InstanceListes::class)
+        Route::get('/instances', HomeClient::class)
             ->name('instances.list');
 
         // Profil utilisateur

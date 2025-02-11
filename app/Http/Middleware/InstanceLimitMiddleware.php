@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,24 +21,20 @@ class InstanceLimitMiddleware
         $user = auth()->user();
         $currentPlan = $user->activePlan();
         $instanceCount = $user->instances()->count();
+        $hasTrialInstance = $user->subscriptions()
+            ->where('status', Subscription::STATUS_TRIAL)
+            ->exists();
 
-        // Si l'utilisateur est sur la route de création d'instance
         if ($request->routeIs('instance.create')) {
-            // Si pas de plan actif
-            if (!$currentPlan) {
-                session()->flash('warning', 'Veuillez sélectionner un plan avant de créer une instance.');
+            // Si c'est une période d'essai et déjà une instance
+            if ($hasTrialInstance && $instanceCount >= 1) {
                 return redirect()->route('plans.selection');
             }
 
-            // Vérifier la limite d'instances
-            if ($instanceCount >= $currentPlan->instance_limit) {
-                session()->flash('error', sprintf(
-                    'Vous avez atteint la limite de %s instance%s de votre plan %s.',
-                    $currentPlan->instance_limit,
-                    $currentPlan->instance_limit > 1 ? 's' : '',
-                    $currentPlan->name
-                ));
-                return redirect()->route('instances.list');
+            // Vérifier limite d'instances pour plan non-trial
+            if (!$hasTrialInstance && $currentPlan && $instanceCount >= $currentPlan->instance_limit) {
+                session()->flash('error', 'Limite d\'instances atteinte');
+                return redirect()->route('espaceClient');
             }
         }
 

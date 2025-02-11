@@ -157,4 +157,13 @@ class User extends Authenticatable implements MustVerifyEmail
             ->exists();
     }
 
+    public function hasReachedTrialLimit()
+    {
+        return $this->instances()
+            ->whereHas('subscription', function($query) {
+                $query->where('status', Subscription::STATUS_TRIAL);
+            })
+            ->count() >= 1;
+    }
+
 }

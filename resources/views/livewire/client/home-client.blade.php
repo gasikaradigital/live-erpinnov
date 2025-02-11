@@ -6,7 +6,7 @@
             {{-- Colonne principale --}}
             <div class="lg:col-span-8 space-y-8">
                 {{-- Liste des instances --}}
-                @include('livewire.client.sections.instances-list')
+                @include('livewire.client.sections.instance-listes')
 
                 {{-- Composant Plan tarifaire --}}
                 <div class="mt-8">

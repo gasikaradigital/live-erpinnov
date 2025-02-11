@@ -1,5 +1,5 @@
 <!-- Header avec navigation -->
-<div class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 py-4">
+<div class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 py-4  mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-4">

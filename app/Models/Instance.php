@@ -147,4 +147,17 @@ class Instance extends Model
     {
         return Carbon::parse($this->created_at)->format('d/m/Y');
     }
+
+    public function canBeUpgraded()
+    {
+        return $this->subscription->status === Subscription::STATUS_TRIAL;
+    }
+
+    public function hasReachedTrialLimit()
+    {
+        return $this->user->instances()
+            ->whereHas('subscription', function($q) {
+                $q->where('status', Subscription::STATUS_TRIAL);
+            })->count() >= 1;
+    }
 }

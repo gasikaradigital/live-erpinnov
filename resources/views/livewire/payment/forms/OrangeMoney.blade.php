@@ -1,6 +1,5 @@
 {{-- resources/views/livewire/payment/forms/OrangeMoney.blade.php --}}
-<form wire:submit.prevent="processPayment" x-ref="orangeMoneyForm"
-id="orangeMoneyForm"
+<form wire:submit.prevent="processPayment"
 class="space-y-4">
     <div>
         <label class="block text-sm font-medium text-gray-700">Numéro Orange Money</label>

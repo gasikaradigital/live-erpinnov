@@ -5,6 +5,7 @@ use App\Models\Plan;
 use App\Models\Payment;
 use App\Models\SubPlan;
 use Livewire\Component;
+use App\Models\Instance;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -25,22 +26,45 @@ class PaymentProcess extends Component
    ];
    public $mobileNumber;
    public $isAnnual = false;
+   public $hasUsedTrial;
+   public $currentInstance;
 
-   protected $rules = [
-       'cardInfo.name' => 'required_if:paymentMethod,VISA',
-       'cardInfo.number' => 'required_if:paymentMethod,VISA|numeric|digits:16',
-       'cardInfo.expiry' => 'required_if:paymentMethod,VISA|date_format:m/y',
-       'cardInfo.cvc' => 'required_if:paymentMethod,VISA|numeric|digits:3',
-       'mobileNumber' => 'required_if:paymentMethod,OrangeMoney,Mvola|regex:/^03[2-4][0-9]{7}$/'
-   ];
+   protected function rules()
+   {
+       $rules = [];
+
+       if ($this->paymentMethod === 'VISA') {
+           $rules = [
+               'cardInfo.name' => 'required',
+               'cardInfo.number' => 'required|numeric|digits:16',
+               'cardInfo.expiry' => 'required|date_format:m/y',
+               'cardInfo.cvc' => 'required|numeric|digits:3'
+           ];
+       } elseif (in_array($this->paymentMethod, ['OrangeMoney', 'Mvola'])) {
+           $rules = [
+               'mobileNumber' => 'required|regex:/^03[2-4][0-9]{7}$/'
+           ];
+       }
+
+       return $rules;
+   }
 
    public function mount($uuid)
    {
-       // Vérifier si le plan sélectionné correspond à celui en session
-       $selectedPlan = session('selected_plan');
-       if (!$selectedPlan || $selectedPlan['uuid'] !== $uuid) {
-           return redirect()->route('plans.selection');
-       }
+    $this->hasUsedTrial = Auth::user()
+        ->subscriptions()
+        ->where('status', Subscription::STATUS_TRIAL)
+        ->exists();
+
+        $this->currentInstance = Instance::where('user_id', Auth::id())
+        ->whereHas('subscription', function($q) {
+            $q->where('status', Subscription::STATUS_TRIAL);
+        })->first();
+
+        $selectedPlan = session('selected_plan');
+            if (!$selectedPlan || $selectedPlan['uuid'] !== $uuid) {
+                return redirect()->route('plans.selection');
+            }
 
        $this->uuid = $uuid;
        $subPlanId = request()->query('sub_plan');
@@ -60,6 +84,7 @@ class PaymentProcess extends Component
                return redirect()->route('plans.selection');
            }
        }
+
    }
 
    protected function loadPlan()
@@ -69,6 +94,10 @@ class PaymentProcess extends Component
 
    public function startTrial()
    {
+        if ($this->hasUsedTrial) {
+            $this->alert('error', 'Vous avez déjà utilisé votre période d\'essai.');
+            return;
+    }
       $subscription = Subscription::create([
           'user_id' => Auth::id(),
           'plan_id' => $this->plan->id,
@@ -90,22 +119,36 @@ class PaymentProcess extends Component
       return redirect()->route('instance.create');
    }
 
-   public function processPayment()
-   {
-       $this->validate();
+    public function processPayment()
+    {
+        $this->validate();
 
-       try {
-           $subscription = $this->createSubscription();
-           $this->createPayment($subscription);
+        try {
+            $subscription = $this->createSubscription();
+            $this->createPayment($subscription);
 
-           $this->alert('success', 'Paiement traité avec succès');
-           return redirect()->route('instance.create');
+            if ($this->currentInstance) {
+                $this->currentInstance->subscription()->update([
+                    'status' => 'active',
+                    'plan_id' => $this->plan->id,
+                    'end_date' => $this->isAnnual ? now()->addYear() : now()->addMonth()
+                ]);
+            }
 
-       } catch(\Exception $e) {
-           $this->alert('error', 'Erreur lors du paiement');
-           logger()->error('Payment error:', ['error' => $e->getMessage()]);
-       }
-   }
+            session(['payment_completed' => true]);
+            $this->alert('success', 'Paiement traité avec succès');
+            return redirect()->route('instance.create');
+        } catch(\Exception $e) {
+            $this->alert('error', 'Erreur lors du paiement');
+            logger()->error('Payment error:', ['error' => $e->getMessage()]);
+        }
+    }
+
+   public function submit()
+{
+    dd('Form submitted', $this->paymentMethod, $this->cardInfo, $this->mobileNumber);
+    $this->processPayment();
+}
 
    protected function createSubscription()
    {
