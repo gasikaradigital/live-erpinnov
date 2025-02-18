@@ -11,12 +11,12 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-zULfD4Gc.css",
+    "file": "assets/app-C75BYIju.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CaI4mR67.js",
+    "file": "assets/app-Zba94Vvy.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -24,7 +24,7 @@
       "_vendor-D4FUqr7X.js"
     ],
     "css": [
-      "assets/app-CbAgKHUI.css"
+      "assets/app-mefmvnWp.css"
     ]
   }
 }
