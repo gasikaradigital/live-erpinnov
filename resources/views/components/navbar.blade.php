@@ -48,7 +48,7 @@
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
                              class="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 divide-y divide-gray-100 dark:divide-gray-700">
-                            {{-- <div class="px-2 py-2">
+                            <div class="px-2 py-2">
                                 <a href="{{ route('profile.show') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 text-gray-700 dark:text-gray-300">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -63,7 +63,7 @@
                                     Mes Entreprises
                                 </a>
                                 @endif
-                            </div> --}}
+                            </div>
                             <div class="px-2 py-2">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
