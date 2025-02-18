@@ -48,7 +48,7 @@
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div class="bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100">
                 <!-- Auth Options -->
-                <div id="auth-options" class="space-y-4">
+                {{-- <div id="auth-options" class="space-y-4">
                     <div class="flex flex-col gap-4">
                         <a href="#"
                            class="group relative flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
@@ -70,42 +70,22 @@
                             <div class="absolute inset-0 rounded-lg border border-transparent group-hover:border-primary-500/20 transition-all duration-200"></div>
                         </button>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Registration Form -->
-                <div id="registration-form" class="hidden">
-                    <div class="mt-0 relative">
+                {{-- <div id="registration-form" class="hidden"> --}}
+                    <div>
+                    {{-- <div class="mt-0 relative">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-200"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
                             <span class="px-2 bg-white text-gray-500">Informations personnelles</span>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <form class="mt-2 space-y-6" method="POST" action="{{ route('register') }}" id="registrationForm">
+                    <form class="mt-2 space-y-6" method="POST" action="{{ route('inscription') }}" id="registrationForm">
                         @csrf
-
-                        <div class="space-y-2">
-                            <label for="name" class="block text-sm font-medium text-gray-700">
-                                Nom complet
-                            </label>
-                            <div class="relative">
-                                <input id="name"
-                                       name="name"
-                                       type="text"
-                                       required
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
-                                       value="{{ old('name') }}" />
-                                <div class="hidden absolute inset-y-0 right-0 flex items-center pr-3 text-green-500">
-                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <x-input-error for="name" class="mt-1" />
-                        </div>
-
                         <div class="space-y-2">
                             <label for="email" class="block text-sm font-medium text-gray-700">
                                 Adresse email
@@ -189,13 +169,13 @@
                             </button>
                         </div>
                     </form>
-                    <div class="mt-2 text-center">
+                    {{-- <div class="mt-2 text-center">
                         <button type="button"
                                 onclick="toggleRegistrationForm()"
                                 class="text-sm text-primary-600 hover:text-primary-500 transition-colors">
                             ← Retour aux options de connexion
                         </button>
-                    </div>
+                    </div> --}}
                 </div>
                 <p class="mt-3 text-center text-sm text-gray-600">
                     Déjà inscrit?
@@ -299,7 +279,6 @@
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const passwordConfirmation = document.getElementById('password_confirmation').value;
@@ -307,12 +286,6 @@
 
             let isValid = true;
             let errors = [];
-
-            // Validation du nom
-            if (name.length < 2) {
-                isValid = false;
-                errors.push("Le nom doit contenir au moins 2 caractères");
-            }
 
             // Validation de l'email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

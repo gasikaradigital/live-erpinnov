@@ -4,19 +4,18 @@
         {{-- Layout principal --}}
         <div class="grid lg:grid-cols-12 gap-8">
             {{-- Colonne principale --}}
-            <div class="lg:col-span-8 space-y-8">
+            <div class="lg:col-span-12 space-y-12">
                 {{-- Liste des instances --}}
                 @include('livewire.client.sections.instance-listes')
 
                 {{-- Composant Plan tarifaire --}}
-                <div class="mt-8">
+                <div class="mt-8" id="plan">
                     <livewire:payment.pricing-plan />
                 </div>
             </div>
 
             {{-- Colonne latérale --}}
-            <div class="lg:col-span-4 space-y-6">
-                {{-- Actions rapides --}}
+            {{-- <div class="lg:col-span-4 space-y-6">
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200/50 dark:border-gray-700/50">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Actions rapides</h3>
@@ -56,7 +55,6 @@
                     </div>
                 </div>
 
-                {{-- Ressources --}}
                 <div class="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-sm overflow-hidden relative">
                     <div class="px-6 py-8">
                         <div class="relative z-10">
@@ -73,7 +71,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
+
         </div>
     </div>
 </div>

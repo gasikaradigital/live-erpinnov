@@ -16,7 +16,6 @@ class UsersSeeder extends Seeder
 
         // Creating Client User
         $client = User::create([
-            'name' => 'Client',
             'email' => 'client@mail.com',
             'password' => bcrypt('client123'),
             'email_verified_at' => now(),

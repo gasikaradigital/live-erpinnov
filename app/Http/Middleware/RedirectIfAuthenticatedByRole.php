@@ -12,15 +12,21 @@ class RedirectIfAuthenticatedByRole
 {
    public function handle(Request $request, Closure $next): Response
    {
-       if (Auth::check()) {
-           /** @var User $user */
-           $user = Auth::user();
+        if (Auth::check()) {
+            /** @var User $user */
+            $user = Auth::user();
 
-           if (!$user->hasVerifiedEmail()) {
-               return redirect()->route('verification.notice');
-           }
+            if (!$user->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
 
            if ($user->hasRole('client')) {
+                // Vérifier si le profil est complet
+                if (!$user->profile->isComplete() && !$request->routeIs('profile.edit')) {
+                    return redirect()->route('profile.edit')
+                        ->with('warning', 'Veuillez compléter votre profil.');
+                }
+
                if (!$user->entreprises()->exists()) {
                    return redirect()->route('entreprise.create');
                }

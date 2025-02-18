@@ -23,6 +23,7 @@ class InstanceListes extends Component
     public $instanceId;
     public $name, $reference, $created_at, $expiration_date, $status, $planType, $dolibarr_username, $url, $modules;
 
+
     public function openPlanSelection()
     {
         $this->showPlanSelection = true;

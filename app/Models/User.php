@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Paddle\Billable;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
@@ -28,12 +28,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'name',
         'email',
         'password',
         'email_verified_at',
         'is_active',
-        'google_id'
+        'google_id',
+        'otp',
+        'otp_expires_at'
     ];
 
     protected $hidden = [
@@ -55,22 +56,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_active' => 'boolean'
         ];
     }
-    // protected static function booted()
-    // {
-    //     static::created(function ($user) {
-    //         $freePlan = Plan::where('is_free', true)->where('is_default', true)->first();
-    //         if ($freePlan) {
-    //             Subscription::create([
-    //                 'user_id' => $user->id,
-    //                 'plan_id' => $freePlan->id,
-    //                 'start_date' => now(),
-    //                 'end_date' => now()->addDays($freePlan->duration_days),
-    //                 'status' => 'active'
-    //             ]);
-    //         }
-    //     });
-    // }
-
 
     public function entreprises()
     {
@@ -101,6 +86,11 @@ class User extends Authenticatable implements MustVerifyEmail
             })
             ->whereDate('end_date', '>=', now())
             ->first();
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
     }
 
     public function activePlan()

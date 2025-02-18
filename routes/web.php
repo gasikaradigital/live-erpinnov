@@ -8,88 +8,68 @@ use App\Livewire\Client\HomeClient;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Payment\PricingPlan;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Client\InstanceListes;
 use App\Livewire\Payment\FactureClient;
 use App\Livewire\Client\CreateInstances;
 use App\Livewire\Payment\PaymentProcess;
-use App\Livewire\Payment\PlansSelection;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 
 // Page d'accueil publique
 Route::get('/', HomePage::class)->name('homepage');
 
-Route::controller(SocialiteController::class)->group(function () {
-    Route::get('auth/{provider}', 'redirect')->name('socialite.redirect');
-    Route::get('auth/{provider}/callback', 'callback')->name('socialite.callback');
+// Routes d'authentification (pour les invités)
+Route::get('inscription', [RegisterController::class, 'showRegistrationForm'])
+    ->name('inscription');
+Route::post('inscription', [RegisterController::class, 'inscription']);
+
+// Routes pour la vérification OTP
+Route::middleware(['auth'])->group(function () {
+    Route::get('verify-otp', [OtpVerificationController::class, 'show'])
+        ->name('verification.notice');
+    Route::post('verify-otp', [OtpVerificationController::class, 'verify'])
+        ->name('verification.verify');
+    Route::post('verify-otp/resend', [OtpVerificationController::class, 'resend'])
+        ->name('verification.resend');
 });
 
-// Redirection après authentification
+// Routes pour les utilisateurs authentifiés et vérifiés
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    // Profil
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
 
-Route::get('/redirect', function () {
-    /** @var User $user */
-    $user = Auth::user();
-
-    if (!$user->hasVerifiedEmail()) {
-        return redirect()->route('verification.notice');
-    }
-
-    if ($user->hasRole('client')) {
-        // Vérification séquentielle
-        if (!$user->entreprises()->exists()) {
-            return redirect()->route('entreprise.create');
-        }
-
-        if (!session()->has('selected_plan')) {
-            return redirect()->route('plans.selection');
-        }
-
-        if (!$user->instances()->exists()) {
-            return redirect()->route('instance.create');
-        }
-
-        return redirect()->route('espaceClient');
-    }
-
-    abort(404, 'Page not found');
-})->name('redirect');
-
-
-// Routes protégées nécessitant une authentification
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-
-    // Routes pour la création d'entreprise et sélection de plan
+    // Entreprise
     Route::get('/entreprise/create', CreateEntreprise::class)
-        ->name('entreprise.create');
+        ->name('entreprise.create')
+        ->middleware('profile.complete');
 
-    Route::get('/offres/plans', PricingPlan::class)
-        ->middleware('has.entreprise')
-        ->name('plans.selection');
+    // Plans et paiements
+    Route::middleware(['has.entreprise'])->group(function () {
+        Route::get('/offres/plans', PricingPlan::class)
+            ->name('plans.selection');
 
-Route::middleware(['has.entreprise', 'instance.limit'])->group(function () {
-    Route::get('/instance/create', CreateInstances::class)
-        ->middleware('plan.flow')
-        ->name('instance.create');
-
-    Route::get('/payment/process/{uuid}', PaymentProcess::class)
-        ->middleware('plan.flow')  // Ajoutez cette ligne
-        ->name('payment.process');
-});
-
-    // Routes pour l'espace client
-    Route::middleware(['role:client', 'has.entreprise'])->prefix('client-espace')->group(function () {
-        // Page d'accueil de l'espace client
-        Route::get('/client', HomeClient::class)
-            ->name('espaceClient');
-
-        // Gestion des factures
-        Route::get('/facturation', FactureClient::class)
-            ->name('client.facture');
-
-        Route::get('/instances', HomeClient::class)
-            ->name('instances.list');
-
-        // Profil utilisateur
-        Route::get('/profile', Profile::class)
-            ->name('client.profile');
+        Route::get('/payment/process/{uuid}', PaymentProcess::class)
+            ->middleware('plan.flow')
+            ->name('payment.process');
     });
+
+    // Instance
+    Route::middleware(['has.entreprise', 'plan.flow', 'instance.limit'])->group(function () {
+        Route::get('/instance/create', CreateInstances::class)
+            ->name('instance.create');
+    });
+
+    // Espace client
+    Route::middleware(['role:client', 'has.entreprise', 'has.instance'])
+        ->prefix('client-espace')
+        ->group(function () {
+            Route::get('/client', HomeClient::class)
+                ->name('espaceClient');
+            Route::get('/instances', HomeClient::class)
+                ->name('instances.list');
+        });
 });

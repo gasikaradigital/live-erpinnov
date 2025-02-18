@@ -3,21 +3,49 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class RedirectAfterRegistration
 {
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check()) {
-            /** @var User $user */
-            $user = Auth::user();
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
 
-            if ($user->hasRole('client') && !$user->entreprises()->exists()) {
-                return redirect()->route('entreprise.create');
-            }
+        $user = auth()->user();
+
+        // Ignorer certaines routes
+        $allowedRoutes = [
+            'verification.notice',
+            'verification.verify',
+            'verification.resend',
+            'profile.edit',
+            'profile.update',
+            'entreprise.create',
+            'plans.selection',
+            'instance.create'
+        ];
+
+        if (in_array($request->route()->getName(), $allowedRoutes)) {
+            return $next($request);
+        }
+
+        // Vérification de l'email
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        // Vérification du profil
+        if (!$user->profile->isComplete()) {
+            return redirect()->route('profile.edit')
+                ->with('warning', 'Veuillez compléter votre profil.');
+        }
+
+        // Vérification de l'entreprise
+        if (!$user->entreprises()->exists()) {
+            return redirect()->route('entreprise.create')
+                ->with('warning', 'Veuillez créer votre entreprise.');
         }
 
         return $next($request);

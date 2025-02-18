@@ -39,6 +39,11 @@ class CreateEntreprise extends Component
    {
        $user = auth()->user();
 
+       // Gérer le message flash du ProfileController si présent
+       if (session()->has('status')) {
+           $this->alert('success', session('status'));
+       }
+
        $this->hasSubscription = $user->subscriptions()
            ->whereIn('status', ['active', 'trial'])
            ->exists();
@@ -46,16 +51,8 @@ class CreateEntreprise extends Component
        $this->entreprises = $user->entreprises()->get();
        $this->showTerminerButton = $this->entreprises->isNotEmpty();
        $this->showBackHeader = $this->entreprises->isNotEmpty() || $this->hasSubscription;
-
-       // Supprimons ces redirections qui empêchent l'ajout de nouvelles entreprises
-       /*if ($this->showTerminerButton && session()->has('selected_plan')) {
-           return redirect()->route('instance.create');
-       }
-
-       if ($this->showTerminerButton && !session()->has('selected_plan')) {
-           return redirect()->route('plans.selection');
-       }*/
    }
+
 
    public function store()
    {
@@ -78,14 +75,10 @@ class CreateEntreprise extends Component
 
            $this->reset(['name', 'nif', 'ville', 'pays', 'phone', 'adresse', 'employees_count']);
 
-           $this->alert('success', 'Entreprise ajoutée avec succès. Vous pouvez en ajouter une autre ou continuer.');
+           $this->alert('success', 'Entreprise ajoutée avec succès.');
 
-           // Redirection selon nombre d'entreprises
-           if ($this->entreprises->count() === 1) {
-               return redirect()->route('plans.selection');
-           }
-
-           return redirect()->route('entreprise.create');
+           // Toujours rediriger vers la sélection de plan après création
+           return redirect()->route('plans.selection');
 
        } catch (\Exception $e) {
            $this->alert('error', 'Erreur lors de l\'ajout: ' . $e->getMessage());

@@ -25,7 +25,6 @@
                 <!-- Login Form -->
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
-
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">
@@ -104,7 +103,7 @@
                 <!-- Register Link -->
                 <div class="mt-6 text-center text-sm text-gray-600">
                     Nouveau sur notre plateforme ?
-                    <a href="/register" class="font-medium text-primary-600 hover:text-primary-500">
+                    <a href="{{ route('inscription')}}" class="font-medium text-primary-600 hover:text-primary-500">
                         S'inscrire
                     </a>
                 </div>
