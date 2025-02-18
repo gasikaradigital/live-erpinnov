@@ -64,11 +64,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
 
     // Espace client
-    Route::middleware(['role:client', 'has.entreprise', 'has.instance'])
+    Route::middleware(['role:client', 'has.entreprise'])
         ->prefix('client-espace')
         ->group(function () {
+
             Route::get('/client', HomeClient::class)
                 ->name('espaceClient');
+
             Route::get('/instances', HomeClient::class)
                 ->name('instances.list');
         });
