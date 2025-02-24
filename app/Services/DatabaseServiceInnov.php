@@ -78,7 +78,7 @@ class DatabaseServiceInnov
             DB::purge('dynamic');
             $connection = DB::connection('dynamic');
             
-            $fichierSql = base_path('database/sc2sylg_innov.sql');
+            $fichierSql = base_path('database/app_innov.sql');
         
             if (!File::exists($fichierSql)) {
                 throw new \Exception("Le fichier SQL n'existe pas.");
