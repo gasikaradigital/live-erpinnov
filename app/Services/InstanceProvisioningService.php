@@ -27,7 +27,7 @@ class InstanceProvisioningService
     }
 
 
-    public function provisionInstance($instanceName, $password, $login, $urlSuffix, $api_key_dolibarr, $userEmail)
+    public function provisionInstance($instanceName, $password, $login, $urlSuffix, $api_key_dolibarr, $userEmail, $subscriptionId)
     {
         //Création base de donnée de dolibarr
         $dbName = $this->databaseServiceDolibarr->createDatabase($instanceName);
@@ -56,7 +56,7 @@ class InstanceProvisioningService
         
         
         //Mise à jours base de donnée Innov
-        $this->databaseServiceInnov->updateCredentialsInnov($dbNameInnov, $instanceName, $api_key_dolibarr, $password, $userEmail);
+        $this->databaseServiceInnov->updateCredentialsInnov($dbNameInnov, $instanceName, $api_key_dolibarr, $password, $userEmail, $subscriptionId);
         
         //Création sous-domaine pour Dolibarr
         $documentRoot = $this->cpanelService->createSubdomain($instanceName);

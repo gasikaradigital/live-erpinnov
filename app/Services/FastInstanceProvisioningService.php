@@ -18,7 +18,8 @@ class FastInstanceProvisioningService {
                 $instanceData['login_dolibarr'],
                 $instanceData['url_suffix'],
                 $instanceData['api_key_dolibarr'],
-                $user->email
+                $user->email,
+                $instance['subscription_id']
             );
 
             if ($instanceDetails) {
@@ -42,7 +43,8 @@ class FastInstanceProvisioningService {
                     $user->email,
                     $instanceData['api_key_dolibarr'],
                     $instanceData['password_dolibarr'],
-                    "http://" . $instanceDetails['url']
+                    "http://" . $instanceDetails['url'],
+                    $instance['subscription_id']
                 );
 
                 // Notifications

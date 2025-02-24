@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use App\Models\Subscription;
 
 class DatabaseServiceInnov
 {
@@ -95,7 +96,7 @@ class DatabaseServiceInnov
     }
     
 
-    public function updateCredentialsInnov($db_name, $instanceName, $api_key_dolibarr, $password, $userEmail)
+    public function updateCredentialsInnov($db_name, $instanceName, $api_key_dolibarr, $password, $userEmail, $subscriptionId)
     {
         try {
             config(['database.connections.dynamic' => [
@@ -114,12 +115,16 @@ class DatabaseServiceInnov
             DB::purge('dynamic');
             DB::reconnect('dynamic');
             
+            $subsciption = Subscription::find($subscription_id);
+
             DB::connection('dynamic')->table('users')
                 ->where('id', 1)
                 ->update([
                     'name' => $instanceName,
                     'api_key' => $api_key_dolibarr,
                     'url_dolibarr' => 'http://'. $instanceName . '-dolibarr.erpinnov.com',
+                    'plan_id' => $subscription->plan_id,
+                    'sub_plan_id' => $subscription->sub_plan_id,
                     'email' => $userEmail,
                     'password' => Hash::make($password)
                 ]);
