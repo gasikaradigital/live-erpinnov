@@ -1,13 +1,13 @@
 # =================================
 # Fichiers/dossiers Node & Composer
 # =================================
-node_modules/
+/node_modules/
 /vendor/
 
 # =================================
 # Fichiers/dossiers de build
 # =================================
-public/build/
+# /public/build/
 /public/hot/
 /public/storage/
 
@@ -46,4 +46,3 @@ yarn-error.log
 /.fleet/
 /.idea/
 /.vscode/
-bootstrap/cache/
