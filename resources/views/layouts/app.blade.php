@@ -36,6 +36,7 @@ data-template="front-pages">
     <script src="{{ asset('assets/js/front-config.js') }}"></script>
 
     @vite('resources/js/app.js')
+
 </head>
 <body>
     <script src="{{ asset('assets/vendor/js/dropdown-hover.js')}}"></script>
@@ -59,6 +60,18 @@ data-template="front-pages">
         window.Laravel = {!! json_encode(['auth' => auth()->check() ? auth()->user() : null]) !!}
     </script>
 
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('darkMode', {
+                on: localStorage.getItem('darkMode') === 'true',
+                toggle() {
+                    this.on = !this.on;
+                    localStorage.setItem('darkMode', this.on);
+                    document.documentElement.classList.toggle('dark', this.on);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 

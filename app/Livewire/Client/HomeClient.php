@@ -75,7 +75,7 @@ class HomeClient extends Component
             $this->alert('error', 'Une erreur est survenue lors du chargement de la page.');
         }
     }
-    
+
     protected function prepareInstance($instance)
     {
         $subscription = $instance->subscription;

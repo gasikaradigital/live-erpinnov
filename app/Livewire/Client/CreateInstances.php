@@ -5,6 +5,7 @@ namespace App\Livewire\Client;
 use Carbon\Carbon;
 use App\Models\Plan;
 use App\Models\User;
+use App\Models\SubPlan;
 use Livewire\Component;
 use App\Models\Instance;
 use App\Models\Entreprise;
@@ -12,6 +13,8 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Models\Subscription;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
+use App\Events\InstanceCreatedEvent;
 use App\Jobs\CreateDolibarrInstance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -39,23 +42,30 @@ class CreateInstances extends Component
 
     protected function rules()
     {
-        return [
-            'name' => [
-                'required_if:creationType,manual',
-                'unique:instances,name',
-                'min:3',
-                'max:15',
-                'regex:/^[a-zA-Z0-9_-]*$/'
-            ],
-            'autoName' => [
-                'required_if:creationType,auto',
-                'unique:instances,name',
-                'min:3',
-                'max:15',
-                'regex:/^[a-zA-Z0-9_-]*$/'
-            ],
+        $rules = [
             'entreprise_id' => 'required|exists:entreprises,id',
         ];
+
+        // Ajouter les règles spécifiques selon le type de création
+        if ($this->creationType === 'manual') {
+            $rules['name'] = [
+                'required',
+                'unique:instances,name',
+                'min:3',
+                'max:15',
+                'regex:/^[a-zA-Z0-9_-]*$/'
+            ];
+        } else {
+            $rules['autoName'] = [
+                'required',
+                'unique:instances,name',
+                'min:3',
+                'max:15',
+                'regex:/^[a-zA-Z0-9_-]*$/'
+            ];
+        }
+
+        return $rules;
     }
 
     protected $messages = [
@@ -269,93 +279,132 @@ class CreateInstances extends Component
         ]);
     }
 
+
     public function store()
     {
         $this->dispatch('instanceCreationStarted');
-        $this->validate();
-
-        $user = Auth::user();
 
         try {
+            DB::beginTransaction();
+
+            $this->validate();
+
+            $user = Auth::user();
+            $instanceName = $this->creationType === 'auto' ? $this->autoName : $this->name;
+
+            logger()->info('Démarrage création instance:', [
+                'type' => $this->creationType,
+                'name' => $instanceName,
+                'user_id' => $user->id
+            ]);
+
+            // Récupérer le plan sélectionné
+            $selectedPlan = session()->get('selected_plan');
+            if (!$selectedPlan) {
+                throw new \Exception('Aucun plan sélectionné.');
+            }
+
+            // Récupérer ou créer la souscription active
+            $activeSubscription = Subscription::where('user_id', $user->id)
+                ->where('plan_id', $selectedPlan['plan_id'])
+                ->whereIn('status', [Subscription::STATUS_ACTIVE, Subscription::STATUS_TRIAL])
+                ->latest()
+                ->first();
+
+            if (!$activeSubscription && session()->has('payment_completed')) {
+                $activeSubscription = Subscription::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $selectedPlan['plan_id'],
+                    'sub_plan_id' => $selectedPlan['sub_plan_id'] ?? null,
+                    'start_date' => now(),
+                    'end_date' => now()->addMonth(),
+                    'status' => Subscription::STATUS_ACTIVE,
+                ]);
+            } elseif (!$activeSubscription) {
+                throw new \Exception('Aucune souscription active trouvée.');
+            }
+
+            // Générer les identifiants d'accès
+            $dolibarrPassword = Str::random(16);
             $instanceData = [
-                'name' => $this->creationType === 'auto' ? $this->autoName : $this->name,
-                'password_dolibarr' => Str::random(16),
+                'name' => $instanceName,
+                'password_dolibarr' => $dolibarrPassword,
                 'login_dolibarr' => 'admin',
-                'url_suffix' => Str::slug($this->creationType === 'auto' ? $this->autoName : $this->name),
+                'url_suffix' => Str::slug($instanceName),
                 'api_key_dolibarr' => Str::random(32),
             ];
 
-            $selectedPlan = session()->get('selected_plan', []);
-            $isTrial = session()->has('trial_activated') && !($selectedPlan['is_free'] ?? false);
-            $isPaid = session()->has('payment_completed');
-
-            // Récupérer ou créer la souscription appropriée
-            $activeSubscription = null;
-            if ($isTrial) {
-                $activeSubscription = $user->subscriptions()
-                    ->where('status', Subscription::STATUS_TRIAL)
-                    ->where('plan_id', $selectedPlan['plan_id'] ?? null)
-                    ->first();
-            } elseif ($isPaid) {
-                $activeSubscription = $this->createPaidSubscription($user, $selectedPlan);
-            } else {
-                $activeSubscription = $this->createFreeSubscription($user);
-            }
-
-            $entreprise = Entreprise::find($this->entreprise_id);
-
+            // Créer l'instance
+            $entreprise = Entreprise::findOrFail($this->entreprise_id);
             $instance = Instance::create([
                 'user_id' => $user->id,
                 'subscription_id' => $activeSubscription->id,
                 'reference' => Instance::generateNextReference(),
-                'name' => $instanceData['name'],
+                'name' => $instanceName,
                 'entreprise_id' => $entreprise->id,
-                'status' => $isPaid ? 'active' : ($isTrial ? 'pending' : 'active'),
-                'url' => $instanceData['name'] . '.erpinnov.com',
+                'status' => 'active',
+                'url' => $instanceName . '.erpinnov.com',
                 'auth_token' => Instance::generateUniqueAuthToken(),
                 'dolibarr_username' => $instanceData['login_dolibarr'],
-                'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),
+                'dolibarr_password' => Hash::make($dolibarrPassword),
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
-                'created_at' => $this->currentDateTime,
-                'created_by' => $this->currentUser,
             ]);
 
-            // Utilisation du service de provisionnement
+            // Provisionnement rapide de l'instance
             $fastProvisioning = new FastInstanceProvisioningService();
             $success = $fastProvisioning->createInstance($instanceData, $user, $instance);
 
-            if ($success) {
-                $this->newInstanceInfo = [
-                    'name' => $instance->name,
-                    'login' => $user->email,
-                    'password' => $instanceData['password_dolibarr'],
-                    'url' => "http://" . $instance->name . ".erpinnov.com",
-                    'created_at' => $this->currentDateTime,
-                    'created_by' => $this->currentUser
-                ];
-
-                // Nettoyer les données de session après création réussie
-                session()->forget(['selected_plan', 'payment_completed', 'trial_activated']);
-
-                $this->alert('success', 'Instance créée avec succès. Vous allez être redirigé vers votre espace client.');
-                $this->reset(['name', 'autoName', 'creationType']);
-
-                // Rediriger vers l'espace client après un court délai
-                return redirect()->route('espaceClient')
-                    ->with('success', 'Instance créée avec succès.');
+            if (!$success) {
+                throw new \Exception('Échec du provisionnement de l\'instance.');
             }
 
+            // Stocker les informations pour l'affichage
+            $this->newInstanceInfo = [
+                'name' => $instance->name,
+                'login' => $user->email,
+                'password' => $dolibarrPassword,
+                'url' => "http://" . $instance->name . ".erpinnov.com",
+                'created_at' => now(),
+                'created_by' => $user->email
+            ];
+
+            // Déclencher l'événement de création
+            event(new InstanceCreatedEvent($instance));
+
+            // Nettoyer la session
+            session()->forget(['selected_plan', 'payment_completed', 'trial_activated']);
+
+            // Commit de la transaction
+            DB::commit();
+
+            // Log du succès
+            logger()->info('Instance créée avec succès:', [
+                'instance_id' => $instance->id,
+                'name' => $instance->name
+            ]);
+
+            $this->alert('success', 'Instance créée avec succès. Vos informations de connexion sont disponibles ci-dessous.');
+            $this->dispatch('instanceCreationEnded');
+
+            return true;
+
         } catch (\Exception $e) {
+            DB::rollBack();
+
             logger()->error('Erreur création instance:', [
                 'error' => $e->getMessage(),
-                'user' => $user->id,
-                'selectedPlan' => $selectedPlan
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
+                'type' => $this->creationType,
+                'name' => $instanceName ?? null
             ]);
-            $this->alert('error', 'Erreur lors de la création de l\'instance.');
-        }
 
-        $this->dispatch('instanceCreationEnded');
+            $this->alert('error', 'Erreur lors de la création de l\'instance: ' . $e->getMessage());
+            $this->dispatch('instanceCreationEnded');
+
+            return false;
+        }
     }
 
     private function createPaidSubscription($user, $selectedPlan)

@@ -3,7 +3,7 @@
         class="inline-flex items-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg text-sm font-medium text-white shadow-sm shadow-primary-600/20 hover:shadow-primary-600/30 transform hover:-translate-y-0.5 transition-all duration-200">
     <!-- Texte normal et loading -->
     <span wire:loading.remove>Créer l'instance</span>
-    <span wire:loading>Création...</span>
+    <span wire:loading>Un instant...</span>
 
     <!-- Icône (visible quand pas de loading) -->
     <svg wire:loading.remove class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

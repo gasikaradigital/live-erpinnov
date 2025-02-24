@@ -12,6 +12,64 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     @stack("styles")
+    <!-- Initialisation du mode sombre basé sur les préférences stockées -->
+    <script>
+        // Fonction pour initialiser et gérer le mode sombre
+        function setupDarkModeToggle() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const moonIcon = document.getElementById('moon-icon');
+            const sunIcon = document.getElementById('sun-icon');
+
+            // Vérifier le mode actuel (stocké dans localStorage ou préférence système)
+            const isDarkMode = localStorage.getItem('darkMode') === 'true' ||
+                               (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            // Appliquer le mode initial
+            document.documentElement.classList.toggle('dark', isDarkMode);
+
+            // Afficher l'icône appropriée
+            updateIcons(isDarkMode);
+
+            // Ajouter l'événement de clic au bouton
+            darkModeToggle.addEventListener('click', function() {
+                // Récupérer l'état actuel
+                const currentDarkMode = document.documentElement.classList.contains('dark');
+
+                // Basculer le mode
+                const newDarkMode = !currentDarkMode;
+                document.documentElement.classList.toggle('dark', newDarkMode);
+
+                // Stocker la préférence
+                localStorage.setItem('darkMode', newDarkMode);
+
+                // Mettre à jour les icônes
+                updateIcons(newDarkMode);
+
+                // Si Alpine.js est utilisé, mettre à jour son store
+                if (window.Alpine && window.Alpine.store('darkMode')) {
+                    window.Alpine.store('darkMode').on = newDarkMode;
+                }
+            });
+
+            // Fonction pour mettre à jour l'affichage des icônes
+            function updateIcons(isDark) {
+                if (isDark) {
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                }
+            }
+        }
+
+        // Exécuter la configuration lorsque le DOM est chargé
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupDarkModeToggle);
+        } else {
+            setupDarkModeToggle();
+        }
+    </script>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
 
@@ -49,6 +107,18 @@
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <x-livewire-alert::scripts />
-
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('darkMode', {
+                on: localStorage.getItem('darkMode') === 'true' ||
+                    (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches),
+                toggle() {
+                    this.on = !this.on;
+                    localStorage.setItem('darkMode', this.on);
+                    document.documentElement.classList.toggle('dark', this.on);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

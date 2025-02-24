@@ -1,4 +1,5 @@
 <!-- Affichage des informations après création -->
+{{-- livewire.client.messages.infocreated --}}
 <div class="modal-body px-6 py-8" x-data="{
     showPassword: false,
     copyFeedback: {

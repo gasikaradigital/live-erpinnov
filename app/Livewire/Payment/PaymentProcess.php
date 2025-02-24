@@ -73,13 +73,14 @@ class PaymentProcess extends Component
         $this->uuid = $uuid;
         $this->instanceId = $instance;
 
-        if ($this->instanceId) {
-            // Mise à niveau depuis une instance existante (essai ou payante)
-            try {
+        try {
+            if ($this->instanceId) {
+                // Mode mise à niveau d'une instance existante
                 $this->currentInstance = Instance::with(['subscription.plan.subPlans'])->findOrFail($this->instanceId);
                 $this->plan = $this->currentInstance->subscription->plan;
                 $this->uuid = $this->plan->uuid;
                 $this->isUpgrade = true;
+                $this->hasUsedTrial = true; // Force à true pour le mode upgrade
 
                 logger()->info('Mount avec instance pour mise à niveau', [
                     'instance_id' => $this->instanceId,
@@ -88,21 +89,12 @@ class PaymentProcess extends Component
                     'subscription_status' => $this->currentInstance->subscription->status,
                 ]);
 
-                // Charger le sous-plan existant ou un sous-plan par défaut pour la mise à niveau
-                $this->selectedSubPlan = $this->currentInstance->subscription->subPlan ?? $this->plan->subPlans()->where('is_default', true)->first();
-                if (!$this->selectedSubPlan) {
-                    $this->selectedSubPlan = $this->plan->subPlans()->first(); // Prendre le premier sous-plan si aucun défaut
-                }
+                // Charger le sous-plan existant ou par défaut
+                $this->selectedSubPlan = $this->currentInstance->subscription->subPlan
+                    ?? $this->plan->subPlans()->where('is_default', true)->first()
+                    ?? $this->plan->subPlans()->first();
 
-                if ($this->selectedSubPlan) {
-                    logger()->info('Sous-plan chargé pour la mise à niveau', [
-                        'sub_plan_id' => $this->selectedSubPlan->id,
-                        'sub_plan_name' => $this->selectedSubPlan->name,
-                        'price_monthly' => $this->selectedSubPlan->price_monthly,
-                        'price_yearly' => $this->selectedSubPlan->price_yearly,
-                        'price_local' => $this->selectedSubPlan->price_local,
-                    ]);
-                } else {
+                if (!$this->selectedSubPlan) {
                     throw new \Exception('Aucun sous-plan valide trouvé pour ce plan');
                 }
 
@@ -110,97 +102,89 @@ class PaymentProcess extends Component
                     throw new \Exception('Plan invalide');
                 }
 
-                // Vérifier si l’instance est en essai
+                // Vérifier si l'instance est en période d'essai
                 if ($this->currentInstance->subscription->status !== Subscription::STATUS_TRIAL) {
-                    throw new \Exception('Cette instance n’est pas en période d’essai et ne peut pas être mise à niveau.');
+                    throw new \Exception('Cette instance n\'est pas en période d\'essai et ne peut pas être mise à niveau.');
                 }
 
-                // Définir les devises principales et secondaires en fonction de pays
+                // Définir les devises selon le pays
                 $isMadagascar = $this->currentInstance->pays === 0;
                 $this->primaryCurrency = $isMadagascar ? 'MGA' : 'EUR';
                 $this->secondaryCurrency = $isMadagascar ? 'EUR' : 'MGA';
 
-                // Initialiser les prix pour éviter qu'ils ne soient à 0
-                $this->primaryPrice = $this->calculateTotal($this->primaryCurrency);
-                $this->secondaryPrice = $this->calculateTotal($this->secondaryCurrency);
+            } else {
+                // Mode nouvelle souscription
+                $this->hasUsedTrial = Subscription::hasEverUsedTrial(Auth::id());
 
-                $this->hasUsedTrial = Auth::user()->subscriptions()->where('status', Subscription::STATUS_TRIAL)->exists();
-            } catch (\Exception $e) {
-                logger()->error('Erreur chargement instance pour mise à niveau:', ['error' => $e->getMessage()]);
-                return redirect()->route('espaceClient')->with('error', 'Instance ou plan invalide : ' . $e->getMessage());
-            }
-        } else {
-            // Nouvelle souscription (cas d’un nouvel utilisateur ou essai gratuit)
-            $this->hasUsedTrial = !Subscription::where('user_id', Auth::id())
-            ->where('status', Subscription::STATUS_TRIAL)
-            ->exists();
+                // Vérifier le plan sélectionné en session
+                $selectedPlan = session('selected_plan');
+                if (!$selectedPlan || $selectedPlan['uuid'] !== $uuid) {
+                    throw new \Exception('Plan non sélectionné ou UUID invalide');
+                }
 
-            $this->currentInstance = Instance::where('user_id', Auth::id())
-                ->whereHas('subscription', function($q) {
-                    $q->where('status', Subscription::STATUS_TRIAL);
-                })->first();
-
-            $selectedPlan = session('selected_plan');
-            if (!$selectedPlan || $selectedPlan['uuid'] !== $uuid) {
-                logger()->warning('Plan non sélectionné ou UUID invalide', ['uuid' => $uuid, 'session_uuid' => $selectedPlan['uuid'] ?? null]);
-                return redirect()->route('plans.selection')->with('error', 'Plan non sélectionné.');
-            }
-
-            try {
+                // Charger le plan et ses sous-plans
                 $this->plan = Plan::with('subPlans')->where('uuid', $uuid)->firstOrFail();
 
-                logger()->info('Mount sans instance', [
-                    'uuid' => $uuid,
-                    'plan_name' => $this->plan->name,
-                ]);
+                // Charger l'instance actuelle si elle existe
+                $this->currentInstance = Instance::where('user_id', Auth::id())
+                    ->whereHas('subscription', function($q) {
+                        $q->where('status', Subscription::STATUS_TRIAL);
+                    })->first();
 
+                // Charger le sous-plan spécifié ou par défaut
                 $subPlanId = request()->query('sub_plan');
                 if ($subPlanId) {
                     $this->selectedSubPlan = $this->plan->subPlans->where('id', $subPlanId)->first();
                     if (!$this->selectedSubPlan) {
-                        logger()->warning('Sous-plan invalide', ['sub_plan_id' => $subPlanId]);
-                        return redirect()->route('plans.selection')->with('error', 'Sous-plan invalide.');
+                        throw new \Exception('Sous-plan invalide');
                     }
-                    logger()->info('Sous-plan chargé', [
-                        'sub_plan_id' => $subPlanId,
-                        'sub_plan_name' => $this->selectedSubPlan->name,
-                        'price_monthly' => $this->selectedSubPlan->price_monthly,
-                        'price_yearly' => $this->selectedSubPlan->price_yearly,
-                        'price_local' => $this->selectedSubPlan->price_local,
-                    ]);
                 } else {
-                    // Charger un sous-plan par défaut pour une nouvelle souscription
-                    $this->selectedSubPlan = $this->plan->subPlans()->where('is_default', true)->first();
+                    $this->selectedSubPlan = $this->plan->subPlans()->where('is_default', true)->first()
+                        ?? $this->plan->subPlans()->first();
+
                     if (!$this->selectedSubPlan) {
-                        $this->selectedSubPlan = $this->plan->subPlans()->first(); // Prendre le premier sous-plan si aucun défaut
-                    }
-                    if ($this->selectedSubPlan) {
-                        logger()->info('Sous-plan par défaut chargé', [
-                            'sub_plan_id' => $this->selectedSubPlan->id,
-                            'sub_plan_name' => $this->selectedSubPlan->name,
-                            'price_monthly' => $this->selectedSubPlan->price_monthly,
-                            'price_yearly' => $this->selectedSubPlan->price_yearly,
-                            'price_local' => $this->selectedSubPlan->price_local,
-                        ]);
-                    } else {
                         throw new \Exception('Aucun sous-plan valide trouvé pour ce plan');
                     }
                 }
 
-                // Définir les devises principales et secondaires en fonction de l'instance par défaut
-                $isMadagascar = $this->currentInstance && $this->currentInstance->pays === 0;
+                // Définir les devises selon l'instance ou par défaut
+                $isMadagascar = $this->currentInstance ? $this->currentInstance->pays === 0 : true;
                 $this->primaryCurrency = $isMadagascar ? 'MGA' : 'EUR';
                 $this->secondaryCurrency = $isMadagascar ? 'EUR' : 'MGA';
+            }
 
-                // Initialiser les prix pour éviter qu'ils ne soient à 0
-                $this->primaryPrice = $this->calculateTotal($this->primaryCurrency);
-                $this->secondaryPrice = $this->calculateTotal($this->secondaryCurrency);
-            } catch (\Exception $e) {
-                logger()->error('Erreur chargement plan:', ['error' => $e->getMessage()]);
-                return redirect()->route('plans.selection')->with('error', 'Plan introuvable : ' . $e->getMessage());
+            // Initialiser les prix
+            $this->primaryPrice = $this->calculateTotal($this->primaryCurrency);
+            $this->secondaryPrice = $this->calculateTotal($this->secondaryCurrency);
+
+            // Logger les informations du sous-plan
+            if ($this->selectedSubPlan) {
+                logger()->info('Sous-plan chargé', [
+                    'sub_plan_id' => $this->selectedSubPlan->id,
+                    'sub_plan_name' => $this->selectedSubPlan->name,
+                    'price_monthly' => $this->selectedSubPlan->price_monthly,
+                    'price_yearly' => $this->selectedSubPlan->price_yearly,
+                    'price_local' => $this->selectedSubPlan->price_local,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            logger()->error('Erreur mount PaymentProcess:', [
+                'error' => $e->getMessage(),
+                'uuid' => $uuid,
+                'instance_id' => $instance
+            ]);
+
+            if ($this->isUpgrade) {
+                return redirect()->route('espaceClient')
+                    ->with('error', 'Instance ou plan invalide : ' . $e->getMessage());
+            } else {
+                return redirect()->route('plans.selection')
+                    ->with('error', 'Plan introuvable : ' . $e->getMessage());
             }
         }
     }
+
 
     public function processPayment()
     {
@@ -209,23 +193,16 @@ class PaymentProcess extends Component
         try {
             DB::beginTransaction();
 
-            // Rechercher une instance existante
-            $existingInstance = Instance::where('user_id', Auth::id())
-                ->whereHas('subscription', function($query) {
-                    $query->whereIn('status', [Subscription::STATUS_TRIAL, Subscription::STATUS_ACTIVE]);
-                })
-                ->first();
-
             $prices = $this->calculatePrices();
 
             if ($this->isUpgrade && $this->instanceId) {
-                // Cas de mise à niveau d'une instance existante
+                // Mise à niveau d'une instance existante
                 $existingSubscription = $this->currentInstance->subscription;
                 if (!$existingSubscription || $existingSubscription->status !== Subscription::STATUS_TRIAL) {
                     throw new \Exception('Cette instance n\'est pas en période d\'essai et ne peut pas être mise à niveau.');
                 }
 
-                // Créer un paiement pour la mise à niveau
+                // Créer le paiement pour la mise à niveau
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
                     'plan_id' => $this->plan->id,
@@ -240,53 +217,29 @@ class PaymentProcess extends Component
                 ]);
 
                 if ($this->processPaymentWithProvider()) {
+                    // Mettre à jour le statut du paiement
                     $payment->update(['status' => Payment::STATUS_COMPLETED]);
 
                     // Mettre à jour la souscription existante
                     $existingSubscription->update([
-                        'status' => Subscription::STATUS_ACTIVE,
                         'plan_id' => $this->plan->id,
                         'sub_plan_id' => $this->selectedSubPlan ? $this->selectedSubPlan->id : null,
+                        'status' => Subscription::STATUS_ACTIVE,
                         'start_date' => now(),
                         'end_date' => $this->isAnnual ? now()->addYear() : now()->addMonth(),
                     ]);
 
+                    // Mettre à jour l'instance
                     $this->currentInstance->update(['status' => 'active']);
-                }
-            } elseif ($existingInstance) {
-                // Cas de mise à jour d'une instance existante (non en cours de mise à niveau)
-                $existingSubscription = $existingInstance->subscription;
 
-                // Créer le paiement
-                $payment = Payment::create([
-                    'user_id' => Auth::id(),
-                    'plan_id' => $this->plan->id,
-                    'subscription_id' => $existingSubscription->id,
-                    'amount' => $prices['eur'],
-                    'amount_local' => $prices['local'],
-                    'currency' => $this->primaryCurrency,
-                    'status' => Payment::STATUS_PENDING,
-                    'payment_method' => $this->paymentMethod,
-                    'cardholder_name' => $this->paymentMethod === 'VISA' ? $this->cardInfo['name'] : null,
-                    'transaction_id' => 'TXN_' . uniqid()
-                ]);
+                    DB::commit();
+                    session(['payment_completed' => true, 'trial_activated' => false]);
 
-                if ($this->processPaymentWithProvider()) {
-                    $payment->update(['status' => Payment::STATUS_COMPLETED]);
-
-                    // Mettre à jour la souscription existante
-                    $existingSubscription->update([
-                        'plan_id' => $this->plan->id,
-                        'sub_plan_id' => $this->selectedSubPlan ? $this->selectedSubPlan->id : null,
-                        'status' => Subscription::STATUS_ACTIVE,
-                        'start_date' => now(),
-                        'end_date' => $this->isAnnual ? now()->addYear() : now()->addMonth(),
-                    ]);
-
-                    $existingInstance->update(['status' => 'active']);
+                    return redirect()->route('espaceClient')
+                        ->with('success', 'Mise à niveau effectuée avec succès.');
                 }
             } else {
-                // Cas d'un nouvel abonnement
+                // Nouvelle souscription
                 $subscription = Subscription::create([
                     'user_id' => Auth::id(),
                     'plan_id' => $this->plan->id,
@@ -296,7 +249,7 @@ class PaymentProcess extends Component
                     'status' => Subscription::STATUS_ACTIVE,
                 ]);
 
-                // Créer un nouveau paiement
+                // Créer le paiement
                 $payment = Payment::create([
                     'user_id' => Auth::id(),
                     'plan_id' => $this->plan->id,
@@ -311,24 +264,41 @@ class PaymentProcess extends Component
                 ]);
 
                 if ($this->processPaymentWithProvider()) {
+                    // Mettre à jour le statut du paiement
                     $payment->update(['status' => Payment::STATUS_COMPLETED]);
+
+                    // Stocker les informations nécessaires en session
+                    session([
+                        'payment_completed' => true,
+                        'trial_activated' => false,
+                        'selected_plan' => [
+                            'uuid' => $this->plan->uuid,
+                            'name' => $this->plan->name,
+                            'is_free' => false,
+                            'subscription_id' => $subscription->id,
+                            'plan_id' => $this->plan->id
+                        ]
+                    ]);
+
+                    DB::commit();
+
+                    // Rediriger vers le processus de création
+                    return redirect()->route('entreprise.create')
+                        ->with('success', 'Paiement effectué avec succès. Vous pouvez maintenant configurer votre entreprise.');
                 }
             }
 
-            DB::commit();
-            session(['payment_completed' => true, 'trial_activated' => false]);
-
-            $redirectRoute = ($this->isUpgrade || $existingInstance) ? 'espaceClient' : 'entreprise.create';
-            $successMessage = ($this->isUpgrade || $existingInstance)
-                ? 'Mise à jour de votre abonnement effectuée avec succès.'
-                : 'Paiement effectué avec succès. Vous pouvez maintenant créer votre instance.';
-
-            return redirect()->route($redirectRoute)
-                ->with('success', $successMessage);
+            throw new \Exception('Échec du paiement');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            logger()->error('Erreur paiement:', ['error' => $e->getMessage()]);
+            logger()->error('Erreur traitement paiement:', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id(),
+                'plan_id' => $this->plan->id,
+                'is_upgrade' => $this->isUpgrade,
+                'instance_id' => $this->instanceId
+            ]);
             $this->alert('error', 'Erreur lors du paiement. Veuillez réessayer.');
         }
     }
@@ -450,7 +420,7 @@ class PaymentProcess extends Component
                 'user_id' => Auth::id(),
                 'plan_id' => $this->plan->id,
                 'start_date' => now(),
-                'end_date' => now()->addDays(14),
+                'end_date' => now()->addDays(14)->endOfDay(),
                 'status' => Subscription::STATUS_TRIAL
             ]);
 

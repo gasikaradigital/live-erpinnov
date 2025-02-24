@@ -3,17 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Paddle\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Paddle\Billable;
 
 class User extends Authenticatable
 {
@@ -197,6 +198,30 @@ class User extends Authenticatable
                 $query->where('status', Subscription::STATUS_TRIAL);
             })
             ->count() >= 1;
+    }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo_path) {
+            return Storage::disk($this->profilePhotoDisk())->url($this->profile_photo_path);
+        }
+
+        // Si l'utilisateur a un profil avec un prénom
+        $name = $this->profile?->fname ?? $this->name ?? $this->email;
+
+        // Paramètres de l'avatar
+        $params = [
+            'name' => urlencode($name),
+            'size' => 200,         // Taille en pixels
+            'background' => '4A90E2', // Couleur d'arrière-plan (bleu primaire)
+            'color' => 'ffffff',   // Couleur du texte (blanc)
+            'bold' => true,        // Texte en gras
+            'rounded' => true,     // Avatar rond
+        ];
+
+        // Construction de l'URL
+        $queryString = http_build_query($params);
+        return "https://ui-avatars.com/api/?{$queryString}";
     }
 
 }

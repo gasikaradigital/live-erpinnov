@@ -1,4 +1,4 @@
-<div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+<div class="bg-white/80 dark:bg-dark-bg backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
     <!-- Header Section -->
     <div class="p-6 space-y-4">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
