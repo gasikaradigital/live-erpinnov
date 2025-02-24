@@ -36,58 +36,22 @@
         </style>
     @endpush
 
-    <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
+    <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
             <!-- Logo si vous en avez un -->
-            {{-- <img class="mx-auto h-12 w-auto" src="{{ asset('logo.png') }}" alt="Logo"> --}}
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
                 Créer un compte gratuit
             </h2>
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100">
-                <!-- Auth Options -->
-                {{-- <div id="auth-options" class="space-y-4">
-                    <div class="flex flex-col gap-4">
-                        <a href="#"
-                           class="group relative flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
-                            <svg class="h-5 w-5 mr-2 text-[#4285F4]" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032 s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2 C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-                            </svg>
-                            Continuer avec Google
-                            <div class="absolute inset-0 rounded-lg border border-transparent group-hover:border-primary-500/20 transition-all duration-200"></div>
-                        </a>
-
-                        <button
-                            type="button"
-                            onclick="toggleRegistrationForm()"
-                            class="group relative flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            S'inscrire avec un email
-                            <div class="absolute inset-0 rounded-lg border border-transparent group-hover:border-primary-500/20 transition-all duration-200"></div>
-                        </button>
-                    </div>
-                </div> --}}
-
+            <div class="bg-white dark:bg-gray-800 py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100 dark:border-gray-700">
                 <!-- Registration Form -->
-                {{-- <div id="registration-form" class="hidden"> --}}
-                    <div>
-                    {{-- <div class="mt-0 relative">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-200"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">Informations personnelles</span>
-                        </div>
-                    </div> --}}
-
+                <div>
                     <form class="mt-2 space-y-6" method="POST" action="{{ route('inscription') }}" id="registrationForm">
                         @csrf
                         <div class="space-y-2">
-                            <label for="email" class="block text-sm font-medium text-gray-700">
+                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Adresse email
                             </label>
                             <div class="relative">
@@ -96,18 +60,18 @@
                                     name="email"
                                     type="email"
                                     required
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                                    class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 sm:text-sm transition-colors"
                                     value="{{ old('email') }}"
                                 />
                                 <div id="email-validation-icon" class="hidden absolute inset-y-0 right-0 flex items-center pr-3">
                                 </div>
                             </div>
-                            <div id="email-error" class="mt-1 text-sm text-red-600 hidden"></div>
+                            <div id="email-error" class="mt-1 text-sm text-red-600 dark:text-red-400 hidden"></div>
                             <x-input-error for="email" class="mt-1" />
                         </div>
 
                         <div class="space-y-2">
-                            <label for="password" class="block text-sm font-medium text-gray-700">
+                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Mot de passe
                             </label>
                             <div class="relative">
@@ -115,10 +79,10 @@
                                        name="password"
                                        type="password"
                                        required
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors" />
+                                       class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 sm:text-sm transition-colors" />
                                 <button type="button"
                                         onclick="togglePasswordVisibility('password')"
-                                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -129,7 +93,7 @@
                         </div>
 
                         <div class="space-y-2">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Confirmer le mot de passe
                             </label>
                             <div class="relative">
@@ -137,10 +101,10 @@
                                        name="password_confirmation"
                                        type="password"
                                        required
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors" />
+                                       class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 sm:text-sm transition-colors" />
                                 <button type="button"
                                         onclick="togglePasswordVisibility('password_confirmation')"
-                                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -155,31 +119,24 @@
                                    name="terms"
                                    type="checkbox"
                                    required
-                                   class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
-                            <label for="terms" class="ml-2 block text-sm text-gray-900">
-                                J'accepte les <a href="{{ route('terms.show') }}" class="text-primary-600 hover:text-primary-500">conditions d'utilisation</a>
-                                et la <a href="{{ route('policy.show') }}" class="text-primary-600 hover:text-primary-500">politique de confidentialité</a>
+                                   class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded" />
+                            <label for="terms" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                                J'accepte les <a href="{{ route('terms.show') }}" class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">conditions d'utilisation</a>
+                                et la <a href="{{ route('policy.show') }}" class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">politique de confidentialité</a>
                             </label>
                         </div>
 
                         <div>
                             <button type="submit"
-                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
+                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-800 transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
                                 Créer mon compte
                             </button>
                         </div>
                     </form>
-                    {{-- <div class="mt-2 text-center">
-                        <button type="button"
-                                onclick="toggleRegistrationForm()"
-                                class="text-sm text-primary-600 hover:text-primary-500 transition-colors">
-                            ← Retour aux options de connexion
-                        </button>
-                    </div> --}}
                 </div>
-                <p class="mt-3 text-center text-sm text-gray-600">
+                <p class="mt-3 text-center text-sm text-gray-600 dark:text-gray-400">
                     Déjà inscrit?
-                    <a href="{{ route('login') }}" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+                    <a href="{{ route('login') }}" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors">
                         Se connecter
                     </a>
                 </p>
