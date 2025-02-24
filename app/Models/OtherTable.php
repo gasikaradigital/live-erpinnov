@@ -9,6 +9,6 @@ class OtherTable extends Model
 {
     protected $connection = 'second_db';
     protected $table = 'users'; // Nom de la table dans l'autre base
-    protected $fillable = ['name', 'email', 'api_key', 'url_dolibarr', 'password']; // Les colonnes modifiables
+    protected $fillable = ['name', 'email', 'api_key','plan_id', 'sub_plan_id', 'url_dolibarr', 'password']; // Les colonnes modifiables
     //use HasFactory;
 }

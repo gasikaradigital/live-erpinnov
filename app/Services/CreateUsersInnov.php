@@ -13,7 +13,7 @@ class CreateUsersInnov
     public function insertIntoOtherDb($name, $email, $api_key, $password, $urlDolibarr, $SubscriptionId){
         try{
             $subscription = Subscription::find($SubscriptionId);
-
+            
             OtherTable::create([
                 'name' => $name,
                 'email' => $email,
