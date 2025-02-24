@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+
     public function up(): void
     {
         Schema::create('plans', function (Blueprint $table) {
@@ -12,14 +13,11 @@ return new class extends Migration {
             $table->string('uuid')->unique();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('price_monthly', 12, 2);
-            $table->decimal('price_yearly', 12, 2);
-            $table->decimal('price_local', 8, 2);
             $table->integer('instance_limit')->nullable();
             $table->integer('duration_days')->nullable();
             $table->boolean('is_free')->default(false);
             $table->boolean('is_default')->default(false);
-            $table->boolean('has_sub_plans')->default(false); // Nouveau champ pour indiquer les sous-offres
+            $table->boolean('has_sub_plans')->default(false);
             $table->json('features');
             $table->timestamps();
         });
@@ -30,7 +28,9 @@ return new class extends Migration {
             $table->string('name');
             $table->decimal('price_monthly', 12, 2);
             $table->decimal('price_yearly', 12, 2);
+            $table->decimal('price_local', 12, 2); // Ajouté ici car plus pertinent
             $table->json('features');
+            $table->boolean('is_default')->default(false); // Pour définir le plan par défaut
             $table->timestamps();
         });
     }

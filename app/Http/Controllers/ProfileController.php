@@ -12,7 +12,7 @@ class ProfileController extends Controller
         $user = auth()->user();
         $profile = $user->profile ?? $user->profile()->create([
             'user_id' => $user->id,
-            'is_public' => true // valeur par défaut
+            'is_public' => true
         ]);
 
         return view('auth.profile.edit', compact('profile'));
@@ -23,44 +23,30 @@ class ProfileController extends Controller
         $user = auth()->user();
         $profile = $user->profile;
 
-        // Utiliser les règles de validation définies dans le modèle
-        $validated = $request->validate(Profile::rules($profile->id));
-
         try {
+            $validated = $request->validate(Profile::rules($profile->id));
             $profile->update($validated);
 
-            // Vérifier si le profil est complet
             if ($profile->isComplete()) {
-                // Si l'utilisateur n'a pas d'entreprise, rediriger vers la création d'entreprise
-                if (!$user->entreprises()->exists()) {
-                    return redirect()->route('entreprise.create')
-                        ->with('success', 'Profil mis à jour avec succès. Vous pouvez maintenant créer votre entreprise.');
-                }
+                // Ajouter le flag dans la session
+                session(['profile_updated' => true]);
 
-                // Si l'utilisateur n'a pas de plan sélectionné
-                if (!session()->has('selected_plan')) {
-                    return redirect()->route('plans.selection')
-                        ->with('success', 'Profil mis à jour avec succès. Veuillez sélectionner un plan.');
-                }
-
-                // Si tout est ok, rediriger vers l'espace client
                 return redirect()->route('espaceClient')
                     ->with('success', 'Profil mis à jour avec succès.');
             }
 
-            // Si le profil n'est pas complet, rester sur la page
-            return back()->with('warning', 'Veuillez compléter tous les champs obligatoires de votre profil.');
+            return redirect()->route('profile.edit')
+                ->with('warning', 'Veuillez compléter tous les champs obligatoires.');
 
         } catch (\Exception $e) {
-            return back()
+            \Log::error('Erreur de mise à jour du profil: ' . $e->getMessage());
+
+            return redirect()->route('profile.edit')
                 ->withInput()
-                ->with('error', 'Une erreur est survenue lors de la mise à jour du profil : ' . $e->getMessage());
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du profil.');
         }
     }
 
-    /**
-     * Vérifie l'état de complétion du profil via AJAX
-     */
     public function checkCompletion()
     {
         $profile = auth()->user()->profile;

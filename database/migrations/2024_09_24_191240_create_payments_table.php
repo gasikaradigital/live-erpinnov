@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('plan_id')->constrained()->onDelete('cascade');
             $table->foreignId('subscription_id')->nullable()->constrained()->onDelete('set null');
             $table->decimal('amount', 8, 2);
+            $table->decimal('amount_local', 15, 2)->nullable(); // Montant local (par exemple, MGA)
+            $table->string('currency', 10)->nullable();
             $table->string('status');
             $table->string('payment_method');
             $table->string('transaction_id')->nullable();

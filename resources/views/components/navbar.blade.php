@@ -24,59 +24,59 @@
                         </svg>
                     </button>
 
-                    <!-- Profile Dropdown -->
-                    <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open"
-                                @keydown.escape.window="open = false"
-                                class="flex items-center gap-3 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <img class="h-9 w-9 rounded-full object-cover ring-2 ring-primary-200 dark:ring-primary-800"
-                                 src="{{ Auth::user()->profile_photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name) }}"
-                                 alt="{{ Auth::user()->name }}">
-                            <span class="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                {{ Auth::user()->name }}
-                            </span>
-                        </button>
+                <!-- Profile Dropdown -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open"
+                            @keydown.escape.window="open = false"
+                            class="flex items-center gap-3 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <img class="h-9 w-9 rounded-full object-cover ring-2 ring-primary-200 dark:ring-primary-800"
+                            src="{{ Auth::user()->profile_photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->profile?->fname ?? Auth::user()->name) }}"
+                            alt="{{ Auth::user()->profile?->fname ?? Auth::user()->name }}">
+                        <span class="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-200">
+                            {{ Auth::user()->profile?->fname ?? Auth::user()->name }}
+                        </span>
+                    </button>
 
-                        <!-- Dropdown Menu -->
-                        <div x-show="open"
-                             x-cloak
-                             @click.away="open = false"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="transform opacity-0 scale-95"
-                             x-transition:enter-end="transform opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="transform opacity-100 scale-100"
-                             x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 divide-y divide-gray-100 dark:divide-gray-700">
-                            <div class="px-2 py-2">
-                                <a href="{{ route('profile.show') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 text-gray-700 dark:text-gray-300">
+                    <!-- Dropdown Menu -->
+                    <div x-show="open"
+                        x-cloak
+                        @click.away="open = false"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black/5 dark:ring-white/10 divide-y divide-gray-100 dark:divide-gray-700">
+                        <div class="px-2 py-2">
+                            <a href="{{ route('profile.show') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 text-gray-700 dark:text-gray-300">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                Mon Profil
+                            </a>
+                            @if(auth()->user()->hasVerifiedEmail())
+                            <a href="{{ route('entreprise.create') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 text-gray-700 dark:text-gray-300">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                                Mes Entreprises
+                            </a>
+                            @endif
+                        </div>
+                        <div class="px-2 py-2">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                                     </svg>
-                                    Mon Profil
-                                </a>
-                                @if(auth()->user()->hasVerifiedEmail())
-                                <a href="{{ route('entreprise.create') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 text-gray-700 dark:text-gray-300">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                    </svg>
-                                    Mes Entreprises
-                                </a>
-                                @endif
-                            </div>
-                            <div class="px-2 py-2">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="flex w-full items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                        </svg>
-                                        Déconnexion
-                                    </button>
-                                </form>
-                            </div>
+                                    Déconnexion
+                                </button>
+                            </form>
                         </div>
                     </div>
+                </div>
                 @else
                     <div class="flex items-center gap-4">
                         <a href="{{ route('login') }}"

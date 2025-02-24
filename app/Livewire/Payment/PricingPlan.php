@@ -33,7 +33,7 @@ class PricingPlan extends Component
     {
         try {
             $user = Auth::user();
-            $plan = Plan::where('uuid', $uuid)->firstOrFail();
+            $plan = Plan::with('subPlans')->where('uuid', $uuid)->firstOrFail();
 
             // Vérifier si un sous-plan est requis
             if ($plan->has_sub_plans && !$this->selectedSubPlanId) {
@@ -61,9 +61,11 @@ class PricingPlan extends Component
                 ]
             ]);
 
-            // Rediriger selon le type de plan
+            // Si c'est un plan gratuit ou d'essai
             if ($plan->is_free) {
-                return redirect()->route('instance.create');
+                session(['trial_activated' => true]);
+                return redirect()->route('entreprise.create')
+                    ->with('success', 'Plan gratuit activé. Créez maintenant votre entreprise.');
             }
 
             // Pour les plans payants, rediriger vers le processus de paiement
@@ -86,10 +88,11 @@ class PricingPlan extends Component
     public function render()
     {
         return view('livewire.payment.pricing-plan', [
-            'plans' => Plan::with('subPlans')
-                ->orderBy('is_free', 'desc')
-                ->orderBy('price_monthly')
-                ->get()
+            'plans' => Plan::with(['subPlans' => function($query) {
+                $query->orderBy('price_monthly', 'asc');
+            }])
+            ->orderBy('is_free', 'desc')
+            ->get()
         ])->layout('layouts.main');
     }
 }

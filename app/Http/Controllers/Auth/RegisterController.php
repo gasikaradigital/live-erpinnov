@@ -27,6 +27,8 @@ class RegisterController extends Controller
         ]);
 
         try {
+            \DB::beginTransaction();
+
             // Créer l'utilisateur
             $user = User::create([
                 'email' => $request->email,
@@ -55,12 +57,17 @@ class RegisterController extends Controller
 
             event(new Registered($user));
 
+            \DB::commit();
+
+            // Connecter l'utilisateur
             auth()->login($user);
 
-            return redirect()->route('verification.notice')
+            // Forcer la redirection vers la vérification OTP
+            return to_route('verification.notice')
                 ->with('status', 'Un code de vérification a été envoyé à votre adresse email.');
 
         } catch (\Exception $e) {
+            \DB::rollBack();
             \Log::error('Erreur inscription: ' . $e->getMessage());
             return back()
                 ->withInput()

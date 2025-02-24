@@ -42,6 +42,11 @@ class RedirectAfterRegistration
                 ->with('warning', 'Veuillez compléter votre profil.');
         }
 
+        // Vérification de l'entreprise
+        if (!$user->entreprises()->exists()) {
+            return redirect()->route('entreprise.create')
+                ->with('warning', 'Veuillez créer votre entreprise.');
+        }
 
         return $next($request);
     }

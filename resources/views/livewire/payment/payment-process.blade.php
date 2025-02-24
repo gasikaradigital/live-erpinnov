@@ -1,195 +1,198 @@
 {{-- payment-process.blade.php --}}
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 mt-16">
-    @if($hasUsedTrial)
-        <x-header-nav title="Mode de paiement "/>
-    @endif
-    {{-- Contenu principal avec padding ajusté --}}
-    <main class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {{-- Colonne principale --}}
-            <div class="lg:col-span-8 space-y-8">
-                {{-- Carte d'essai gratuit --}}
-                @if(!$hasUsedTrial)
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between">
-                            {{-- Contenu gauche --}}
-                            <div class="space-y-4">
-                                {{-- Badge et titre --}}
-                                <div>
-                                    <h2 class="mt-2 text-xl font-semibold text-gray-900">Essai gratuit de 15 jours</h2>
-                                    <p class="text-sm text-gray-500">Découvrez toutes les fonctionnalités sans engagement</p>
-                                </div>
-
-                                {{-- Liste compacte --}}
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        <span class="text-sm text-gray-600">Accès complet à toutes les fonctionnalités</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        <span class="text-sm text-gray-600">Support prioritaire inclus</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Bouton à droite --}}
-                            <div class="pl-6">
-                                <button wire:click="startTrial"
-                                    class="group inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                                    Démarrer l'essai
-                                    <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+<div class="min-h-screen bg-gradient-to-tr from-gray-50 via-blue-50 to-gray-50 pt-16">
+    <!-- En-tête avec progression -->
+    <div class="bg-white border-b border-gray-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('espaceClient') }}"
+                        class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Retour à l'espace client
+                    </a>
                 </div>
-                @endif
-                {{-- Section Paiement avec formulaires cachés --}}
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200/50">
-                    {{-- Méthodes de paiement --}}
-                    <div class="p-4" x-data="{ selectedPayment: null }">
-                        <h3 class="text-sm font-medium text-gray-900 mb-3">Moyens de paiement acceptés</h3>
+                <div class="flex items-center space-x-2">
+                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                        Finaliser votre abonnement
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        {{-- Boutons de méthode de paiement --}}
-                        <div class="grid grid-cols-3 gap-3 mb-4">
-                            @foreach(['VISA', 'OrangeMoney', 'Mvola'] as $method)
-                                <button type="button"
-                                    wire:click="$set('paymentMethod', '{{ $method }}')"
-                                    @click="selectedPayment = selectedPayment === '{{ $method }}' ? null : '{{ $method }}'"
-                                    class="relative p-4 rounded-lg border-2 transition-all duration-200
-                                        {{ $paymentMethod === $method
-                                            ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-100'
-                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50' }}">
-                                    <div class="flex flex-col items-center">
-                                        <div class="mb-2 h-8 flex items-center justify-center">
-                                            <img src="{{ asset('client/assets/img/logo/' . ($method === 'VISA' ? 'visa.svg' : ($method === 'OrangeMoney' ? 'OM.svg' : 'MVOLA.png'))) }}"
-                                                alt="{{ $method }}"
-                                                class="h-full w-auto object-contain">
+    <!-- Contenu principal -->
+    <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Colonne gauche : Options de paiement -->
+            <div class="lg:col-span-8 space-y-8">
+                <!-- Carte d'essai gratuit -->
+                @include('livewire.payment.version-trial')
+                <div
+                x-data="{ open: false }"
+                x-show="open"
+                x-on:open-payment-modal.window="open = true"
+                x-on:close-payment-modal.window="open = false"
+                x-on:keydown.escape.window="open = false"
+                style="display: none;" class="bg-white rounded-2xl shadow-sm border border-gray-200">
+                    <div class="p-6">
+                        <div class="justify-between mb-6">
+                            <h3 class="text-sm font-bold text-gray-900">
+                                @if($upgradeType === 'upgrade')
+                                    Mise à niveau de l'instance
+                                    <span class="text-blue-600">{{ $currentInstance->name }}.erpinnov.com</span>
+                                @else
+                                    Création d'une nouvelle instance
+                                @endif
+                            </h3>
+                            <p class="mt-1 text-gray-500">
+                                @if($upgradeType === 'upgrade')
+                                    Vous allez mettre à niveau votre instance existante
+                                @else
+                                    Vous allez créer une nouvelle instance payante
+                                @endif
+                            </p>
+                        </div>
+                        <!-- Options de paiement -->
+                        <div class="grid grid-cols-3 gap-4 mb-8">
+                            @foreach([
+                                ['id' => 'VISA', 'name' => 'Carte bancaire', 'logo' => 'visa.svg'],
+                                ['id' => 'OrangeMoney', 'name' => 'Orange Money', 'logo' => 'OM.svg'],
+                                ['id' => 'Mvola', 'name' => 'MVola', 'logo' => 'MVOLA.png']
+                            ] as $method)
+                                <label class="relative block cursor-pointer">
+                                    <input type="radio"
+                                        name="payment_method"
+                                        value="{{ $method['id'] }}"
+                                        wire:model="paymentMethod"
+                                        class="sr-only peer">
+                                    <div class="p-4 rounded-xl border-2 transition-all duration-200
+                                        {{ $paymentMethod === $method['id']
+                                            ? 'border-blue-500 bg-blue-50/50'
+                                            : 'border-gray-200 hover:border-gray-300' }}">
+                                        <div class="flex flex-col items-center">
+                                            <img src="{{ asset('client/assets/img/logo/' . $method['logo']) }}"
+                                                alt="{{ $method['name'] }}"
+                                                class="h-12 w-auto mb-0 transition-transform duration-200 transform peer-hover:scale-105">
+                                            <span class="text-sm font-medium text-gray-900">{{ $method['name'] }}</span>
+                                            @if($method['id'] === 'VISA')
+                                                <small class="text-sm text-green-300">Récommandé</small>
+                                            @endif
+                                            @if($method['id'] === 'OrangeMoney')
+                                                <span>+261 32 74 555 00</span>
+                                            @endif
+                                            @if($method['id'] === 'Mvola')
+                                                <span>+261 34 74 555 00</span>
+                                            @endif
                                         </div>
-                                        <span class="text-sm font-medium {{ $paymentMethod === $method ? 'text-blue-600' : 'text-gray-700' }}">
-                                            {{ $method }}
-                                        </span>
                                     </div>
-                                </button>
+                                </label>
                             @endforeach
                         </div>
 
-                        {{-- Formulaires --}}
-                        <div x-show="selectedPayment"
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 transform translate-y-4"
-                             x-transition:enter-end="opacity-100 transform translate-y-0"
-                             class="mt-6">
-                            {{-- Formulaire VISA --}}
-                            <div x-show="selectedPayment === 'VISA'">
+                        <!-- Formulaires de paiement -->
+                        @if($paymentMethod)
+                            <div class="mt-8 border-t border-gray-200 pt-8">
+                               <!-- Formulaires de paiement détaillés -->
+                                @if($paymentMethod === 'VISA')
                                 @include('livewire.payment.forms.VISA')
+                                {{-- @else
+                                @include('livewire.payment.forms.MobileMoney') --}}
+                                @endif
                             </div>
-                            {{-- Formulaire Orange Money --}}
-                            <div x-show="selectedPayment === 'OrangeMoney'">
-                                @include('livewire.payment.forms.OrangeMoney')
-                            </div>
-                            {{-- Formulaire Mvola --}}
-                            <div x-show="selectedPayment === 'Mvola'">
-                                @include('livewire.payment.forms.Mvola')
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
-
             </div>
 
-            {{-- Résumé (droite) --}}
+            <!-- Colonne droite : Résumé -->
             <div class="lg:col-span-4">
-                <div class="sticky top-24 bg-white rounded-2xl shadow-sm border border-gray-200/50 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200/80 bg-gray-50/50">
+                <div class="sticky top-24 bg-white rounded-2xl shadow-sm border border-gray-200">
+                    <!-- En-tête du résumé -->
+                    <div class="p-6 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-900">Résumé de votre commande</h3>
                     </div>
-                    <div class="p-6">
+
+                    <!-- Contenu du résumé -->
+                    <div class="p-6 space-y-6">
+                        <!-- Détails du plan -->
                         <div class="space-y-4">
-                            {{-- Détails du plan --}}
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-medium text-gray-900">{{ $plan->name }}</p>
-                                    @if($selectedSubPlan)
-                                        <p class="text-sm text-gray-500">{{ $selectedSubPlan->name }}</p>
-                                    @endif
+                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                                        {{ $plan->name }}
+                                        @if($selectedSubPlan)
+                                            - {{ $selectedSubPlan->name }}
+                                        @endif
+                                    </span>
                                 </div>
-                                <p class="font-medium text-gray-900">{{ number_format($this->calculateTotal(), 2) }}€</p>
-                            </div>
-
-                            {{-- Économie annuelle --}}
-                            @if($isAnnual)
-                                <div class="bg-green-50 rounded-xl p-4 border border-green-100">
-                                    <div class="flex items-center">
-                                        <svg class="flex-shrink-0 h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        <p class="ml-3 text-sm text-green-700 font-medium">
-                                            Économie de 10% avec la facturation annuelle
-                                        </p>
+                                <div class="text-right">
+                                    <div class="text-xl font-bold text-gray-900" wire:key="price-{{ $isAnnual }}">
+                                        {{ number_format($primaryPrice, $primaryCurrency === 'MGA' ? 0 : 2) }} {{ $primaryCurrency }}
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        {{ number_format($secondaryPrice, $secondaryCurrency === 'MGA' ? 0 : 2) }} {{ $secondaryCurrency }}
                                     </div>
                                 </div>
-                            @endif
+                            </div>
 
-                            {{-- Total --}}
-                            <div class="pt-4 border-t border-gray-200/80">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-base font-medium text-gray-700">Total</span>
-                                    <span class="text-2xl font-bold text-gray-900">{{ number_format($this->calculateTotal(), 2) }}€</span>
+                            <!-- Sélection période -->
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox"
+                                                wire:model.live="isAnnual"
+                                                class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-900">Facturation annuelle</span>
+                                    </label>
                                 </div>
+
+                                @if($isAnnual)
+                                <div class="mt-2 flex items-center text-xs text-green-600">
+                                    <svg class="w-5 h-5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Économisez 10% sur l'abonnement annuel
+                                </div>
+                                @endif
                             </div>
                         </div>
-
-                        {{-- Garanties et Sécurité --}}
-                        <div class="mt-8 space-y-4">
-                            <div class="flex items-start space-x-3">
-                                <div class="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Garanties -->
+                        <div class="space-y-4">
+                            <!-- Sécurité -->
+                            <div class="flex gap-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-medium text-gray-900">Paiement 100% sécurisé</h4>
+                                    <h4 class="text-sm font-medium text-gray-900">Paiement sécurisé</h4>
                                     <p class="mt-1 text-sm text-gray-500">Vos données sont protégées et chiffrées</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-start space-x-3">
-                                <div class="flex-shrink-0 w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-900">Satisfait ou remboursé</h4>
-                                    <p class="mt-1 text-sm text-gray-500">Garantie de remboursement de 30 jours</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start space-x-3">
-                                <div class="flex-shrink-0 w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Support -->
+                            <div class="flex gap-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-medium text-gray-900">Support client dédié</h4>
-                                    <p class="mt-1 text-sm text-gray-500">Assistance disponible 24/7</p>
+                                    <h4 class="text-sm font-medium text-gray-900">Support dédié</h4>
+                                    <p class="mt-1 text-sm text-gray-500">Une équipe à votre écoute 24/7</p>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- CGV et confidentialité --}}
-                        <div class="mt-8 pt-6 border-t border-gray-200/80">
+                        <!-- Conditions -->
+                        <div class="pt-6 border-t border-gray-200">
                             <p class="text-sm text-gray-500">
                                 En procédant au paiement, vous acceptez nos
                                 <a href="#" class="text-blue-600 hover:text-blue-700 hover:underline">conditions générales</a>
@@ -197,45 +200,56 @@
                                 <a href="#" class="text-blue-600 hover:text-blue-700 hover:underline">politique de confidentialité</a>.
                             </p>
                         </div>
-                    </div>
 
-                    {{-- Bouton de paiement pour mobile --}}
-                    {{-- <div class="p-4 bg-gray-50 border-t border-gray-200/80">
-                        <button type="submit"
-                            onclick="document.getElementById('{{ strtolower($paymentMethod) }}Form')?.requestSubmit()"
-                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-medium
-                                   hover:bg-blue-700 focus:outline-none focus:ring-2
-                                   focus:ring-blue-500 focus:ring-offset-2 transition-colors
-                                   disabled:opacity-50 disabled:cursor-not-allowed"
-                            {{ !$paymentMethod ? 'disabled' : '' }}>
-                            @if(!$paymentMethod)
-                                Sélectionnez un mode de paiement
-                            @else
-                                Payer {{ number_format($this->calculateTotal(), 2) }}€
-                            @endif
-                        </button>
-                    </div> --}}
+                    </div>
+                </div>
             </div>
+
+
         </div>
     </main>
+
 </div>
 
 @push('styles')
 <style>
-    /* Animations personnalisées */
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .payment-method-selected {
+        animation: pulse 2s infinite;
+    }
+
     .group:hover img {
         transform: scale(1.05);
         transition: transform 0.2s ease-in-out;
     }
-
-    /* Style pour le toggle de période */
-    .peer:checked ~ .peer-checked\:after\:translate-x-full::after {
-        transform: translateX(100%);
-    }
-
-    /* Animation pour le stepper */
-    .stepper-line {
-        transition: background-color 0.3s ease;
-    }
 </style>
+@endpush
+@push('scripts')
+    <script>
+        document.addEventListener('livewire:load', function () {
+            // Définir les fractions de décimales en fonction de la devise principale
+            const primaryDecimalPlaces = '{{ $primaryCurrency === 'MGA' ? 0 : 2 }}';
+            const secondaryDecimalPlaces = '{{ $secondaryCurrency === 'MGA' ? 0 : 2 }}';
+
+            Livewire.on('priceUpdated', (data) => {
+                // Mettre à jour le prix dans la vue dynamiquement
+                const primaryPriceElement = document.querySelector('.text-xl.font-bold.text-gray-900');
+                const secondaryPriceElement = document.querySelector('.text-sm.text-gray-500');
+                if (primaryPriceElement && secondaryPriceElement) {
+                    primaryPriceElement.textContent = `${data.total.toLocaleString('fr-FR', {
+                        minimumFractionDigits: parseInt(primaryDecimalPlaces),
+                        maximumFractionDigits: parseInt(primaryDecimalPlaces)
+                    })} {{ $primaryCurrency }}`;
+                    secondaryPriceElement.textContent = `${data.total.toLocaleString('fr-FR', {
+                        minimumFractionDigits: parseInt(secondaryDecimalPlaces),
+                        maximumFractionDigits: parseInt(secondaryDecimalPlaces)
+                    })} {{ $secondaryCurrency }}`;
+                }
+            });
+        });
+    </script>
 @endpush

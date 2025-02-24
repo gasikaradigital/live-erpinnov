@@ -7,10 +7,10 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    <span class="ml-2 text-sm font-medium">Retour au tableau de bord</span>
+                    <span class="ml-2 text-sm font-medium">Retour au précedent</span>
                 </a>
-                <span class="text-gray-300 dark:text-gray-600">/</span>
-                <span class="text-gray-900 dark:text-gray-100 font-medium">{{ $title ?? 'Page titre' }}</span>
+                {{-- <span class="text-gray-300 dark:text-gray-600">/</span>
+                <span class="text-gray-900 dark:text-gray-100 font-medium">{{ $title ?? 'Page titre' }}</span> --}}
             </div>
         </div>
     </div>

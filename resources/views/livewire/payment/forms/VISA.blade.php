@@ -1,31 +1,59 @@
-{{-- resources/views/livewire/payment/forms/VISA.blade.php --}}
-<form wire:submit.prevent="processPayment"
-class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Nom sur la carte</label>
-        <input type="text" wire:model.defer="cardInfo.name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-        @error('cardInfo.name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+<form wire:submit.prevent="processPayment" class="space-y-6">
+    <div class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nom du titulaire</label>
+            <div class="relative">
+                <input type="text"
+                    wire:model.defer="cardInfo.name"
+                    class="w-full rounded-xl border-gray-300 pl-4 pr-10 focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Ex: John Doe">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1 14H5c-.55 0-1-.45-1-1V7c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1z"/>
+                    </svg>
+                </div>
+            </div>
+            @error('cardInfo.name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Numéro de carte</label>
+            <div class="relative">
+                <input type="text"
+                    wire:model.defer="cardInfo.number"
+                    class="w-full rounded-xl border-gray-300 pl-4 pr-10 focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="4242 4242 4242 4242">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+            </div>
+            @error('cardInfo.number') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date d'expiration</label>
+                <input type="text"
+                    wire:model.defer="cardInfo.expiry"
+                    class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="MM/YY">
+                @error('cardInfo.expiry') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Code CVC</label>
+                <input type="text"
+                    wire:model.defer="cardInfo.cvc"
+                    class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="123">
+                @error('cardInfo.cvc') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            </div>
+        </div>
     </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Numéro de carte</label>
-        <input type="text" wire:model.defer="cardInfo.number" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-        @error('cardInfo.number') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Date d'expiration</label>
-            <input type="text" wire:model.defer="cardInfo.expiry" placeholder="MM/YY" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-            @error('cardInfo.expiry') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">CVC</label>
-            <input type="text" wire:model.defer="cardInfo.cvc" maxlength="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-            @error('cardInfo.cvc') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-        </div>
-    </div>
     <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
-        Payer {{ number_format($this->calculateTotal(), 2) }}€
+        Payer {{ number_format($primaryPrice, $primaryCurrency === 'MGA' ? 0 : 2) }} {{ $primaryCurrency }}
     </button>
 </form>

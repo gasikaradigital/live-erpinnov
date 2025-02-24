@@ -26,7 +26,6 @@ class Instance extends Model
         'url',
         'status',
         'subscription_id',
-        'expiration_date',
         'token_expires_at',
         'dolibarr_username',
         'dolibarr_password',
@@ -35,11 +34,9 @@ class Instance extends Model
         'pays',
     ];
 
-
     protected $hidden = ['auth_token', 'dolibarr_password'];
 
     protected $casts = [
-        'expiration_date' => 'datetime',
         'token_expires_at' => 'datetime',
         'pays' => 'integer',
     ];
@@ -94,14 +91,6 @@ class Instance extends Model
         return $token;
     }
 
-    // public function regenerateAuthToken()
-    // {
-    //     $this->update([
-    //         'auth_token' => self::generateUniqueAuthToken(),
-    //         'token_expires_at' => Carbon::now()->addDays(30),
-    //     ]);
-    // }
-
     public function isTokenExpired()
     {
         return $this->token_expires_at->isPast();
@@ -117,7 +106,6 @@ class Instance extends Model
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
-
 
     public function scopeExpired($query)
     {
@@ -136,10 +124,8 @@ class Instance extends Model
         return $this->belongsTo(Entreprise::class);
     }
 
-
     public function getPaysNomAttribute()
     {
-        // Si vous utilisez des valeurs numériques
         return $this->pays === 0 ? 'Madagascar' : 'France';
     }
 
@@ -159,5 +145,29 @@ class Instance extends Model
             ->whereHas('subscription', function($q) {
                 $q->where('status', Subscription::STATUS_TRIAL);
             })->count() >= 1;
+    }
+
+    /**
+     * Formater la date de début de la souscription associée
+     */
+    public function getFormattedStartDateAttribute()
+    {
+        if ($this->subscription && $this->subscription->start_date) {
+            Carbon::setLocale('fr');
+            return Carbon::parse($this->subscription->start_date)->format('d/m/Y');
+        }
+        return '-';
+    }
+
+    /**
+     * Formater la date de fin de la souscription associée
+     */
+    public function getFormattedEndDateAttribute()
+    {
+        if ($this->subscription && $this->subscription->end_date) {
+            Carbon::setLocale('fr');
+            return Carbon::parse($this->subscription->end_date)->format('d/m/Y');
+        }
+        return '-';
     }
 }

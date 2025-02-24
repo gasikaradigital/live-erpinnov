@@ -23,12 +23,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
-            'role.redirect' => \App\Http\Middleware\RedirectIfAuthenticatedByRole::class,
-            'has.entreprise' => \App\Http\Middleware\RedirectIfNoEntreprise::class,
-            'plan.flow' => \App\Http\Middleware\PlanFlowMiddleware::class,
-            'instance.limit' => \App\Http\Middleware\InstanceLimitMiddleware::class,
-            'registration.flow' => \App\Http\Middleware\RedirectAfterRegistration::class,
-            'profile.complete' => \App\Http\Middleware\CheckProfileComplete::class,
+            'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
+            // 'registration.flow' => \App\Http\Middleware\RedirectAfterRegistration::class,
+            // 'profile.complete' => \App\Http\Middleware\CheckProfileComplete::class,
+            // 'plan.flow' => \App\Http\Middleware\PlanFlowMiddleware::class,
+            // 'has.entreprise' => \App\Http\Middleware\RedirectIfNoEntreprise::class,
+            // 'instance.limit' => \App\Http\Middleware\InstanceLimitMiddleware::class,
+            // 'role.redirect' => \App\Http\Middleware\RedirectIfAuthenticatedByRole::class,
+            // 'plan.selection' => \App\Http\Middleware\PlanSelectionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

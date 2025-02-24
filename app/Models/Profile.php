@@ -14,7 +14,7 @@ class Profile extends Model
         'user_id',
         'fname',
         'lname',
-        'sexe',
+        'civilite',
         'telephone',
         'adresse',
         'ville',
@@ -42,11 +42,6 @@ class Profile extends Model
         return ucfirst($this->fname) . ' ' . ucfirst($this->lname);
     }
 
-    public function getAgeAttribute()
-    {
-        return $this->birthdate ? now()->diffInYears($this->birthdate) : null;
-    }
-
     // Relations
     public function user()
     {
@@ -71,7 +66,7 @@ class Profile extends Model
         return [
             'fname' => 'required|string|max:50',
             'lname' => 'nullable|string|max:50',
-            'sexe' => 'nullable|in:homme,femme',
+            'civilite' => 'nullable',
             'telephone' => 'nullable|string|max:20|unique:profiles,telephone,' . $id,
             'adresse' => 'nullable|string|max:255',
             'ville' => 'nullable|string|max:100',

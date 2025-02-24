@@ -10,6 +10,14 @@ class Payment extends Model
 {
     use HasFactory;
 
+    const METHOD_VISA = 'VISA';
+    const METHOD_ORANGE_MONEY = 'OrangeMoney';
+    const METHOD_MVOLA = 'Mvola';
+
+    const STATUS_PENDING = 'pending';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_FAILED = 'failed';
+
     protected $fillable = [
         'user_id',
         'plan_id',
@@ -18,7 +26,9 @@ class Payment extends Model
         'status',
         'payment_method',
         'transaction_id',
-        'cardholder_name'
+        'cardholder_name',
+        'currency',
+        'amount_local'
     ];
 
     public function user()

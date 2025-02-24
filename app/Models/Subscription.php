@@ -28,6 +28,8 @@ class Subscription extends Model
         'end_date' => 'datetime',
     ];
 
+    // Relations existantes...
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -43,7 +45,6 @@ class Subscription extends Model
         return $this->belongsTo(SubPlan::class, 'sub_plan_id');
     }
 
-
     public function instance()
     {
         return $this->hasOne(Instance::class);
@@ -54,8 +55,67 @@ class Subscription extends Model
         return $this->hasOne(Payment::class);
     }
 
+    // Méthodes améliorées
     public function isTrialPeriod()
     {
-        return $this->status === self::STATUS_TRIAL;
+        return $this->status === self::STATUS_TRIAL && $this->end_date->isFuture();
+    }
+
+    public function canUpgrade()
+    {
+        return $this->isTrialPeriod() && $this->end_date->isFuture();
+    }
+
+    public function canChangePlan()
+    {
+        return $this->status === self::STATUS_ACTIVE && !$this->hasRecentlyChanged();
+    }
+
+    public function hasRecentlyChanged()
+    {
+        return $this->updated_at && $this->updated_at->addDays(30)->isFuture();
+    }
+
+    public function daysUntilChangeAllowed()
+    {
+        if (!$this->hasRecentlyChanged()) {
+            return 0;
+        }
+        return now()->diffInDays($this->updated_at->addDays(30));
+    }
+
+    public function remainingTrialDays()
+    {
+        return $this->isTrialPeriod() ? now()->diffInDays($this->end_date) : 0;
+    }
+
+    /**
+     * Déterminer si l'abonnement est annuel
+     */
+    public function getIsAnnualAttribute()
+    {
+        return $this->attributes['is_annual'] ?? false; // Lire la valeur stockée ou par défaut false
+    }
+    public static function hasEverUsedTrial($userId)
+    {
+        return static::where('user_id', $userId)
+            ->where(function($query) {
+                $query->where('status', self::STATUS_TRIAL)
+                    ->orWhere(function($q) {
+                        $q->where('status', self::STATUS_ACTIVE)
+                            ->whereHas('plan', function($p) {
+                                $p->where('is_free', false);
+                            });
+                    });
+            })
+            ->exists();
+    }
+
+    public static function hasActiveTrial($userId)
+    {
+        return static::where('user_id', $userId)
+            ->where('status', self::STATUS_TRIAL)
+            ->where('end_date', '>', now())
+            ->exists();
     }
 }

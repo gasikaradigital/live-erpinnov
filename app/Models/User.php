@@ -25,7 +25,7 @@ class User extends Authenticatable
     use HasRoles;
     use SoftDeletes;
     use Billable;
-
+    protected $with = ['profile'];
     protected $dates = ['deleted_at'];
     protected $fillable = [
         'email',
@@ -56,6 +56,21 @@ class User extends Authenticatable
             'is_active' => 'boolean'
         ];
     }
+
+    public function activePlan()
+    {
+        return $this->subscriptions()
+            ->whereIn('status', [Subscription::STATUS_ACTIVE, Subscription::STATUS_TRIAL])
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>', now());
+            })
+            ->with('plan') // Inclure le plan associé
+            ->latest()
+            ->first()
+            ->plan ?? null;
+    }
+
 
     public function entreprises()
     {
@@ -93,30 +108,58 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
-    public function activePlan()
-    {
-        return $this->activeSubscription()?->plan;
-    }
-
     public function canCreateInstance()
     {
-        $activePlan = $this->activePlan();
-        if (!$activePlan) {
+        // Récupérer l'abonnement actif (trial ou payant)
+        $activeSubscription = $this->subscriptions()
+            ->whereIn('status', ['active', 'trial'])
+            ->latest()
+            ->first();
+
+        if (!$activeSubscription) {
             return false;
         }
-        return $activePlan->instance_limit === null || $this->instances()->count() < $activePlan->instance_limit;
+
+        // Compter les instances selon le type d'abonnement
+        $instanceCount = $this->instances()
+            ->whereHas('subscription', function($query) use ($activeSubscription) {
+                $query->where('id', $activeSubscription->id);
+            })->count();
+
+        // Si c'est un abonnement payant, vérifier la limite du plan
+        if ($activeSubscription->status === 'active') {
+            return $instanceCount < ($activeSubscription->plan->instance_limit ?? 1);
+        }
+
+        // Si c'est un essai, limiter à 1 instance
+        if ($activeSubscription->status === 'trial') {
+            return $instanceCount < 1;
+        }
+
+        return false;
     }
 
     public function remainingInstances()
     {
-        $activePlan = $this->activePlan();
-        if (!$activePlan) {
+        $activeSubscription = $this->subscriptions()
+            ->whereIn('status', ['active', 'trial'])
+            ->latest()
+            ->first();
+
+        if (!$activeSubscription) {
             return 0;
         }
-        if ($activePlan->instance_limit === null) {
-            return 'Illimité';
+
+        $instanceCount = $this->instances()
+            ->whereHas('subscription', function($query) use ($activeSubscription) {
+                $query->where('id', $activeSubscription->id);
+            })->count();
+
+        if ($activeSubscription->status === 'active') {
+            return max(0, ($activeSubscription->plan->instance_limit ?? 1) - $instanceCount);
         }
-        return max(0, $activePlan->instance_limit - $this->instances()->count());
+
+        return $activeSubscription->status === 'trial' ? max(0, 1 - $instanceCount) : 0;
     }
 
 
