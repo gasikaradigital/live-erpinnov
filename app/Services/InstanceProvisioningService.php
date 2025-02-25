@@ -83,6 +83,7 @@ class InstanceProvisioningService
         return [
             'url' => $urlSuffix . Config::get('dolibarr.domain_suffix'),
             'document_root' => $documentRoot,
+            'db_name' => $dbNameInnov
         ];
     }
 }

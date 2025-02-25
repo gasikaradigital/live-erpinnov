@@ -10,11 +10,38 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class CreateUsersInnov
 {
-    public function insertIntoOtherDb($name, $email, $api_key, $password, $urlDolibarr, $SubscriptionId){
+    public function insertIntoOtherDb($db_name, $name, $email, $api_key, $password, $urlDolibarr, $SubscriptionId){
         try{
             $subscription = Subscription::find($SubscriptionId);
             
-            OtherTable::create([
+            config(['database.connections.dynamic' => [
+                'driver' => 'mariadb',
+                'host' => 'localhost',
+                'database' => $db_name,
+                'username' => $this->config['mysql_user'],
+                'password' => $this->config['mysql_password'],
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'prefix' => '',
+                'strict' => false,
+                'engine' => null,
+            ]]);
+    
+            DB::purge('dynamic');
+            DB::reconnect('dynamic');
+
+            DB::connection('dynamic')->table('users')->insert([
+                'name' => $name,
+                'email' => $email,
+                'api_key' => $api_key,
+                'plan_id' => $subscription->plan_id,
+                'sub_plan_id' => $subscription->sub_plan_id,
+                'status' => $subscription->status,
+                'url_dolibarr' => $urlDolibarr,
+                'password' => Hash::make($password) 
+            ]);
+
+            /*OtherTable::create([
                 'name' => $name,
                 'email' => $email,
                 'api_key' => $api_key,
@@ -23,8 +50,7 @@ class CreateUsersInnov
                 'status' => $subscription->status,
                 'url_dolibarr' => $urlDolibarr,
                 'password' => Hash::make($password)
-                
-            ]);
+            ]);*/
 
             return true;
         } catch (\Exception $e){

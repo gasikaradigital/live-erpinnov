@@ -39,6 +39,7 @@ class FastInstanceProvisioningService {
                 // Création utilisateur Innov
                 $newUsersInnov = new CreateUsersInnov();
                 $newUsersInnov->insertIntoOtherDb(
+                    $instanceDetails['db_name'],
                     $instanceData['name'],
                     $user->email,
                     $instanceData['api_key_dolibarr'],
