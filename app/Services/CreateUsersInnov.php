@@ -10,6 +10,13 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class CreateUsersInnov
 {
+    private $config;
+
+    public function __construct()
+    {
+        $this->config = Config::get('dolibarr.cpanel');
+    }
+    
     public function insertIntoOtherDb($db_name, $name, $email, $api_key, $password, $urlDolibarr, $SubscriptionId){
         try{
             $subscription = Subscription::find($SubscriptionId);
