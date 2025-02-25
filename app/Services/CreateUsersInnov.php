@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\OtherTable;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class CreateUsersInnov
     {
         $this->config = Config::get('dolibarr.cpanel');
     }
-    
+
     public function insertIntoOtherDb($db_name, $name, $email, $api_key, $password, $urlDolibarr, $SubscriptionId){
         try{
             $subscription = Subscription::find($SubscriptionId);
