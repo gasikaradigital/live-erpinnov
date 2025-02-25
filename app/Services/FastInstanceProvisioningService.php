@@ -44,7 +44,7 @@ class FastInstanceProvisioningService {
                     $user->email,
                     $instanceData['api_key_dolibarr'],
                     $instanceData['password_dolibarr'],
-                    "http://" . $instanceDetails['url'],
+                    "http://" . $instanceData['name'] . '-dolibarr.erpinnov.com',
                     $instance['subscription_id']
                 );
 
