@@ -43,7 +43,7 @@ class CreateUsersInnov
                 'email' => $email,
                 'api_key' => $api_key,
                 'plan_id' => $subscription->plan_id,
-                'sub_plan_id' => $subscription->sub_plan_id,
+                'sub_plan_id' => $subscription->sub_plan_id ?? '0',
                 'status' => $subscription->status,
                 'url_dolibarr' => $urlDolibarr,
                 'password' => Hash::make($password) 

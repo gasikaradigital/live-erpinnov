@@ -90,7 +90,6 @@ class DatabaseServiceInnov
         
             return true;
         } catch (\Exception $e) {
-            dd($e->getMessage());
             //\Log::error("Erreur lors de l'importation : " . $e->getMessage());
             return false;
         }
