@@ -49,17 +49,6 @@ class CreateUsersInnov
                 'password' => Hash::make($password) 
             ]);
 
-            /*OtherTable::create([
-                'name' => $name,
-                'email' => $email,
-                'api_key' => $api_key,
-                'plan_id' => $subscription->plan_id,
-                'sub_plan_id' => $subscription->sub_plan_id,
-                'status' => $subscription->status,
-                'url_dolibarr' => $urlDolibarr,
-                'password' => Hash::make($password)
-            ]);*/
-
             return true;
         } catch (\Exception $e){
             dd($e->getMessage());

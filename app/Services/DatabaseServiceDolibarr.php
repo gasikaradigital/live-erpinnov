@@ -56,7 +56,7 @@ class DatabaseServiceDolibarr
         return $db_name;
     }
     
-    public function createDatabaseInnov($dbNameCpanel)
+    /*public function createDatabaseInnov($dbNameCpanel)
     {
         $cpanel_host = $this->config['host'];
         $cpanel_user = $this->config['user'];
@@ -95,7 +95,7 @@ class DatabaseServiceDolibarr
         curl_close($ch);
 
         return $db_name;
-    }
+    }*/
 
     public function importDatabase($db_name)
     {
