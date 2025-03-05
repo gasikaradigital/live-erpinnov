@@ -115,7 +115,7 @@ class DatabaseServiceInnov
             DB::purge('dynamic');
             DB::reconnect('dynamic');
             
-            $subsciption = Subscription::find($subscription_id);
+            $subsciption = Subscription::find($subscriptionId);
 
             DB::connection('dynamic')->table('users')
                 ->where('id', 1)
