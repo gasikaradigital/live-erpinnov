@@ -16,6 +16,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use App\Events\InstanceCreatedEvent;
 use App\Jobs\CreateDolibarrInstance;
+use App\Jobs\ReplaceFreeSubdomain;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -403,6 +404,13 @@ class CreateInstances extends Component
             $this->alert('error', 'Erreur lors de la création de l\'instance: ' . $e->getMessage());
             $this->dispatch('instanceCreationEnded');
 
+            // Lancer le Job de création de sous-domaine
+            try{
+                (new ReplaceFreeSubdomain())->handle();
+            } catch(\Exception $e){
+                dd($e->getMessage());
+            }
+            
             return false;
         }
     }

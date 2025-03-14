@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use App\Models\Subscription;
+use App\Models\InstanceQuota;
 
 class DatabaseServiceInnov
 {
@@ -96,7 +97,7 @@ class DatabaseServiceInnov
     }
     
 
-    public function updateCredentialsInnov($db_name, $instanceName, $api_key_dolibarr, $password, $userEmail, $subscriptionId)
+    public function updateCredentialsInnov($db_name, $instanceName, $api_key_dolibarr, $password, $userEmail, $subscriptionId, $instance_free)
     {
         try {
             config(['database.connections.dynamic' => [
@@ -115,14 +116,14 @@ class DatabaseServiceInnov
             DB::purge('dynamic');
             DB::reconnect('dynamic');
             
-            $subsciption = Subscription::find($subscriptionId);
-
+            $subscription = Subscription::find($subscriptionId);
+            
             DB::connection('dynamic')->table('users')
                 ->where('id', 1)
                 ->update([
                     'name' => $instanceName,
-                    'api_key' => $api_key_dolibarr,
-                    'url_dolibarr' => 'http://'. $instanceName . '-dolibarr.erpinnov.com',
+                    'api_key' => $instance_free->api_key,
+                    'url_dolibarr' => $instance_free->url,
                     'plan_id' => $subscription->plan_id,
                     'sub_plan_id' => $subscription->sub_plan_id,
                     'email' => $userEmail,
@@ -131,6 +132,7 @@ class DatabaseServiceInnov
     
             return true;
         } catch (\Exception $e) {
+            dd($e->getMessage());
             \Log::error("Erreur lors de la mise à jour : " . $e->getMessage());
             return false;
         }
