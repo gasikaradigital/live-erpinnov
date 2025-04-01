@@ -17,6 +17,10 @@
                              
                         </a>
 
+                        <p class="footer-text footer-logo-description mb-6">
+                            {{ description }}
+                        </p>
+
                         <!-- Contact en bas -->
                         <ul class="list-unstyled mt-auto">
                             <li v-for="(link, index) in erpContact"
@@ -25,9 +29,6 @@
                                 <a :href="link.url" class="footer-link">{{ link.text }}</a>
                             </li>
                         </ul>
-                        <p class="footer-text footer-logo-description mb-6">
-                            {{ description }}
-                        </p>
                         <form @submit.prevent="subscribeNewsletter">
                             <div class="d-flex mt-2 gap-4">
                                 <div class="form-floating form-floating-outline w-px-250">
