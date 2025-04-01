@@ -28,7 +28,7 @@
                                            placeholder="Votre email" />
                                     <label for="newsletter-1">S'inscrire à la newsletter</label>
                                 </div>
-                                <button type="submit" class="btn btn-primary">S'abonner</button>
+                                <button type="submit" class="btn btn-primary">Rester informé</button>
                             </div>
                         </form>
                     </div>
@@ -101,7 +101,7 @@ export default {
     name: 'FooterSection',
     data() {
         return {
-            description: 'La solution ERP complète pour gérer et développer votre entreprise. Accessible, performante et adaptée à vos besoins.',
+            description: 'ERP Innov: La Gestion Intelligente à Portée de Main. Simplifiez, Innovez, Prospérez',
             newsletterEmail: '',
             erpLinks: [
                 { url: '#landingFeatures', text: 'Fonctionnalités' },
@@ -123,12 +123,6 @@ export default {
                     text: 'contact@erpinnov.com',
                     isLink: true,
                     href: 'mailto:contact@erpinnov.com'
-                },
-                {
-                    icon: 'ri-phone-line',
-                    text: '+261 34 00 000 00',
-                    isLink: true,
-                    href: 'tel:+261340000000'
                 },
                 {
                     icon: 'ri-map-pin-line',

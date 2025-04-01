@@ -9,6 +9,7 @@ use App\Models\SubPlan;
 use Livewire\Component;
 use App\Models\Instance;
 use App\Models\Entreprise;
+use App\Models\InstanceQuota;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Models\Subscription;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Services\FastInstanceProvisioningService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 
 class CreateInstances extends Component
 {
@@ -299,7 +301,7 @@ class CreateInstances extends Component
                 'user_id' => $user->id
             ]);
 
-            // Récupérer le plan sélectionné
+            // // Récupérer le plan sélectionné
             $selectedPlan = session()->get('selected_plan');
             if (!$selectedPlan) {
                 throw new \Exception('Aucun plan sélectionné.');
@@ -325,8 +327,9 @@ class CreateInstances extends Component
                 throw new \Exception('Aucune souscription active trouvée.');
             }
 
-            // Générer les identifiants d'accès
-            $dolibarrPassword = Str::random(16);
+            // // Générer les identifiants d'accès
+            $instance_free = InstanceQuota::where('statut', 'libre')->first();            
+            $dolibarrPassword = $instance_free->password;
             $instanceData = [
                 'name' => $instanceName,
                 'password_dolibarr' => $dolibarrPassword,
@@ -352,7 +355,7 @@ class CreateInstances extends Component
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
 
-            // Provisionnement rapide de l'instance
+            // // Provisionnement rapide de l'instance
             $fastProvisioning = new FastInstanceProvisioningService();
             $success = $fastProvisioning->createInstance($instanceData, $user, $instance);
 
@@ -370,13 +373,13 @@ class CreateInstances extends Component
                 'created_by' => $user->email
             ];
 
-            // Déclencher l'événement de création
+            // // Déclencher l'événement de création
             event(new InstanceCreatedEvent($instance));
 
-            // Nettoyer la session
+            // // Nettoyer la session
             session()->forget(['selected_plan', 'payment_completed', 'trial_activated']);
 
-            // Commit de la transaction
+            // // Commit de la transaction
             DB::commit();
 
             // Log du succès
@@ -388,6 +391,13 @@ class CreateInstances extends Component
             $this->alert('success', 'Instance créée avec succès. Vos informations de connexion sont disponibles ci-dessous.');
             $this->dispatch('instanceCreationEnded');
 
+            // Lancer le Job de création de sous-domaine
+            try{
+                (new ReplaceFreeSubdomain())->handle();
+            } catch(\Exception $e){
+                dd($e->getMessage());
+            }
+            
             return true;
 
         } catch (\Exception $e) {
@@ -404,13 +414,6 @@ class CreateInstances extends Component
             $this->alert('error', 'Erreur lors de la création de l\'instance: ' . $e->getMessage());
             $this->dispatch('instanceCreationEnded');
 
-            // Lancer le Job de création de sous-domaine
-            try{
-                (new ReplaceFreeSubdomain())->handle();
-            } catch(\Exception $e){
-                dd($e->getMessage());
-            }
-            
             return false;
         }
     }

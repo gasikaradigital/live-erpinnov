@@ -7,18 +7,25 @@
              data-speed="1" />
 
         <!-- Header Original -->
-        <h6 class="text-center d-flex justify-content-center align-items-center mb-2">
+        <h2 class="text-center d-flex justify-content-center align-items-center mb-2">
           <img src="/assets/img/front-pages/icons/section-tilte-icon.png"
                alt="section title icon"
                class="me-3" />
           <span class="text-uppercase">Nos offres</span>
-        </h6>
-        <h5 class="text-center mb-2">
-          <span class="display-5 fs-4 fw-bold">Des solutions sur mesure</span> pour votre entreprise
-        </h5>
+        </h2>
+    
         <p class="text-center fw-medium mb-10">
           Toutes nos offres incluent une suite complète d'outils pour gérer votre activité.<br />
           Choisissez le plan qui correspond le mieux à vos besoins.
+        </p>
+
+        <h1 class=" text-center hero-title" data-aos="fade-up" data-aos-delay="300">         
+          <span class="gradient-text">SOLO</span> 
+        </h1>
+
+         <p class="text-center fw-medium mb-10">
+          Que vous soyez artisan, commerçant ou entrepreneur, notre solution ERP-CRM vous aide à gérer efficacement votre activité au quotidien. 
+          De la gestion des clients à la comptabilité, en passant par le suivi des ventes et la gestion d'un site web, nous avons une offre adaptée à vos besoins.
         </p>
 
         <!-- Le reste du contenu reste identique -->
@@ -76,31 +83,33 @@ export default {
       pricingPlans: [
         {
           id: 1,
-          name: 'Solo Basic',
-          price: '5,25',
+          name: 'Basic',
+          price: '5.00',
           priceLocal: '25 500 MGA',
           featured: false,
           features: [
             'Gestion des tiers',
             'Gestion des produits',
-            'Gestion des stocks',
             'CRM',
             'Devis et facturation',
-            'Comptabilité'
+            'Comptabilité simple',
+            'Banque',
+            'Caisse'
           ],
           description: "Idéal pour les indépendants ou petites entreprises avec des besoins simples.",
           buttonText: 'Essayer gratuitement'
         },
         {
           id: 2,
-          name: 'Solo Standard',
-          price: '15,50',
-          priceLocal: '77 500 MGA',
+          name: 'Standard',
+          price: '8.00',
+          priceLocal: '40.000 MGA',
           featured: true,
           features: [
-            'Modules Artisan',
-            'Gestion avancée des utilisateurs',
-            'Rapports et statistiques'
+            'Modules Basic',
+            'Rapports et statistiques',
+            'Gestion des stocks',
+            'Email integré'
           ],
           description: "Pour les petites entreprises nécessitant une gestion avancée.",
           buttonText: 'Démarrer maintenant'
@@ -108,19 +117,16 @@ export default {
         {
           id: 3,
           name: 'Premium',
-          price: '45,00',
-          priceLocal: '225 000 MGA',
+          price: '16.00',
+          priceLocal: '80.000 MGA',
           featured: false,
           features: [
             'Modules Standard',
-            'Email intégré',
-            'Calculs automatisés des coûts et marges',
-            'Suivi de temps',
-            'Gestion multi-devises',
-            'Support prioritaire'
+            'Comptabilité analytique',
+            'Site web synchronisé'
           ],
           description: "Offre complète pour les entreprises ayant des besoins avancés et une gestion d\u0027équipe.",
-          buttonText: 'Contacter un commercial'
+          buttonText: 'Inscrivez vous pour plus de detail'
         }
       ]
     }
@@ -139,6 +145,10 @@ export default {
     height: auto;
  }
 
+.gradient-text {
+  font-weight: bold;
+  color: #0d6efd;
+}
  .card-body {
   display: flex;
   flex-direction: column;

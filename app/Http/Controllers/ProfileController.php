@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use Illuminate\Http\Request;
+use App\Jobs\UpdateContactDolibarr;
 
 class ProfileController extends Controller
 {
@@ -30,6 +31,13 @@ class ProfileController extends Controller
             if ($profile->isComplete()) {
                 // Ajouter le flag dans la session
                 session(['profile_updated' => true]);
+
+                // Lancer le Job de mise à jours du contact dans dolibarr
+                try{
+                    (new UpdateContactDolibarr($profile, $user->email))->handle();
+                } catch(\Exception $e){
+                    dd($e->getMessage());
+                }
 
                 return redirect()->route('espaceClient')
                     ->with('success', 'Profil mis à jour avec succès.');

@@ -3,8 +3,8 @@
       <nav-section />
       <div data-bs-spy="scroll" class="scrollspy-example">
         <hero-section />
+        <module-section />
         <pricing-section />
-        <facts-section />
         <faq-section />
         <CTASection />
         <contact-section />
@@ -25,13 +25,17 @@ import CTASection from './sections/CTASection.vue'
 // import ContactSection from './sections/ContactSection.vue'
 import FooterSection from './sections/FooterSection.vue'
 import ScrollSection from './sections/ScrollSection.vue'
+import DiscoverSection from './sections/DiscoverSection.vue'
+import ModuleSection from './sections/ModuleSection.vue'
 
 export default {
     name: 'App',
     components: {
         NavSection,
         HeroSection,
+        DiscoverSection,
         PricingSection,
+        ModuleSection,
         FactsSection,
         FaqSection,
         CTASection,

@@ -2,26 +2,28 @@
     <section id="landingFunFacts" class="section-py landing-fun-facts py-12 my-3">
         <div class="container">
             <div class="row gx-0 gy-6 gx-sm-6 justify-content-center">
+                <div class="container bg-icon-left position-relative">
+                    <h2 class="text-center mb-2">
+                        <span class="display-5 fs-4 fw-bold">SIMPLIFIER VOTRE GESTION</span> 
+                    </h2>
+                    <p class="text-center fw-medium mb-10">
+                        Des outils adaptés pour gagner du temps et répondre à vos besoins
+                    </p>
+                </div>
                 <div v-for="fact in facts"
                      :key="fact.id"
-                     class="col-md-3 col-sm-6 text-center"
+                     class="col-md-4 col-sm-6 text-center"
                      data-aos="fade-up"
                      :data-aos-delay="fact.id * 100">
+                     
                     <span :class="['badge', 'rounded-pill', fact.iconBgClass, 'fun-facts-icon', 'mb-6', 'p-5']">
                         <i :class="['tf-icons', fact.icon, 'ri-42px']"></i>
                     </span>
 
                     <h2 class="fw-bold mb-0 fun-facts-text">
-                        <count-up
-                            :startVal="0"
-                            :endVal="fact.numericValue"
-                            :duration="2.5"
-                            :options="fact.options"
-                            @end="onCountFinished(fact)"
-                        >
-                            <template #suffix>{{ fact.suffix }}</template>
-                        </count-up>
+                        {{ fact.suffix}}
                     </h2>
+
                     <h6 class="mb-0 text-body">{{ fact.label }}</h6>
                 </div>
             </div>
@@ -36,7 +38,7 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 
 export default defineComponent({
-    name: 'FactsSection',
+    name: 'ModuleSection',
     components: {
         CountUp
     },
@@ -45,9 +47,9 @@ export default defineComponent({
             facts: [
                 {
                     id: 1,
-                    numericValue: 7,
-                    suffix: '.1k+',
-                    label: 'Documentation en ligne, chat d\'assistance, ticket réponse sous 24h',
+                    numericValue: null,
+                    suffix: 'CRM & Ventes',
+                    label: 'Le CRM vous aide à gérer vos clients de manière efficace et personnalisée.',
                     icon: 'ri-macbook-line',
                     iconBgClass: 'bg-label-hover-primary',
                     options: {
@@ -59,10 +61,9 @@ export default defineComponent({
                 },
                 {
                     id: 2,
-                    numericValue: 50,
-                    suffix: 'k+',
-                    label: 'Rejoigner nous',
-                    icon: 'ri-account-circle-fill',
+                    suffix: 'Comptabilité',
+                    label: 'Gérer de manière autonome votre comptabilité simple ou partie double',
+                    icon: 'ri-bank-line',
                     iconBgClass: 'bg-label-hover-success',
                     options: {
                         useEasing: true,
@@ -73,10 +74,9 @@ export default defineComponent({
                 },
                 {
                     id: 3,
-                    numericValue: 4,
-                    suffix: '.8/5',
-                    label: 'Très bien noté',
-                    icon: 'ri-vip-diamond-fill',
+                    suffix: 'Finance & Facturation',
+                    label: 'Optimisez votre gestion financière. Paiement et Rapprochement bancaire',
+                    icon: 'ri-bank-fill',
                     iconBgClass: 'bg-label-hover-success',
                     options: {
                         useEasing: true,
@@ -87,10 +87,35 @@ export default defineComponent({
                 },
                 {
                     id: 4,
-                    numericValue: 30,
-                    suffix: 'jours',
-                    label: 'Essai gratuit',
-                    icon: 'ri-shield-check-fill',
+                    suffix: 'Produit & Stock',
+                    label: 'Gérer efficacement vos Produits, Services, Stocks, Achats et Expéditions',
+                    icon: 'ri-product-hunt-line',
+                    iconBgClass: 'bg-label-hover-warning',
+                    options: {
+                        useEasing: true,
+                        useGrouping: true,
+                        separator: ' ',
+                        decimal: '.',
+                    }
+                },
+                {
+                    id: 5,
+                    suffix: 'Ressources Humaines',
+                    label: 'Noter solution simplifie la gestion de vos RH avec des outils intuitifs',
+                    icon: 'ri-account-circle-fill',
+                    iconBgClass: 'bg-label-hover-warning',
+                    options: {
+                        useEasing: true,
+                        useGrouping: true,
+                        separator: ' ',
+                        decimal: '.',
+                    }
+                },
+                {
+                    id: 6,
+                    suffix: 'Productivité',
+                    label: 'Améliorez votre Productivité en gérant efficacement Projets et Tâches.',
+                    icon: 'ri-line-chart-fill',
                     iconBgClass: 'bg-label-hover-warning',
                     options: {
                         useEasing: true,

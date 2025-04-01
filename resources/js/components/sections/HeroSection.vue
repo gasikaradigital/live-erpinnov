@@ -13,23 +13,27 @@
                 <div class="col-lg-6 hero-content" data-aos="fade-up">
                     <!-- Title -->
                     <h1 class="hero-title" data-aos="fade-up" data-aos-delay="300">
-                        <span class="gradient-text">Solution SaaS</span>
-                        complète pour
-                        <span class="highlight-text">votre entreprise</span>
+                        
+                        <span class="gradient-text">Nos solutions</span> adaptées
+                        <br>pour votre
+                        <span class="highlight-text"> organisation</span>
                     </h1>
 
                     <!-- Description -->
                     <p class="hero-description" data-aos="fade-up" data-aos-delay="400">
-                        <span class="text-emphasis">Transformez votre business</span>
-                        sans coder. Notre plateforme offre toutes les fonctionnalités
-                        marketing dont vous avez besoin, avec une
-                        <span class="text-primary">personnalisation en temps réel</span>.
-                    </p>
+                        Découvrez comment ERP INNOV peut transformer votre activité. 
+                        Que vous soyez entrepreneur individuel, TPE/PME en croissance, grande entreprise, association ou administration, nous vous offrons des solutions adaptées qui permettent :
+                        <ul>
+                            <li><b>Réduction des coûts opérationnels</b>: Optimisez vos dépenses et améliorez votre rentabilité.</li>
+                            <li><b>Optimisation de la gestion</b>: Optimisez vos dépenses et améliorez votre rentabilité.</li>
+                            <li><b>Croissance accélérée</b>: Adoptez des outils performants pour soutenir votre développement.</li>
+                        </ul>
+                    </p> 
 
                     <!-- CTA Buttons -->
                     <div class="hero-buttons" data-aos="fade-up" data-aos-delay="500">
                         <a href="/login" class="btn-primary">
-                            <span>Commencer maintenant</span>
+                            <span>En savoir plus, inscription gratuite</span>
                             <i class="ri-arrow-right-line ms-2"></i>
                         </a>
                         <a href="#landingCTA" class="btn-secondary">
@@ -54,7 +58,7 @@
 
                         <div class="stats-card stats-card-2">
                             <div class="stats-indicator primary"></div>
-                            <span>98% Satisfaction</span>
+                            <span>35% d'économies sur vos coûts</span>
                         </div>
                     </div>
                 </div>
@@ -191,6 +195,8 @@ export default {
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
+    margin-top: -10px;
+    transition: font-size 0.3s ease;
 }
 
 .gradient-text {
@@ -200,7 +206,7 @@ export default {
 }
 
 .highlight-text {
-    color: #1e40af;
+    color: #FF8C00;
 }
 
 .hero-description {
@@ -304,6 +310,71 @@ export default {
 
     .hero-buttons {
         justify-content: center;
+    }
+}
+
+/* Ultra larges (par exemple, écrans 4K ou ultra large) */
+@media (min-width: 1920px) {
+    .hero-title {
+        font-size: 4.5rem; /* augmentation pour profiter de l'espace */
+    }
+}
+
+/* Début écran de bureau standard (entre 1200px et 1919px) */
+@media (max-width: 1919px) and (min-width: 1200px) {
+    .hero-title {
+        font-size: 3.5rem;
+    }
+}
+
+/* Ecrans moyens ou Laptops (entre 992px et 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .hero-content {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+}
+
+/* Tablettes (entre 768px et 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content {
+        text-align: center;
+        padding: 0 1rem;
+        margin-bottom: 2.5rem;
+    }
+        
+    .hero-buttons {
+        justify-content: center;
+    }
+}
+
+/* Mobiles (moins de 768px) */
+@media (max-width: 767px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-content {
+        text-align: center;
+        padding: 0 1rem;
+        margin-bottom: 2rem;
+    }
+        
+    .hero-buttons {
+        justify-content: center;
+        flex-direction: column; /* éventuel empilement vertical */
     }
 }
 </style>
