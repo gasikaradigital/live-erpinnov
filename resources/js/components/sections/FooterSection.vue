@@ -81,6 +81,7 @@
             <div class="container d-flex flex-wrap justify-content-between flex-md-row flex-column text-center text-md-start">
                 <div class="mb-2 mb-md-0">
                     <span class="footer-text">© {{ currentYear }} ERP INNOV. Tous droits réservés.</span>
+                    <span class="footer-text">Mentions légales</span>
                 </div>
                 <div>
                     <a v-for="(social, index) in socialLinks"
@@ -101,7 +102,7 @@ export default {
     name: 'FooterSection',
     data() {
         return {
-            description: 'ERP Innov: La Gestion Intelligente à Portée de Main. Simplifiez, Innovez, Prospérez',
+            description: 'ERP Innov: La Gestion Intelligente à Portée de Main. Simplifiez, Innovez, Prospérez. contact@erpinnov@gmail.com',
             newsletterEmail: '',
             erpLinks: [
                 { url: '#landingFeatures', text: 'Fonctionnalités' },
@@ -118,12 +119,6 @@ export default {
                 { url: '/connexion', text: 'Connexion' }
             ],
             contactInfo: [
-                {
-                    icon: 'ri-mail-line',
-                    text: 'contact@erpinnov.com',
-                    isLink: true,
-                    href: 'mailto:contact@erpinnov.com'
-                },
                 {
                     icon: 'ri-map-pin-line',
                     text: 'Madagascar',
