@@ -133,7 +133,6 @@ export default {
             legalLinks: [
                 { url: '/confidentialite', text: 'Confidentialité' },
                 { url: '/cgv', text: 'CGV' },
-                { url: '/centre-aide', text: "Centre d'aide" },
                 { url: '/connexion', text: 'Connexion' }
             ],
             contactInfo: [
