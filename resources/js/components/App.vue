@@ -6,7 +6,6 @@
         <module-section />
         <pricing-section />
         <faq-section />
-        <CTASection />
         <contact-section />
       </div>
       <footer-section />
