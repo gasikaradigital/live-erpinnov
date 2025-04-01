@@ -8,7 +8,7 @@
             <div class="container position-relative">
                 <div class="row gx-0 gy-7 gx-sm-6 gx-lg-12">
                     <!-- Logo et Newsletter -->
-                    <div class="col-lg-5">
+                    <div class="col-lg-5 d-flex flex-column">
                         <a href="/" class="app-brand-link mb-6">
                             <span class="app-brand-logo demo me-2">
                                 <!-- Logo -->
@@ -16,7 +16,9 @@
                             <span class="app-brand-text demo footer-link fw-semibold ms-1">ERP INNOV</span>
                              
                         </a>
-                        <ul class="list-unstyled mb-0">
+
+                        <!-- Contact en bas -->
+                        <ul class="list-unstyled mt-auto">
                             <li v-for="(link, index) in erpContact"
                                 :key="index"
                                 class="mb-4">
