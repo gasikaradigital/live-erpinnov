@@ -14,14 +14,15 @@
                                 <!-- Logo -->
                             </span>
                             <span class="app-brand-text demo footer-link fw-semibold ms-1">ERP INNOV</span>
-                             <ul class="list-unstyled mb-0">
+                             
+                        </a>
+                        <ul class="list-unstyled mb-0">
                             <li v-for="(link, index) in erpContact"
                                 :key="index"
                                 class="mb-4">
                                 <a :href="link.url" class="footer-link">{{ link.text }}</a>
                             </li>
                         </ul>
-                        </a>
                         <p class="footer-text footer-logo-description mb-6">
                             {{ description }}
                         </p>
