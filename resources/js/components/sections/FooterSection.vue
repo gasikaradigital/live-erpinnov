@@ -80,7 +80,7 @@
         <div class="footer-bottom py-5">
             <div class="container d-flex flex-wrap justify-content-between flex-md-row flex-column text-center text-md-start">
                 <div class="mb-2 mb-md-0">
-                    <span class="footer-text">© {{ currentYear }} ERP INNOV. Tous droits réservés.</span>
+                    <span class="footer-text">© {{ currentYear }} ERP INNOV. Tous droits réservés. </span>
                     <span class="footer-text">Mentions légales</span>
                 </div>
                 <div>

@@ -1,10 +1,6 @@
 <template>
     <section id="landingPricing" class="section-py bg-body landing-pricing">
       <div class="container bg-icon-left position-relative">
-        <img src="/assets/img/front-pages/icons/bg-left-icon-light.png"
-             alt="section icon"
-             class="position-absolute top-0 start-0"
-             data-speed="1" />
 
         <!-- Header Original -->
         <h2 class="text-center d-flex justify-content-center align-items-center mb-2">
