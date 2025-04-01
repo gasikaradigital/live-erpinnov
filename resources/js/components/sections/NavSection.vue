@@ -137,6 +137,7 @@
             menuItems: [
                 { href: '#landingHero', icon: 'ri-home-line', text: 'Accueil' },
                 { href: '#landingPricing', icon: 'ri-price-tag-line', text: 'Offres' },
+                { href: '#landingGestion', icon: 'ri-price-tag-line', text: 'Gestion' },
                 { href: '#landingFAQ', icon: 'ri-questionnaire-line', text: 'FAQ' }
             ]
         }

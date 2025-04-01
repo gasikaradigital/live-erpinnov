@@ -36,10 +36,6 @@
                             <span>En savoir plus, inscription gratuite</span>
                             <i class="ri-arrow-right-line ms-2"></i>
                         </a>
-                        <a href="#landingCTA" class="btn-secondary">
-                            <span>Voir la démo</span>
-                            <i class="ri-play-circle-line ms-2"></i>
-                        </a>
                     </div>
                 </div>
 

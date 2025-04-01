@@ -1,5 +1,5 @@
 <template>
-    <section id="landingFunFacts" class="section-py landing-fun-facts py-12 my-3">
+    <section id="landingGestion" class="section-py landing-fun-facts py-12 my-3">
         <div class="container">
             <div class="row gx-0 gy-6 gx-sm-6 justify-content-center">
                 <div class="container bg-icon-left position-relative">
