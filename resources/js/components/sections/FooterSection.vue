@@ -14,6 +14,13 @@
                                 <!-- Logo -->
                             </span>
                             <span class="app-brand-text demo footer-link fw-semibold ms-1">ERP INNOV</span>
+                             <ul class="list-unstyled mb-0">
+                            <li v-for="(link, index) in erpContact"
+                                :key="index"
+                                class="mb-4">
+                                <a :href="link.url" class="footer-link">{{ link.text }}</a>
+                            </li>
+                        </ul>
                         </a>
                         <p class="footer-text footer-logo-description mb-6">
                             {{ description }}
@@ -102,7 +109,15 @@ export default {
     name: 'FooterSection',
     data() {
         return {
-            description: 'ERP Innov: La Gestion Intelligente à Portée de Main. Simplifiez, Innovez, Prospérez. contact@erpinnov@gmail.com',
+            description: 'ERP Innov: La Gestion Intelligente à Portée de Main. Simplifiez, Innovez, Prospérez.',
+            erpContact: [
+                {
+                icon: 'ri-mail-line',
+                    text: 'contact@erpinnov.com',
+                    isLink: true,
+                    href: 'mailto:contact@erpinnov.com'
+                }
+            ],
             newsletterEmail: '',
             erpLinks: [
                 { url: '#landingFeatures', text: 'Fonctionnalités' },
@@ -112,7 +127,6 @@ export default {
                 { url: '/demo', text: 'Démonstration' }
             ],
             legalLinks: [
-                { url: '/mentions-legales', text: 'Mentions légales' },
                 { url: '/confidentialite', text: 'Confidentialité' },
                 { url: '/cgv', text: 'CGV' },
                 { url: '/centre-aide', text: "Centre d'aide" },
