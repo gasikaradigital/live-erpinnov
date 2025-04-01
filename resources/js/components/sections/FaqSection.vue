@@ -7,12 +7,9 @@
                  data-speed="1" />
 
             <!-- Section Header -->
-            <h6 class="text-center d-flex justify-content-center align-items-center mb-6">
-                <img src="/assets/img/front-pages/icons/section-tilte-icon.png"
-                     alt="section title icon"
-                     class="me-3" />
-                <span class="text-uppercase">Questions fréquentes</span>
-            </h6>
+            <h2 class="text-center d-flex justify-content-center align-items-center mb-2">
+                <span class="display-5 fs-4 fw-bold">QUESTIONS FREQUENTES</span> 
+            </h2>
 
             <h5 class="text-center mb-2">
                 <span class="display-5 fs-4 fw-bold">Les réponses à vos questions</span>
