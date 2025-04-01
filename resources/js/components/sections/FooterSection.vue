@@ -111,6 +111,7 @@ export default {
     data() {
         return {
             description: 'ERP Innov: La Gestion Intelligente à Portée de Main. Simplifiez, Innovez, Prospérez.',
+            newsletterEmail: '',
             erpContact: [
                 {
                 icon: 'ri-mail-line',
@@ -119,7 +120,6 @@ export default {
                     href: 'mailto:contact@erpinnov.com'
                 }
             ],
-            newsletterEmail: '',
             erpLinks: [
                 { url: '#landingFeatures', text: 'Fonctionnalités' },
                 { url: '#landingPricing', text: 'Tarifs' },
