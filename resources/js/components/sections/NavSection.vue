@@ -23,19 +23,11 @@
                     <span class="app-brand-text demo menu-text fw-semibold ms-2">
                         ERP <span class="innov-text">INNOV</span>
                     </span>
-
                 </a>
             </div>
 
             <!-- Menu principal -->
             <div class="collapse navbar-collapse landing-nav-menu" id="navbarSupportedContent">
-                <button class="navbar-toggler border-0 position-absolute end-0 top-0 d-lg-none"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent">
-                    <i class="tf-icons ri-close-fill"></i>
-                </button>
-
                 <ul class="navbar-nav mx-auto p-3 p-lg-0">
                     <li v-for="item in menuItems"
                         :key="item.href"
@@ -47,88 +39,115 @@
                             <span>{{ item.text }}</span>
                         </a>
                     </li>
-                </ul>
-            </div>
 
-            <!-- Actions à droite -->
-            <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <template v-if="!auth">
-                    <li>
-                        <a href="/login" class="btn btn-login rounded-pill px-3 px-sm-4 mx-2"  
-                        data-bs-toggle="tooltip" data-bs-placement="top" 
-                        title="Déjà un compte, connectez-vous">
+                    <!-- Connexion et Inscription -->
+                    <li class="nav-item mx-2" v-if="!auth">
+                        <a href="/login" class="auth-link btn-login">
                             <i class="tf-icons ri-user-line me-md-1"></i>
                             <span class="d-inline">Connexion</span>
                         </a>
-
-                        <a href="/inscription" class="btn btn-inscription rounded-pill px-3 px-sm-4 mx-2"  
-                        data-bs-toggle="tooltip" data-bs-placement="top" 
-                        title="Inscrivez-vous maintenant et profitez d'un essai gratuit de 14 jours">
+                    </li>
+                    <li class="nav-item mx-2" v-if="!auth">
+                        <a href="/inscription" class="auth-link btn-inscription">
                             <i class="tf-icons ri-user-add-line me-md-1"></i>
                             <span class="d-inline">Inscription</span>
                         </a>
-
                     </li>
-                </template>
-                <template v-else>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <img :src="auth.profile_photo_url || '/assets/img/avatars/1.png'"
-                            class="rounded-circle fw-bold" width="40" :alt="auth.name">
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/client-espace/client"><i class="ri-dashboard-line me-2"></i>Dashboard</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form @submit.prevent="logout" method="POST">
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="ri-logout-box-line me-2"></i>Déconnexion
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                </template>
-            </ul>
+                </ul>
+            </div>
         </div>
     </nav>
- </template>
- <style>
-  .innov-text {
-        color: #0393da;
+</template>
+
+<style>
+/* Style du texte ERP Innov */
+.innov-text {
+    color: #0393da;
+}
+
+/* Bureau : Les boutons restent normaux */
+@media (min-width: 992px) {
+    .btn-login, .btn-inscription {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
     }
-    /* Style du bouton Connexion */
+
     .btn-login {
         background-color: #0d6efd; /* Bleu */
         border: 2px solid #0d6efd;
         color: white;
-        transition: all 0.3s ease-in-out;
     }
 
     .btn-login:hover {
         background-color: white;
         color: #0d6efd;
-        border: 2px solid #0d6efd;
     }
 
-    /* Style du bouton Inscription */
     .btn-inscription {
         background-color: #FF8C00; /* Orange */
         border: 2px solid #FF8C00;
         color: white;
-        transition: all 0.3s ease-in-out;
     }
 
     .btn-inscription:hover {
         background-color: white;
         color: #FF8C00;
-        border: 2px solid #FF8C00;
+    }
+}
+
+/* Mobile : Transformer en liens */
+@media (max-width: 991.98px) {
+    .landing-nav-menu {
+        display: flex;
+        width: fit-content !important; /* Ajuste automatiquement à la taille du contenu */
+        max-width: 70%; /* Limite la largeur max pour éviter qu'il prenne toute la ligne */
+        margin: 0 auto; /* Centre le menu */
+    }
+    .navbar-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
     }
 
- </style>
-   
- <script>
- export default {
+    .auth-link {
+        display: block;
+        text-align: left;
+        width: 100%;
+        padding: 12px 0;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .btn-login {
+        color: #0d6efd;
+        border-bottom: 2px solid #0d6efd;
+    }
+
+    .btn-inscription {
+        color: #FF8C00;
+        border-bottom: 2px solid #FF8C00;
+    }
+
+    /* Effet au survol */
+    .btn-login:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .btn-inscription:hover {
+        background-color: #FF8C00;
+        color: white;
+    }
+}
+</style>
+
+<script>
+export default {
     name: 'NavSection',
     data() {
         return {
@@ -174,62 +193,5 @@
             }
         }
     }
- }
-
- var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
- </script>
-
- <style scoped>
- .nav-link {
-    position: relative;
-    transition: all 0.2s ease;
- }
-
- .nav-link span::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    background-color: #666cff;
-    transition: width 0.2s ease;
-    opacity: 0;
- }
-
- .nav-link:hover span::after,
- .nav-link.active span::after {
-    width: 100%;
-    opacity: 1;
- }
-
- .nav-link:hover {
-    color: #666cff;
- }
-
- .nav-link:hover i {
-    transform: translateY(-1px);
- }
-
- .nav-link i {
-    transition: transform 0.2s ease;
- }
-
- @media (max-width: 991.98px) {
-    .navbar-collapse {
-        position: relative;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        padding-top: 1rem;
-    }
-
-    .navbar-collapse .navbar-toggler {
-        z-index: 10;
-        margin: 0.5rem;
-    }
- }
- </style>
+}
+</script>
