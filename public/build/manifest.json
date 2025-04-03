@@ -3,28 +3,28 @@
     "file": "assets/vendor-DvB2Xm2x.css",
     "src": "_vendor-!~{003}~.js"
   },
-  "_vendor-D4FUqr7X.js": {
-    "file": "assets/vendor-D4FUqr7X.js",
+  "_vendor-BN8XuZb7.js": {
+    "file": "assets/vendor-BN8XuZb7.js",
     "name": "vendor",
     "css": [
       "assets/vendor-DvB2Xm2x.css"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CYALmDQp.css",
+    "file": "assets/app-DXdRShSG.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DgBX5Xoj.js",
+    "file": "assets/app-CxWY-vJV.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-D4FUqr7X.js"
+      "_vendor-BN8XuZb7.js"
     ],
     "css": [
-      "assets/app-DI_ba9rE.css"
+      "assets/app-CkTo39xx.css"
     ]
   }
 }
