@@ -1,0 +1,116 @@
+<?php
+namespace App\Jobs;
+
+use App\Models\InstanceQuota;
+use Illuminate\Bus\Queueable;
+use Exception;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+class AddTiers implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    public $contact;
+    public $email;
+    protected $config;
+
+    public function __construct($email)
+    {
+        $this->email = $email;
+        $this->config = Config::get('dolibarr.cpanel');
+    }
+
+    public function handle()
+    {
+        $this->getContact();
+        $this->setValue();
+        
+        try {
+            $apiData = [
+                ...$this->value,
+                'statut' => 1,
+                'entity' => 1
+            ];
+
+            Log::info('Données envoyées à l\'API:', $apiData);
+            
+            $response = Http::withHeaders([
+                'DOLAPIKEY' => 'V8ARU7g614rfiu5Dft2fbj4P6xXDO9TN',
+                'Accept' => 'application/json'
+            ])->post('https://g.erpinnov.com' . '/api/index.php/thirdparties', $apiData);
+
+            if (!$response->successful()) {
+                Log::error('Réponse API Dolibarr: ' . $response->body());
+                throw new Exception('Erreur API: ' . $response->body());
+            }
+
+            Log::info('Tiers créer avec succès');
+        } catch (Exception $e) {
+            Log::error('Erreur création de contact: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        
+    }
+
+    public function getTiers()
+    {
+        try {
+                // Récupération des tiers depuis l'API Dolibarr
+                $response = Http::withHeaders([
+                    'DOLAPIKEY' =>  $user->api_key 
+                ])->get($user->url_dolibarr . '/api/index.php/thirdparties');
+    
+                if (!$response->successful()) {
+                    throw new Exception('Erreur API: ' . $response->status());
+                }
+    
+                // Conversion du tableau en objets pour faciliter l'utilisation dans la vue
+                $this->data = collect($response->json())->map(function($item) {
+                    $item = (object) $item;
+    
+                    // Récupérer le nom du pays si country_id existe
+                    if (!empty($item->country_id)) {
+                        try {
+                            $countryResponse = Http::withHeaders([
+                                'DOLAPIKEY' => $user->api_key
+                            ])->get($user->url_dolibarr . '/api/index.php/setup/dictionary/countries/' . $item->country_id);
+    
+                            if ($countryResponse->successful()) {
+                                $country = $countryResponse->json();
+                                $item->country = $country['label'] ?? 'N/A';
+                            }
+                        } catch (\Exception $e) {
+                            $item->country = 'N/A';
+                        }
+                    } else {
+                        $item->country = 'N/A';
+                    }
+    
+                    return $item;
+                })->all();
+                
+                //Récupération des codes clients qui sont déjà utilisé par d'autre tiers
+                foreach($this->data as $codeClient){
+                    if($codeClient->code_client){
+                        $this->codeClient[] = $codeClient->code_client;
+                    }
+                }
+        } catch(\Exception $e){
+            dd($e->getMessage());
+        }
+            
+    }
+
+    public function setValue()
+    {
+        $this->value = [
+            'lastname' => $this->email,
+        ];    
+    }
+}
