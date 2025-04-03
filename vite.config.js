@@ -12,13 +12,14 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
             ],
-            refresh: [
-                'resources/routes/**',
-                'routes/**',
-                'resources/views/**',
-                'resources/js/**',
-                'resources/css/**',
-            ],
+            refresh: true,
+            // refresh: [
+            //     'resources/routes/**',
+            //     'routes/**',
+            //     'resources/views/**',
+            //     'resources/js/**',
+            //     'resources/css/**',
+            // ],
         }),
         vue({
             template: {
