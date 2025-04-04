@@ -80,6 +80,8 @@
         font-weight: bold;
     }
 
+
+
     .btn-login {
         background-color: #0d6efd; /* Bleu */
         border: 2px solid #0d6efd;
@@ -111,16 +113,16 @@
         right: 10px; /* Positionner l'icône à droite */
         top: 10px; /* Ajuster la position verticale si nécessaire */
     }
-
-    .landing-nav-menu {
+  .light-style .navbar.landing-navbar .landing-nav-menu {
+        background-color: #ffffff;
         display: flex;
-        width: fit-content;
-        flex-direction: column; /* Afficher les éléments en colonne */
-        max-width: 90%; /* Limite la largeur à 90% de l'écran */
-        margin: 0 auto; /* Centre le menu horizontalement */
+        flex-direction: column; /* Organiser les éléments en colonne */
+        align-items: center; /* Aligner les éléments à droite */
+        margin-top: 15%; /* Espacement supérieur pour espacer les éléments du haut */
+        height: 50%; /* Prendre toute la largeur disponible */
+        max-width: 100%;
+        margin-left: 10%;
         padding: 0px; /* Supprime le padding si nécessaire */
-        height: auto; /* Ajuste la hauteur automatiquement selon le contenu */
-        top: 10px; /* Si nécessaire, ajuster la position verticale */
     }
 
     /* Menu non modifié, reste centré */
@@ -133,10 +135,7 @@
     .navbar-nav {
         display: flex;
         flex-direction: column; /* Organiser les éléments en colonne */
-        align-items: flex-end; /* Aligner les éléments à droite */
-        margin-top: 15%; /* Espacement supérieur pour espacer les éléments du haut */
-        background-color: transparent !important; /* Fond transparent */
-        width: 100%; /* Prendre toute la largeur disponible */
+        align-items: center; /* Aligner les éléments à droite */
     }
 
     .auth-link {
