@@ -26,13 +26,15 @@ class OtpVerificationController extends Controller
 
         // Convertir en string pour la comparaison
         if ((string)$user->otp !== (string)$request->otp) {
-            return back()->withErrors(['otp' => 'Code OTP invalide.'])
-                        ->withInput();
+            // return back()->withErrors(['otp' => 'Code OTP invalide.'])
+            //             ->withInput();
+            return response()->json(['otp' => 'Code OTP invalide']);
         }
 
         if (now()->isAfter($user->otp_expires_at)) {
-            return back()->withErrors(['otp' => 'Code OTP expiré.'])
-                        ->withInput();
+            // return back()->withErrors(['otp' => 'Code OTP expiré.'])
+            //             ->withInput();
+            return response()->json(['otp' => 'Code OTP expiré']);
         }
 
         try {
@@ -45,13 +47,15 @@ class OtpVerificationController extends Controller
                 'otp_expires_at' => null
             ]);
 
+            return response()->json(['message' => 'verification successful'], 200);
             // Rediriger vers la mise à jour du profil
-            return redirect()->route('profile.edit')
-                ->with('status', 'Email vérifié avec succès. Veuillez compléter votre profil.');
+            // return redirect()->route('profile.edit')
+            //     ->with('status', 'Email vérifié avec succès. Veuillez compléter votre profil.');
 
         } catch (\Exception $e) {
-            \Log::error('Erreur vérification OTP: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Une erreur est survenue lors de la vérification.']);
+            return response()->json(['message' => 'verification failed'], 422);
+            // \Log::error('Erreur vérification OTP: ' . $e->getMessage());
+            // return back()->withErrors(['error' => 'Une erreur est survenue lors de la vérification.']);
         }
     }
 
@@ -74,11 +78,12 @@ class OtpVerificationController extends Controller
             // Renvoyer l'OTP
             $user->notify(new OtpVerification($otp));
 
-            return back()->with('status', 'Un nouveau code de vérification a été envoyé.');
-
+            //return back()->with('status', 'Un nouveau code de vérification a été envoyé.');
+            return response()->json(['message' => 'succès']);
         } catch (\Exception $e) {
-            \Log::error('Erreur renvoi OTP: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Une erreur est survenue lors du renvoi du code.']);
+            // \Log::error('Erreur renvoi OTP: ' . $e->getMessage());
+            // return back()->withErrors(['error' => 'Une erreur est survenue lors du renvoi du code.']);
+            return response()->json(['message' => 'failed']);
         }
     }
 }
