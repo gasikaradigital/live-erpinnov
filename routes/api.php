@@ -17,11 +17,15 @@ Route::post('/logout', function (Request $request){
 
 Route::post('/register', [AuthController::class, 'register']);
 
-// Routes protégées par authentification
-Route::middleware(['auth'])->group(function () {
+// Routes protégées par authentification sanctum, toutes les routes qui nécessite le controle d'authentification doivent-être ici
+Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     // Vérification OTP
-    Route::post('verify-otp', [OtpVerificationController::class, 'verify']);
-    Route::post('resend-otp', [OtpVerificationController::class, 'resend']);
+    Route::post('/verify-otp', [OtpVerificationController::class, 'verify']);
+    Route::post('/resend-otp', [OtpVerificationController::class, 'resend']);
+
+    Route::get('/dashboard', function (){
+        return response()->json(['Message' => 'Bienvenue sur votre dashboard']);
+    });
 });
 
 Route::get('/user', function (Request $request) {

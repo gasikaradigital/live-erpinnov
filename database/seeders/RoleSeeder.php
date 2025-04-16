@@ -21,6 +21,17 @@ class RoleSeeder extends Seeder
                     'view_instance'
                 ],
             ],
+            'admin' => [
+                'label' => 'admin',
+                'description' => 'Admin ERP',
+                'permission' => [
+                    'view_profile',
+                    'update_profile',
+                    'view_subscription',
+                    'view_instance',
+                    ''
+                ]
+            ],
         ];
 
         foreach ($roles as $roleName => $roleData) {

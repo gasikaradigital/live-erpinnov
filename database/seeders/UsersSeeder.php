@@ -21,5 +21,13 @@ class UsersSeeder extends Seeder
         ]);
         $client->assignRole('client');
 
+        //Creating admin User
+        $admin = User::create([
+            'email' => 'gasikaradigital@gmail.com',
+            'password' => bcryp('gasikaradigital@gmail.com'),
+            'email_verified_at' => now(),
+        ]);
+        admin->assignRole('admin');
+
     }
 }
