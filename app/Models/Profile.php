@@ -36,6 +36,10 @@ class Profile extends Model
         'is_public' => 'boolean'
     ];
 
+    protected $hidden = [
+        'deleted_at',
+    ];
+
     // Accesseurs
     public function getFullNameAttribute()
     {
