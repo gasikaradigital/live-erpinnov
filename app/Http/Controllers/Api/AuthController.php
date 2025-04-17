@@ -81,28 +81,34 @@ class AuthController extends Controller
         
     }
 
-    public function login(Request $request){
+        /**
+     * Handle user login
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
+    {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
-        ]);
-    
-        $user = User::where('email', $request->email)->first();
-    
-        if(! $user || ! Hash::check($request->password, $user->password)){
-            return response()->json([
-                'message' => 'Identifiant invalides',
-            ], 401);
-        } 
-    
-        //Création du token
-        $token = $user->createToken('auth_token')->plainTextToken;
-    
-        return response()->json([
-            'acces_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
+            'password' => 'required',
         ]);
 
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials',
+            ], 401);
+        }
+
+        // Create a new token for the user
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+        ]);
     }
 }

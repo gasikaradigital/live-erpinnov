@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InstancesController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -19,14 +21,15 @@ Route::post('/logout', function (Request $request){
 
 Route::post('/register', [AuthController::class, 'register']);
 
-// Routes protégées par authentification
-Route::middleware(['auth'])->group(function () {
+// Routes protégées par authentification sanctum, toutes les routes qui nécessite le controle d'authentification doivent-être ici
+Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     // Vérification OTP
-    Route::post('verify-otp', [OtpVerificationController::class, 'verify']);
-    Route::post('resend-otp', [OtpVerificationController::class, 'resend']);
-});
+    Route::post('/verify-otp', [OtpVerificationController::class, 'verify']);
+    Route::post('/resend-otp', [OtpVerificationController::class, 'resend']);
 
-Route::middleware(['auth:sanctum'])->group(function(){
+    //Renvoie des plans et subplans
+    Route::get('/plans', [PlanController::class, 'plan']);
+
     // Recuperation de Profile
     Route::patch('profile',[ProfileController::class,'update']);
 
@@ -35,7 +38,9 @@ Route::middleware(['auth:sanctum'])->group(function(){
         return $request->user();
     });
 
-    // Récupetation des instances liés au utilisateur
-    Route::get('instances',[InstancesController::class,'getInstanceByUser']);
+    // Récuperation des instances liés au utilisateur
+    #Route::get('instances',[InstancesController::class,'getInstanceByUser']);
 
+    // Création d'instance
+    #Route::post('instances',[InstancesController::class,'createInstance']);
 });

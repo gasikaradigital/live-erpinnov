@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
-use Spatie\Permission\Middleware\RoleMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
