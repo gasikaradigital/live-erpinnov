@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\InstancesController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Models\User;
 
@@ -25,8 +26,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('resend-otp', [OtpVerificationController::class, 'resend']);
 });
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->group(function(){
+    // Recuperation de Profile
+    Route::patch('profile',[ProfileController::class,'update']);
 
-Route::patch('/profile',[ProfileController::class,'update'])->middleware('auth:sanctum');;
+    // Récuperation de l'utilisateur
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Récupetation des instances liés au utilisateur
+    Route::get('instances',[InstancesController::class,'getInstanceByUser']);
+
+});
