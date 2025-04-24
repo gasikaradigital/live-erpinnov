@@ -5,9 +5,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FAQController;
 use App\Http\Controllers\Api\InstancesController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\SheetWebHook;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Models\User;
 
@@ -44,3 +46,5 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     // Création d'instance
     #Route::post('instances',[InstancesController::class,'createInstance']);
 });
+Route::post('/webhooks/faq',[FAQController::class,'receive']);
+Route::get('/faq',[FAQController::class,'getAllFaqs']);
