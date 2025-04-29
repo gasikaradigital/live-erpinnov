@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\FaqController;
 use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -27,6 +28,7 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
 
     //Renvoie des plans et subplans
     Route::get('/plans', [PlanController::class, 'plan']);
+
 });
 
 Route::get('/user', function (Request $request) {
