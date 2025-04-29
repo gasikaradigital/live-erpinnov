@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
+            'verify-apps-script'=>\App\Http\Middleware\VerifyAppsScript::class,
             // 'registration.flow' => \App\Http\Middleware\RedirectAfterRegistration::class,
             // 'profile.complete' => \App\Http\Middleware\CheckProfileComplete::class,
             // 'plan.flow' => \App\Http\Middleware\PlanFlowMiddleware::class,
