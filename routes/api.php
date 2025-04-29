@@ -5,9 +5,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FAQController;
+use App\Http\Controllers\Api\InstancesController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PlanController;
-use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\SheetWebHook;
+use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -28,11 +31,18 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
 
     //Renvoie des plans et subplans
     Route::get('/plans', [PlanController::class, 'plan']);
-
 });
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    // Récuperation de l'utilisateur
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-Route::patch('/profile',[ProfileController::class,'update'])->middleware('auth:sanctum');
+    // Récuperation des instances liés au utilisateur
+    #Route::get('instances',[InstancesController::class,'getInstanceByUser']);
+
+    // Création d'instance
+    #Route::post('instances',[InstancesController::class,'createInstance']);
+
+Route::post('/webhooks/faq',[FAQController::class,'receive']);
+Route::get('/faq',[FAQController::class,'getAllFaqs']);
