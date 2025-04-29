@@ -11,98 +11,96 @@ use Illuminate\Support\Facades\Log;
 class FAQController extends Controller
 {
     public function receive(Request $request)
-{
-    $savedFaqs = FAQs::all()->keyBy('row');
-    $fetchedFaqs = collect($request->sheetData)->keyBy('row');
+    {
+        $savedFaqs = FAQs::all()->keyBy('row');
+        $fetchedFaqs = collect($request->sheetData)->keyBy('row');
 
-    $notifications = [
-        'added' => [],
-        'updated' => [],
-        'deleted' => []
-    ];
+        $notifications = [
+            'added' => [],
+            'updated' => [],
+            'deleted' => []
+        ];
 
-    $fieldsToCheck = [
-        'title', 'category', 'Titre', 'slug', 
-        'description', 'video_url', 'type', 'tag'
-    ];
+        $fieldsToCheck = [
+            'category',
+            'slug',
+            'question',
+            'answer',
+            'tag'
+        ];
 
-    $rowsToDelete = $savedFaqs->keys()->diff($fetchedFaqs->keys());
+        $rowsToDelete = $savedFaqs->keys()->diff($fetchedFaqs->keys());
 
-    // Suppression des lignes
-    foreach ($rowsToDelete as $row) {
-        FAQs::where('row', $row)->delete();
-        $notifications['deleted'][] = $row;
-    }
+        // Suppression des lignes
+        foreach ($rowsToDelete as $row) {
+            FAQs::where('row', $row)->delete();
+            $notifications['deleted'][] = $row;
+        }
 
-    foreach ($fetchedFaqs as $row => $faqData) {
-        $payload = $this->normalizeFaqData($faqData);
+        foreach ($fetchedFaqs as $row => $faqData) {
+            $payload = $this->normalizeFaqData($faqData);
 
-        if (!$savedFaqs->has($row)) {
-            // Nouvelle entrée
-            $newFaq = FAQs::create(array_merge($payload, ['row' => $row]));
-            $notifications['added'][] = $this->formatFaqData($newFaq);
-        } else {
-            $existing = $savedFaqs[$row];
-            
-            if ($this->hasChanged($existing, $payload, $fieldsToCheck)) {
-                // Mise à jour
-                $existing->update($payload);
-                $notifications['updated'][] = $this->formatFaqData($existing->fresh());
+            if (!$savedFaqs->has($row)) {
+                // Nouvelle entrée
+                $newFaq = FAQs::create(array_merge($payload, ['row' => $row]));
+                $notifications['added'][] = $this->formatFaqData($newFaq);
+            } else {
+                $existing = $savedFaqs[$row];
+                
+                Log::info($payload['tag']);
+
+                if ($this->hasChanged($existing, $payload, $fieldsToCheck)) {
+                    // Mise à jour
+                    $existing->update($payload);
+                    $notifications['updated'][] = $this->formatFaqData($existing->fresh());
+                }
             }
         }
+
+        event(new FaqUpdated($notifications));
     }
 
-    event(new FaqUpdated($notifications));
-}
-
-// Vérifie si un des champs a changé
-protected function hasChanged($existing, $payload, $fieldsToCheck)
-{
-    foreach ($fieldsToCheck as $field) {
-        if (($existing->$field ?? null) != ($payload[$field] ?? null)) {
-            return true;
+    // Vérifie si un des champs a changé
+    protected function hasChanged($existing, $payload, $fieldsToCheck)
+    {
+        foreach ($fieldsToCheck as $field) {
+            if (($existing->$field ?? null) != ($payload[$field] ?? null)) {
+                return true;
+            }
         }
+        return false;
     }
-    return false;
-}
 
-// Formatte les données de la FAQ
-protected function formatFaqData($faq)
-{
-    return [
-        'row' => $faq->row,
-        'title' => $faq->title,
-        'category' => $faq->category,
-        'Titre' => $faq->Titre,
-        'slug' => $faq->slug,
-        'description' => $faq->description,
-        'video_url' => $faq->video_url ?? null,
-        'type' => $faq->type ?? null,
-        'tag' => $faq->tag ?? null
-    ];
-}
+    // Formatte les données de la FAQ
+    protected function formatFaqData($faq)
+    {
+        return [
+            'row' => $faq->row,
+            'category' => $faq->category,
+            'slug' => $faq->slug,
+            'question' => $faq->question,
+            'answer' => $faq->answer,
+            'tag' => $faq->tag
+        ];
+    }
     /**
      * Normalise les données entrantes en payload compatible avec le modèle FAQs
      */
     private function normalizeFaqData($data)
     {
         return [
-            'title' => $data['title'],
             'category' => $data['category'],
-            'Titre' => $data['Titre'],
             'slug' => $data['slug'],
-            'description' => $data['description'],
-            'video_url' => $data['video_url'] ?? null,
-            'type' => $data['type'] ?? null,
-            'author' => $data['author'] ?? null,
+            'question' => $data['question'],
+            'answer' => $data['answer'],
             'visible' => $data['visible'] ?? 'Non',
-            'tag' => $data['tag'] ?? null,
+            'tag' => $data['tag'],
         ];
     }
 
 
 
-    public function getAllFaqs()
+    public function getAll()
     {
         $savedFaqs = FAQs::all()->keyBy('row');
         $response = [];
@@ -110,16 +108,7 @@ protected function formatFaqData($faq)
             if ($faq->visible == "Oui") {
                 array_push(
                     $response,
-                    [
-                        'title' => $faq->title,
-                        'category' => $faq->category,
-                        'Titre' => $faq->Titre,
-                        'slug' => $faq->slug,
-                        'description' => $faq->description,
-                        'video_url' => $faq->video_url ?? null,
-                        'type' => $faq->type ?? null,
-                        'tag' => $data->tag ?? null,
-                    ]
+                    $this->formatFaqData($faq)
                 );
             }
         }
