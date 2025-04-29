@@ -4,21 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FAQs extends Model
+class Tutoriel extends Model
 {
-    protected $table = 'faqs';
-    
     protected $fillable = [
+        'title',
         'category',
+        'Titre',
         'slug',
-        'question',
-        'answer',
+        'description',
+        'video_url',
+        'type',
+        'author',
         'visible',
         'tag',
         'row',
     ];
-
-    public function isVisible():bool{
-        return $this->visible == 'Oui';
-    }
 }

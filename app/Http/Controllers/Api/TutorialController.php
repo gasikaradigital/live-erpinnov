@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\FaqUpdated;
+use App\Events\TutorialUpdated;
 use App\Http\Controllers\Controller;
-use App\Models\FAQs;
+use App\Models\Tutoriel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class FAQController extends Controller
+class TutorialController extends Controller
 {
     public function receive(Request $request)
     {
-        $savedFaqs = FAQs::all()->keyBy('row');
-        $fetchedFaqs = collect($request->sheetData)->keyBy('row');
+        $savedTutorials = Tutoriel::all()->keyBy('row');
+        $fetchedTutorials = collect($request->sheetData)->keyBy('row');
 
         $notifications = [
             'added' => [],
@@ -22,32 +22,33 @@ class FAQController extends Controller
         ];
 
         $fieldsToCheck = [
+            'title',
             'category',
+            'Titre',
             'slug',
-            'question',
-            'answer',
+            'description',
+            'video_url',
+            'type',
             'tag'
         ];
 
-        $rowsToDelete = $savedFaqs->keys()->diff($fetchedFaqs->keys());
+        $rowsToDelete = $savedTutorials->keys()->diff($fetchedTutorials->keys());
 
         // Suppression des lignes
         foreach ($rowsToDelete as $row) {
-            FAQs::where('row', $row)->delete();
+            Tutoriel::where('row', $row)->delete();
             $notifications['deleted'][] = $row;
         }
 
-        foreach ($fetchedFaqs as $row => $faqData) {
+        foreach ($fetchedTutorials as $row => $faqData) {
             $payload = $this->normalizeFaqData($faqData);
 
-            if (!$savedFaqs->has($row)) {
+            if (!$savedTutorials->has($row)) {
                 // Nouvelle entrée
-                $newFaq = FAQs::create(array_merge($payload, ['row' => $row]));
+                $newFaq = Tutoriel::create(array_merge($payload, ['row' => $row]));
                 $notifications['added'][] = $this->formatFaqData($newFaq);
             } else {
-                $existing = $savedFaqs[$row];
-                
-                Log::info($payload['tag']);
+                $existing = $savedTutorials[$row];
 
                 if ($this->hasChanged($existing, $payload, $fieldsToCheck)) {
                     // Mise à jour
@@ -57,7 +58,8 @@ class FAQController extends Controller
             }
         }
 
-        event(new FaqUpdated($notifications));
+        Log::info($notifications['updated']);
+        event(new TutorialUpdated($notifications));
     }
 
     // Vérifie si un des champs a changé
@@ -72,15 +74,18 @@ class FAQController extends Controller
     }
 
     // Formatte les données de la FAQ
-    protected function formatFaqData($faq)
+    protected function formatFaqData($tutorial)
     {
         return [
-            'row' => $faq->row,
-            'category' => $faq->category,
-            'slug' => $faq->slug,
-            'question' => $faq->question,
-            'answer' => $faq->answer,
-            'tag' => $faq->tag
+            'row' => $tutorial->row,
+            'title' => $tutorial->title,
+            'category' => $tutorial->category,
+            'Titre' => $tutorial->Titre,
+            'slug' => $tutorial->slug,
+            'description' => $tutorial->description,
+            'video_url' => $tutorial->video_url ?? null,
+            'type' => $tutorial->type ?? null,
+            'tag' => $tutorial->tag ?? null
         ];
     }
     /**
@@ -89,10 +94,14 @@ class FAQController extends Controller
     private function normalizeFaqData($data)
     {
         return [
+            'title' => $data['title'],
             'category' => $data['category'],
+            'Titre' => $data['Titre'],
             'slug' => $data['slug'],
-            'question' => $data['question'],
-            'answer' => $data['answer'],
+            'description' => $data['description'],
+            'video_url' => $data['video_url'] ?? null,
+            'type' => $data['type'] ?? null,
+            'author' => $data['author'] ?? null,
             'visible' => $data['visible'] ?? 'Non',
             'tag' => $data['tag'],
         ];
@@ -102,13 +111,13 @@ class FAQController extends Controller
 
     public function getAll()
     {
-        $savedFaqs = FAQs::all()->keyBy('row');
+        $savedTutorials = Tutoriel::all()->keyBy('row');
         $response = [];
-        foreach ($savedFaqs as $faq) {
-            if ($faq->visible == "Oui") {
+        foreach ($savedTutorials as $tutorial) {
+            if ($tutorial->visible == "Oui") {
                 array_push(
                     $response,
-                    $this->formatFaqData($faq)
+                    $this->formatFaqData($tutorial)
                 );
             }
         }

@@ -11,11 +11,14 @@
         "laravel/cashier-paddle": "^2.5",
         "laravel/framework": "^11.9",
         "laravel/jetstream": "^5.1",
+        "laravel/pail": "^1.2",
+        "laravel/reverb": "^1.5",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.17",
         "laravel/tinker": "^2.9",
         "league/flysystem-ftp": "^3.29",
         "livewire/livewire": "^3.5",
+        "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "^6.9"
     },
     "require-dev": {

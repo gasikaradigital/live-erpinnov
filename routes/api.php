@@ -10,12 +10,13 @@ use App\Http\Controllers\Api\InstancesController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\SheetWebHook;
+use App\Http\Controllers\Api\TutorialController;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/logout', function (Request $request){
+Route::post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
 
     return response()->json(['Message' => 'Déconnexion réussie']);
@@ -33,7 +34,7 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     Route::get('/plans', [PlanController::class, 'plan']);
 
     // Recuperation de Profile
-    Route::patch('profile',[ProfileController::class,'update']);
+    Route::patch('profile', [ProfileController::class, 'update']);
 
     // Récuperation de l'utilisateur
     Route::get('/user', function (Request $request) {
@@ -46,5 +47,10 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     // Création d'instance
     #Route::post('instances',[InstancesController::class,'createInstance']);
 });
-Route::post('/webhooks/faq',[FAQController::class,'receive']);
-Route::get('/faq',[FAQController::class,'getAllFaqs']);
+Route::get('/faq', [FAQController::class, 'getAll']);
+Route::get('/tutorial', [TutorialController::class, 'getAll']);
+
+Route::group(['middleware' => 'verify-apps-script'], function () {
+    Route::post('webhooks/tutorial', [TutorialController::class, 'receive']);
+    Route::post('/webhooks/faq', [FAQController::class, 'receive']);
+});
