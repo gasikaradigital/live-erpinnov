@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\InstanceQuota;
+use App\Livewire\Admin\ChangeConfigInstance;
 use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
@@ -35,6 +36,19 @@ class InstanceManager extends Component
     public function addInstance()
     {
         try{
+            $changeConfig = new ChangeConfigInstance(
+                $this->dbName,
+                $this->dbUser ,
+                $this->dbPass,
+                $this->prefix
+            );
+
+            $password = $this->generateComplexPassword();
+
+            $passwordHash = $changeConfig->cryptDolibarrPassword($password);
+
+            $changeConfig->ChangePassword($passwordHash);
+
             //Récupère les configurations de l'instance
             $this->getConfigDolibarr();
 
@@ -97,12 +111,47 @@ class InstanceManager extends Component
             if (!$this->dbPass || !$this->dbUser || !$this->instanceId || !$this->prefix) {
                 dd("Une ou plusieurs valeurs manquent !");
             }
+
+
         } catch(\Exception $e){
             dd($e->getMessage());
         }
         
     }
 
+    /**
+     * Génère un mot de passe complexe aléatoire.
+     *
+     * @param int $length La longueur du mot de passe (par défaut : 10).
+     *
+     * @return string Le mot de passe généré.
+     */
+    public function generateComplexPassword(int $length = 10): string
+    {
+        // Définition des caractères autorisés
+        $letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $symbols = '!@#$%^&*()-_=+[]{}<>?/';
+
+        // Assurer au moins une lettre, un chiffre, un symbole
+        $password = [
+            $letters[random_int(0, strlen($letters) - 1)],
+            $numbers[random_int(0, strlen($numbers) - 1)],
+            $symbols[random_int(0, strlen($symbols) - 1)],
+        ];
+
+        // Remplir le reste aléatoirement
+        $all = $letters . $numbers . $symbols;
+        for ($i = 3; $i <= $length; $i++) {
+            $password[] = $all[random_int(0, strlen($all) - 1)];
+        }
+
+        // Mélanger le mot de passe final pour éviter un ordre prévisible
+        shuffle($password);
+
+        return implode('', $password);
+    }
+    
     public function render()
     {
         return view('livewire.admin.instance-manager', [
