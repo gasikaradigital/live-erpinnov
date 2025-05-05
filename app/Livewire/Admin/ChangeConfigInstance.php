@@ -34,7 +34,7 @@ class ChangeConfigInstance extends Component
         // Initialize properties or perform setup tasks here
     }
 
-    public function ChangePassword($passwordHash){
+    public function ChangeConfigDatabase($login, $passwordHash, $apiKey){
         config(['database.connections.dynamic' => [
             'driver' => 'mariadb',
             'host' => 'localhost',
@@ -54,8 +54,8 @@ class ChangeConfigInstance extends Component
         DB::connection('dynamic')->table($this->dbPrefix.'user')
             ->where('rowid', 1)
             ->update([
-                'login' => 'admin',
-                'api_key' => $api_key_dolibarr,
+                'login' => $login,
+                'api_key' => $apiKey,
                 'password' => $passwordHash
             ]);
     }
