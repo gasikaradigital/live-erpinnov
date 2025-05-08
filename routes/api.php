@@ -57,3 +57,6 @@ Route::group(['middleware' => 'verify-apps-script'], function () {
     Route::post('webhooks/tutorial', [TutorialController::class, 'receive']);
     Route::post('/webhooks/faq', [FAQController::class, 'receive']);
 });
+
+Route::post('/entreprises',[TestDolibarrApi::class,'testCreateEntreprise']);
+Route::get('/entreprises',[TestDolibarrApi::class,'getEntreprises']);
