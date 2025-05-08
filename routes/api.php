@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     // Recuperation de Profile
     Route::patch('profile', [ProfileController::class, 'update']);
 
+
     // Récuperation de l'utilisateur
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -47,6 +48,7 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
 
     // Création d'instance
     #Route::post('instances',[InstancesController::class,'createInstance']);
+
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
 Route::get('/tutorial', [TutorialController::class, 'getAll']);
@@ -55,6 +57,3 @@ Route::group(['middleware' => 'verify-apps-script'], function () {
     Route::post('webhooks/tutorial', [TutorialController::class, 'receive']);
     Route::post('/webhooks/faq', [FAQController::class, 'receive']);
 });
-
-Route::get('/entreprises',[TestDolibarrApi::class,'getEntreprises']);
-Route::post('/entreprises',[TestDolibarrApi::class,'testCreateEntreprise']);
