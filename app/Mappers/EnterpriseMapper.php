@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mappers;
 
 use App\DTO\EnterpriseDto;
@@ -19,9 +20,9 @@ class EnterpriseMapper
         $dto->name = $apiData['name'] ?? '';
         $dto->ville = $apiData['town'] ?? '';
         $dto->adresse = $apiData['address'] ?? '';
-        $dto->pays = $apiData['country'] ?? '';
+        $dto->pays = $apiData['country_code'] ?? '';
         $dto->phone = $apiData['phone'] ?? '';
-        $dto->clientCode = $apiData['code_client']??'';
+        $dto->clientCode = $apiData['code_client'] ?? '';
 
         $arrayOptions = $apiData['array_options'] ?? [];
 
@@ -67,12 +68,30 @@ class EnterpriseMapper
 
     public static function mapToApiData(EnterpriseDto $dto): array
     {
+        $country_id = "";
+        switch (strtolower($dto->pays)) {
+            case 'FR':
+                $country_id = "1";
+                break;
+            case 'BE':
+                $country_id = "2";
+                break;
+            case 'CH':
+                $country_id = "6";
+                break;
+            case 'MG':
+                $country_id = "143";
+                break;
+            default:
+                $country_id = "143";
+                break;
+        }
         return [
             "name" => $dto->name,
-            "client"=>1,
+            "client" => 1,
             "town" => $dto->ville,
             "address" => $dto->adresse,
-            "country" => $dto->pays,
+            "country_id" => $country_id,
             "phone" => $dto->phone,
             "array_options" => [
                 "options_owner_id" => $dto->ownerId,
