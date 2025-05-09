@@ -70,16 +70,20 @@ class EnterpriseMapper
     {
         $country_id = "";
         switch (strtolower($dto->pays)) {
-            case 'FR':
+            case 'fr':
+            case 'france':    
                 $country_id = "1";
                 break;
-            case 'BE':
+            case 'be':
+            case 'belgique':    
                 $country_id = "2";
                 break;
-            case 'CH':
+            case 'ch':
+            case 'suisse' :   
                 $country_id = "6";
                 break;
-            case 'MG':
+            case 'mg':
+            case 'madagascar':    
                 $country_id = "143";
                 break;
             default:
