@@ -21,7 +21,7 @@ class TestDolibarrApi extends Controller
     }
 
     public function testCreateEntreprise(Request $request){
-        $entreprise = Entreprise::find(1);
+        $entreprise = Entreprise::find(3);
         $apiData = EnterpriseMapper::mapFromModel($entreprise);
 
         return response()->json($this->entrepriseApiService->pushEntreprise($apiData),200);

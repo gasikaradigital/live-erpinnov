@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 
@@ -28,6 +29,7 @@ class ClientCodeGeneratorService
 
         do {
             $increment = $this->getNextIncrement($yearMonth);
+
             $proposedCode = $this->formatCode($yearMonth, $increment);
 
             if ($this->verifyCodeUniqueness($proposedCode)) {
@@ -36,40 +38,40 @@ class ClientCodeGeneratorService
 
             $attempt++;
             usleep(self::RETRY_DELAY_MS * 1000);
-            
+
             Log::warning('Collision de code client', [
                 'code' => $proposedCode,
                 'attempt' => $attempt
             ]);
-
         } while ($attempt < self::MAX_ATTEMPTS);
 
-        throw new RuntimeException("Échec de génération après ".self::MAX_ATTEMPTS." tentatives");
+        throw new RuntimeException("Échec de génération après " . self::MAX_ATTEMPTS . " tentatives");
     }
 
     private function getNextIncrement(string $yearMonth): int
     {
         $lastCode = $this->findLatestCode($yearMonth);
-        
-        return $lastCode 
-            ? (int)explode('-', $lastCode)[1] + 1 
+
+        return $lastCode
+            ? (int)explode('-', $lastCode)[1] + 1
             : 1;
     }
 
     private function findLatestCode(string $yearMonth): ?string
     {
         try {
-            $response = $this->apiClient->fetch(endpoint:'thirdparties', query:[
-                'sortfield' => 'code_client',
+            $response = $this->apiClient->fetch(endpoint: 'thirdparties', query: [
+                'sortfield' => 't.code_client',
                 'sortorder' => 'DESC',
                 'limit' => 1,
                 'sqlfilters' => sprintf("(t.code_client:like:'%s%s%%')", self::PREFIX, $yearMonth)
             ]);
 
             return $response[0]['code_client'] ?? null;
-
         } catch (\Exception $e) {
-            Log::error('Erreur API Dolibarr', ['error' => $e->getMessage()]);
+            if (str_contains($e->getMessage(), '404')) {
+                return sprintf("%s%s-000000", self::PREFIX, $yearMonth);
+            }
             return null;
         }
     }
@@ -78,13 +80,15 @@ class ClientCodeGeneratorService
     {
         try {
             $response = $this->apiClient->fetch('thirdparties', [
-                'sqlfilters' => sprintf("(t.code_client = '%s')", $code),
+                'sqlfilters' => sprintf("(t.code_client:like:'%s')", $code),
                 'limit' => 1
             ]);
 
             return empty($response);
-
         } catch (\Exception $e) {
+            if(str_contains($e->getMessage(), '404')){
+                return true;
+            }
             Log::error('Erreur vérification unicité', ['error' => $e->getMessage()]);
             return false;
         }
