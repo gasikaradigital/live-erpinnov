@@ -24,10 +24,10 @@ class UsersSeeder extends Seeder
         //Creating admin User
         $admin = User::create([
             'email' => 'gasikaradigital@gmail.com',
-            'password' => bcryp('gasikaradigital@gmail.com'),
+            'password' => bcrypt('gasikaradigital@gmail.com'),
             'email_verified_at' => now(),
         ]);
-        admin->assignRole('admin');
+        $admin->assignRole('admin');
 
     }
 }

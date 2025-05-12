@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\InstancesController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\SheetWebHook;
+use App\Http\Controllers\Api\TestDolibarrApi;
 use App\Http\Controllers\Api\TutorialController;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Api\TicketsController;
@@ -61,3 +62,5 @@ Route::group(['middleware' => 'verify-apps-script'], function () {
     Route::post('/webhooks/faq', [FAQController::class, 'receive']);
 });
 
+Route::post('/entreprises',[TestDolibarrApi::class,'testCreateEntreprise']);
+Route::get('/entreprises',[TestDolibarrApi::class,'getEntreprises']);
