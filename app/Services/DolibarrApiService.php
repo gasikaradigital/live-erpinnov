@@ -36,25 +36,28 @@ class DolibarrApiService
         array $query = [],
         ?string $dtoClass = null,
         null|Closure|callable $mapper = null
-    ): array {
+    ) {
         if ($dtoClass && !$mapper) {
             throw new \InvalidArgumentException("Un mapper est requis quand un DTO est spécifié");
         }
-
+        
         // Récupération des données
         $response = Http::withHeaders([
             'DOLAPIKEY' => $this->apiKey,
             'Accept' => 'application/json',
-        ])->get("{$this->baseUrl}/{$endpoint}", $query);
-
+        ])->get("{$this->baseUrl}/{$endpoint}", [
+            'limit' => 100,
+            'sortfield' => 'ref',
+            'sortorder' => 'ASC',
+        ]);
+           
         if ($response->failed()) {
             throw new \RuntimeException("Erreur API Dolibarr: " . $response->body());
         }
 
-        $apiData = $response->json();
-
-        // Transformation en DTO si nécessaire
-        if (!$dtoClass || !$mapper) {
+        return $response;
+        //Transformation en DTO si nécessaire
+        /*if (!$dtoClass || !$mapper) {
             return $apiData;
         }
 
@@ -65,7 +68,7 @@ class DolibarrApiService
             );
         }
 
-        return [$mapper($apiData)];
+        return [$mapper($apiData)];*/
     }
 
     /**
@@ -95,6 +98,36 @@ class DolibarrApiService
 
         if ($response->failed()) {
             throw new Exception("Dolibarr POST failed - Status: {$response->status()}, Error: {$response->body()}");
+        }
+
+        $responseData = $response->json();
+
+        return $responseData;
+    }
+
+    /**
+     * methode de modification par defaut
+     * 
+     * @param string $endpoint Le endpoint API (ex: "thirdparties")
+     * @param array $data Les données à envoyer (seront converties en JSON)
+     * @param Closure|null $preprocessor Preprocesseur optionnel pour enrichire le body
+     * @return array|mixed
+     * @throws Exception
+     */
+
+    public function modify(
+        string $endpoint,
+        array $data
+    ): array {
+        
+        $response = Http::withHeaders([
+            'DOLAPIKEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ])->put("{$this->baseUrl}/{$endpoint}", $data);
+
+        if ($response->failed()) {
+            throw new Exception("Dolibarr Put failed - Status: {$response->status()}, Error: {$response->body()}");
         }
 
         $responseData = $response->json();

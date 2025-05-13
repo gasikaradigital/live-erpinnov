@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Plan;
 use App\Models\SubPlan;
 use Illuminate\Support\Facades\Http;
+use App\Services\DolibarrApiService;
 
 class PlanController extends Controller
 {
@@ -28,18 +29,18 @@ class PlanController extends Controller
 
     public $data;
 
+    /**
+     * Récupère les plans dans Dolibarr via API
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function plan()
     {
         $user = auth()->user();
         try {
-            
-            $response = Http::withHeaders([
-                'DOLAPIKEY' => 'V8ARU7g614rfiu5Dft2fbj4P6xXDO9TN',
-            ])->get('https://g.erpinnov.com' . '/api/index.php/products', [
-                'limit' => 100,
-                'sortfield' => 'ref',
-                'sortorder' => 'ASC',
-            ]);
+            $dolibarrApiService = new DolibarrApiService("https://modelmg.erpinnov.com/api/index.php", "KzvPZvn2XXLK96C7t00c5Lp3gGu38sKw");
+
+            $response = $dolibarrApiService->fetch("products");
 
             if (!$response->successful()) {
                 return response()->json([

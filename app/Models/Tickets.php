@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tickets extends Model
@@ -9,15 +10,18 @@ class Tickets extends Model
     use HasFactory;
 
     protected $fillable = [
-        '',
-        'description',
-        'price_monthly',
-        'price_yearly',
-        'price_local',
-        'instance_limit',
-        'duration_days',
-        'is_free',
-        'is_default',
-        'features',
+        'user_id',
+        'sujet',
+        'message',
     ];
+
+    /**
+     * Définie la rélation avec le model User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -24,6 +24,9 @@ Route::post('/logout', function (Request $request) {
     return response()->json(['Message' => 'Déconnexion réussie']);
 })->middleware('auth:sanctum');
 
+/**
+ * 
+ */
 Route::post('/register', [AuthController::class, 'register']);
 
 // Routes protégées par authentification sanctum, toutes les routes qui nécessite le controle d'authentification doivent-être ici
