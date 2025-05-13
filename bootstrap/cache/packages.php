@@ -80,6 +80,13 @@
       0 => 'LaravelLang\\Routes\\ServiceProvider',
     ),
   ),
+  'laravel-lang/starter-kits' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'LaravelLang\\StarterKits\\ServiceProvider',
+    ),
+  ),
   'laravel/cashier-paddle' => 
   array (
     'providers' => 
@@ -99,6 +106,25 @@
     'providers' => 
     array (
       0 => 'Laravel\\Jetstream\\JetstreamServiceProvider',
+    ),
+  ),
+  'laravel/pail' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Pail\\PailServiceProvider',
+    ),
+  ),
+  'laravel/reverb' => 
+  array (
+    'aliases' => 
+    array (
+      'Output' => 'Laravel\\Reverb\\Output',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Reverb\\ApplicationManagerServiceProvider',
+      1 => 'Laravel\\Reverb\\ReverbServiceProvider',
     ),
   ),
   'laravel/sail' => 
