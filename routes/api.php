@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\TutorialController;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
-use Fruitcake\Cors\HandleCors;
+use Illuminate\Http\Middleware\HandleCors;
 
 Route::middleware([HandleCors::class])->post('/login', [AuthController::class, 'login']);
 
