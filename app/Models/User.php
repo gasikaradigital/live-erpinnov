@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\PasswordResetLink;
 use Laravel\Paddle\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
@@ -64,7 +66,7 @@ class User extends Authenticatable
             ->whereIn('status', [Subscription::STATUS_ACTIVE, Subscription::STATUS_TRIAL])
             ->where(function ($query) {
                 $query->whereNull('end_date')
-                      ->orWhere('end_date', '>', now());
+                    ->orWhere('end_date', '>', now());
             })
             ->with('plan') // Inclure le plan associé
             ->latest()
@@ -96,9 +98,9 @@ class User extends Authenticatable
     public function activeSubscription()
     {
         return $this->subscriptions()
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('status', 'active')
-                      ->orWhere('status', 'trial');
+                    ->orWhere('status', 'trial');
             })
             ->whereDate('end_date', '>=', now())
             ->first();
@@ -123,7 +125,7 @@ class User extends Authenticatable
 
         // Compter les instances selon le type d'abonnement
         $instanceCount = $this->instances()
-            ->whereHas('subscription', function($query) use ($activeSubscription) {
+            ->whereHas('subscription', function ($query) use ($activeSubscription) {
                 $query->where('id', $activeSubscription->id);
             })->count();
 
@@ -152,7 +154,7 @@ class User extends Authenticatable
         }
 
         $instanceCount = $this->instances()
-            ->whereHas('subscription', function($query) use ($activeSubscription) {
+            ->whereHas('subscription', function ($query) use ($activeSubscription) {
                 $query->where('id', $activeSubscription->id);
             })->count();
 
@@ -171,7 +173,7 @@ class User extends Authenticatable
 
         if (count($names) >= 2) {
             // Prendre la première lettre du premier et du dernier mot
-            $initials = strtoupper(substr($names[0], 0, 1) . substr($names[count($names)-1], 0, 1));
+            $initials = strtoupper(substr($names[0], 0, 1) . substr($names[count($names) - 1], 0, 1));
         } else {
             // Si un seul mot, prendre les deux premières lettres
             $initials = strtoupper(substr($this->name, 0, 2));
@@ -183,8 +185,8 @@ class User extends Authenticatable
     public function hasUsedFreeTrial()
     {
         return $this->instances()
-            ->whereHas('subscription', function($query) {
-                $query->whereHas('plan', function($q) {
+            ->whereHas('subscription', function ($query) {
+                $query->whereHas('plan', function ($q) {
                     $q->where('is_free', true);
                 });
             })
@@ -194,7 +196,7 @@ class User extends Authenticatable
     public function hasReachedTrialLimit()
     {
         return $this->instances()
-            ->whereHas('subscription', function($query) {
+            ->whereHas('subscription', function ($query) {
                 $query->where('status', Subscription::STATUS_TRIAL);
             })
             ->count() >= 1;
@@ -224,4 +226,10 @@ class User extends Authenticatable
         return "https://ui-avatars.com/api/?{$queryString}";
     }
 
+    // Personnalisation email de réinitialisation de mot de passe
+    
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new PasswordResetLink($token));
+    }
 }
