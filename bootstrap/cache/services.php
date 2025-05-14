@@ -52,9 +52,10 @@
     48 => 'Termwind\\Laravel\\TermwindServiceProvider',
     49 => 'Pest\\Laravel\\PestServiceProvider',
     50 => 'Spatie\\Permission\\PermissionServiceProvider',
-    51 => 'App\\Providers\\AppServiceProvider',
-    52 => 'App\\Providers\\FortifyServiceProvider',
-    53 => 'App\\Providers\\JetstreamServiceProvider',
+    51 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
+    52 => 'App\\Providers\\AppServiceProvider',
+    53 => 'App\\Providers\\FortifyServiceProvider',
+    54 => 'App\\Providers\\JetstreamServiceProvider',
   ),
   'eager' => 
   array (
@@ -92,9 +93,10 @@
     31 => 'Termwind\\Laravel\\TermwindServiceProvider',
     32 => 'Pest\\Laravel\\PestServiceProvider',
     33 => 'Spatie\\Permission\\PermissionServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
-    35 => 'App\\Providers\\FortifyServiceProvider',
-    36 => 'App\\Providers\\JetstreamServiceProvider',
+    34 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
+    35 => 'App\\Providers\\AppServiceProvider',
+    36 => 'App\\Providers\\FortifyServiceProvider',
+    37 => 'App\\Providers\\JetstreamServiceProvider',
   ),
   'deferred' => 
   array (

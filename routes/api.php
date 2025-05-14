@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\SheetWebHook;
 use App\Http\Controllers\Api\TestDolibarrApi;
 use App\Http\Controllers\Api\TutorialController;
 use App\Http\Controllers\Auth\OtpVerificationController;
+use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -23,6 +24,9 @@ Route::post('/logout', function (Request $request) {
     return response()->json(['Message' => 'Déconnexion réussie']);
 })->middleware('auth:sanctum');
 
+/**
+ * 
+ */
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/send-reset-link',[AuthController::class,'sendResetLink']);
@@ -51,6 +55,9 @@ Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
 
     // Création d'instance
     #Route::post('instances',[InstancesController::class,'createInstance']);
+
+    //Récupération de tous les tickets
+    Route::get('/tickets/get', [TicketsController::class, 'getTickets']);
 
 });
 Route::get('/faq', [FAQController::class, 'getAll']);

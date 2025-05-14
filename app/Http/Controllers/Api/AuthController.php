@@ -11,6 +11,7 @@ use App\Notifications\OtpVerification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Password;
 use Spatie\Permission\Models\Role;
+use App\Jobs\AddInDolibarr;
 
 class AuthController extends Controller
 {
@@ -20,7 +21,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'terms' => ['required', 'accepted'],
+            //'terms' => ['required', 'accepted'],
         ]);
 
         if ($validator->fails()) {
