@@ -42,7 +42,7 @@ class AddInDolibarr implements ShouldQueue
             $response = Http::withHeaders([
                 'DOLAPIKEY' => 'V8ARU7g614rfiu5Dft2fbj4P6xXDO9TN',
                 'Accept' => 'application/json'
-            ])->post('https://g.erpinnov.com' . '/api/index.php/contacts', $apiData);
+            ])->post('https://gmg.erpinnov.com' . '/api/index.php/contacts', $apiData);
 
             if (!$response->successful()) {
                 Log::error('Réponse API Dolibarr: ' . $response->body());
