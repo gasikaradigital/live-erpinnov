@@ -25,6 +25,9 @@ Route::post('/logout', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 
+Route::post('/send-reset-link',[AuthController::class,'sendResetLink']);
+Route::post('/reset-password',[AuthController::class,'resetPassword']);
+
 // Routes protégées par authentification sanctum, toutes les routes qui nécessite le controle d'authentification doivent-être ici
 Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
     // Vérification OTP
