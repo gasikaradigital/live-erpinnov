@@ -25,7 +25,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
             'verify-apps-script'=>\App\Http\Middleware\VerifyAppsScript::class,
-            'cors' => \Fruitcake\Cors\HandleCors::class,
             // 'registration.flow' => \App\Http\Middleware\RedirectAfterRegistration::class,
             // 'profile.complete' => \App\Http\Middleware\CheckProfileComplete::class,
             // 'plan.flow' => \App\Http\Middleware\PlanFlowMiddleware::class,
@@ -33,6 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
             // 'instance.limit' => \App\Http\Middleware\InstanceLimitMiddleware::class,
             // 'role.redirect' => \App\Http\Middleware\RedirectIfAuthenticatedByRole::class,
             // 'plan.selection' => \App\Http\Middleware\PlanSelectionMiddleware::class,
+        ]);
+
+        $middleware->append([
+            \Illuminate\Http\Illuminate\Http\Middleware\HandleCors::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
