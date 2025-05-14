@@ -17,10 +17,8 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
-Route::middleware([HandleCors::class])->group(function(){
-    Route::post('/login', [AuthController::class, 'login']);
-});
 
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
