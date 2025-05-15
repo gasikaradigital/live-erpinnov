@@ -34,9 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // 'plan.selection' => \App\Http\Middleware\PlanSelectionMiddleware::class,
         ]);
 
-        $middleware->append([
-            \Illuminate\Http\Middleware\HandleCors::class,
-        ]);
+        $middleware->append(\App\Http\Middleware\cors::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

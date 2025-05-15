@@ -17,6 +17,10 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
+Route::options('/{any}', function () {
+    return response()->json();
+})->where('any', '.*');
+
 
 Route::post('/login', [AuthController::class, 'login']);
 
