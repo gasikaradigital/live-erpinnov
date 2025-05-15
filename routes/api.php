@@ -18,7 +18,10 @@ use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
 Route::options('/{any}', function () {
-    return response()->json();
+    return response()->json()
+        ->header('Access-Control-Allow-Origin', 'https://portail.erpinnov.com')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 })->where('any', '.*');
 
 
