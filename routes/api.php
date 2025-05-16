@@ -17,12 +17,12 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
-Route::options('/{any}', function () {
-    return response()->json()
-        ->header('Access-Control-Allow-Origin', 'https://portail.erpinnov.com')
+Route::options('/login', function () {
+    return response('OK', 200)
+        ->header('Access-Control-Allow-Origin', '*')
         ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-})->where('any', '.*');
+});
 
 
 Route::post('/login', [AuthController::class, 'login']);
