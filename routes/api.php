@@ -27,6 +27,12 @@ Route::options('/login', function () {
 
 Route::post('/login', [AuthController::class, 'login']);
 
+
+Route::get('/test-cors', function () {
+    return response('CORS test');
+});
+
+
 Route::post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
 
