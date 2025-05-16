@@ -74,7 +74,6 @@ class AuthController extends Controller
 
             return response()->json([
                 'Message' => 'Utilisateur enregistré avec succès',
-                'user' => $user
             ], 201);
         } catch (\Exception $e) {
             return response()->json(['Message' => 'enregistrement annulé']);
