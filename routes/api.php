@@ -17,21 +17,7 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
-Route::options('/test-cors', function () {
-    return response('OK', 200)
-        ->header('Access-Control-Allow-Origin', '*')
-        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-});
-
-
 Route::post('/login', [AuthController::class, 'login']);
-
-
-Route::get('/test-cors', function () {
-    return response('CORS test');
-});
-
 
 Route::post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
@@ -39,9 +25,7 @@ Route::post('/logout', function (Request $request) {
     return response()->json(['Message' => 'Déconnexion réussie']);
 })->middleware('auth:sanctum');
 
-/**
- * 
- */
+
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/send-reset-link',[AuthController::class,'sendResetLink']);
