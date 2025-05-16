@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
-Route::options('/login', function () {
+Route::options('/test-cors', function () {
     return response('OK', 200)
         ->header('Access-Control-Allow-Origin', '*')
         ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
