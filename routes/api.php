@@ -17,6 +17,10 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->json(['csrf_cookie' => 'set']);
+});
+
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function (Request $request) {
