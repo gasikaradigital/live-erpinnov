@@ -22,7 +22,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            //'terms' => ['required', 'accepted'],
+            'terms' => ['required', 'accepted'],
         ]);
 
         if ($validator->fails()) {
@@ -63,7 +63,7 @@ class AuthController extends Controller
             \DB::commit();
 
             //Création du token
-            $token = $user->createToken('auth_token')->plainTextToken;
+            Auth::login($user);
 
             // Lancer le Job d'ajout dans le contact de dolibarr
             try {
@@ -74,8 +74,6 @@ class AuthController extends Controller
 
             return response()->json([
                 'Message' => 'Utilisateur enregistré avec succès',
-                'access_token' => $token,
-                'token_type' => 'Bearer',
                 'user' => $user
             ], 201);
         } catch (\Exception $e) {

@@ -36,7 +36,7 @@ Route::post('/send-reset-link',[AuthController::class,'sendResetLink']);
 Route::post('/reset-password',[AuthController::class,'resetPassword']);
 
 // Routes protégées par authentification sanctum, toutes les routes qui nécessite le controle d'authentification doivent-être ici
-Route::middleware(['auth:sanctum', 'role:client|admin'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     // Vérification OTP
     Route::post('/verify-otp', [OtpVerificationController::class, 'verify']);
     Route::post('/resend-otp', [OtpVerificationController::class, 'resend']);
