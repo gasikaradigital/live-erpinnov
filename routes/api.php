@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->json(['csrf_cookie' => 'set']);
