@@ -23,9 +23,10 @@ class ProfileController extends Controller
         $profile = $user->profile;
 
         try {
-            $validator = Validator::make($request->all(), $profile->rules());
+            $validator = Validator::make($request->all(), $profile->rules($profile->id));
     
             if($validator->fails()){
+            	Log::debug('Erreurs de validation : ', $validator->errors()->toArray());
                 return response()->json($validator->errors(), 422);
             }
 
@@ -34,9 +35,9 @@ class ProfileController extends Controller
             if ($profile->isComplete()) {
                 // Lancer le Job de mise à jours du contact dans dolibarr
                 try{
-                    (new UpdateContactDolibarr($profile, $user->email))->handle();
+                    UpdateContactDolibarr::dispatch($profile,$user->mail);
                 } catch(\Exception $e){
-                    return response()->json(["message"=>"Erreur de serveur"],500);
+                    Log::error("erreur update contact dollibar",[$e->getMessage()]);
                 }
             }
             return response()->json($profile,200);

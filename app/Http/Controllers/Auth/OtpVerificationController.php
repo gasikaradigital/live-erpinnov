@@ -28,13 +28,13 @@ class OtpVerificationController extends Controller
         if ((string)$user->otp !== (string)$request->otp) {
             // return back()->withErrors(['otp' => 'Code OTP invalide.'])
             //             ->withInput();
-            return response()->json(['otp' => 'Code OTP invalide']);
+            return response()->json(['otp' => 'Code OTP invalide'],400);
         }
 
         if (now()->isAfter($user->otp_expires_at)) {
             // return back()->withErrors(['otp' => 'Code OTP expiré.'])
             //             ->withInput();
-            return response()->json(['otp' => 'Code OTP expiré']);
+            return response()->json(['otp' => 'Code OTP expiré'],410);
         }
 
         try {

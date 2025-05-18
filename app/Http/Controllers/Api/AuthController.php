@@ -13,6 +13,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Password;
 use Spatie\Permission\Models\Role;
 use App\Jobs\AddInDolibarr;
+use App\Jobs\SendOtpNotification;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -55,9 +57,6 @@ class AuthController extends Controller
                 'otp_expires_at' => now()->addMinutes(10),
             ]);
 
-            // Envoyer l'OTP par email
-            $user->notify(new OtpVerification($otp));
-
             event(new Registered($user));
 
             \DB::commit();
@@ -67,7 +66,8 @@ class AuthController extends Controller
 
             // Lancer le Job d'ajout dans le contact de dolibarr
             try {
-                (new AddInDolibarr($request->email))->handle();
+                SendOtpNotification::dispatch($user);
+                AddInDolibarr::dispatch($request->email);
             } catch (\Exception $e) {
                 dd($e->getMessage());
             }
