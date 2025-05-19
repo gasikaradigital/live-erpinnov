@@ -20,7 +20,10 @@ class ProfileController extends Controller
     {
        
         $user = auth()->user();
-        $profile = $user->profile;
+        $profile = $user->profile ?? $user->profile()->create([
+            'user_id' => $user->id,
+            'is_public' => true
+        ]);
 
         try {
             $validator = Validator::make($request->all(), $profile->rules($profile->id));
