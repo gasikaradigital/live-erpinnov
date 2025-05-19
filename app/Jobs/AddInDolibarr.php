@@ -40,7 +40,7 @@ class AddInDolibarr implements ShouldQueue
             Log::info('Données envoyées à l\'API:', $apiData);
             
             $response = Http::withHeaders([
-                'DOLAPIKEY' => 'V8ARU7g614rfiu5Dft2fbj4P6xXDO9TN',
+                'DOLAPIKEY' => '3at1TxcD44CYN4J9LJ23ldG6r7VrcdTu',
                 'Accept' => 'application/json'
             ])->post('https://gmg.erpinnov.com' . '/api/index.php/contacts', $apiData);
 
