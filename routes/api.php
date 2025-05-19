@@ -25,9 +25,11 @@ Route::get('/sanctum/csrf-cookie', function () {
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function (Request $request) {
-    $request->user()->currentAccessToken()->delete();
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-    return response()->json(['Message' => 'Déconnexion réussie']);
+    return response()->json(['message' => 'Logged out']);
 })->middleware('auth:sanctum');
 
 
