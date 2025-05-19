@@ -22,7 +22,10 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = auth()->user();
-        $profile = $user->profile;
+        $profile = $user->profile ?? $user->profile()->create([
+            'user_id' => $user->id,
+            'is_public' => true
+        ]);
 
         try {
             $validated = $request->validate(Profile::rules($profile->id));
