@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Api\EntrepriseController;
 
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->json(['csrf_cookie' => 'set']);
@@ -64,6 +65,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Récupération de tous les tickets
     Route::get('/tickets/get', [TicketsController::class, 'getTickets']);
+
+    //Création entreprise
+    Route::get('/create-entreprise', [EntrepriseController::class, 'create']);
 
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
