@@ -54,7 +54,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Récuperation de l'utilisateur
     Route::get('/user', function (Request $request) {
         return $request->user();
-    });
+    }, 200);
 
     // Récuperation des instances liés au utilisateur
     #Route::get('instances',[InstancesController::class,'getInstanceByUser']);
