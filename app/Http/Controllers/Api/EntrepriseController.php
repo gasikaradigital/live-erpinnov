@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use DragonCode\Contracts\Cashier\Auth\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class EntrepriseController extends Controller
 {
     public function create(Request $request){
         //Validation des données
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'nif' => ['required', 'string', 'min:8', 'confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'nif' => ['required', 'string', 'min:8'],
             'ville' => ['required', 'string', 'min:3', 'max:50'],
             'pays' => ['required', 'string', 'min:3', 'max:50'],
             'phone' => ['required', 'string', 'min:8', 'max:15'],
@@ -45,5 +47,11 @@ class EntrepriseController extends Controller
             ]);
         }
         
+    }
+
+    public function get(Request $request){
+        $user = $request->user();
+        $entreprises = $user->entreprises()->get();
+        return response()->json($entreprises);
     }
 }

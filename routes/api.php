@@ -67,7 +67,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/tickets/get', [TicketsController::class, 'getTickets']);
 
     //Création entreprise
-    Route::get('/create-entreprise', [EntrepriseController::class, 'create']);
+    Route::post('/create-entreprise', [EntrepriseController::class, 'create']);
+
+    Route::get('/entreprises',[EntrepriseController::class,'get']);
 
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
@@ -77,6 +79,3 @@ Route::group(['middleware' => 'verify-apps-script'], function () {
     Route::post('webhooks/tutorial', [TutorialController::class, 'receive']);
     Route::post('/webhooks/faq', [FAQController::class, 'receive']);
 });
-
-Route::post('/entreprises',[TestDolibarrApi::class,'testCreateEntreprise']);
-Route::get('/entreprises',[TestDolibarrApi::class,'getEntreprises']);
