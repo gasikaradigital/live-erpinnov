@@ -17,8 +17,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(DolibarrApiService::class, function ($app) {
             return new DolibarrApiService(
-                "https://www.gmg.erpinnov.com/api/index.php",
-                "3at1TxcD44CYN4J9LJ23ldG6r7VrcdTu"
+                "https://www.modelmg.erpinnov.com/api/index.php",
+                "KzvPZvn2XXLK96C7t00c5Lp3gGu38sKw"
             );
         });
 
