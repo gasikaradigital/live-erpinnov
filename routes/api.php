@@ -61,7 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     #Route::get('instances',[InstancesController::class,'getInstanceByUser']);
 
     // Création d'instance
-    #Route::post('instances',[InstancesController::class,'createInstance']);
+    Route::post('/create-instances',[InstancesController::class,'createInstance']);
 
     //Récupération de tous les tickets
     Route::get('/tickets/get', [TicketsController::class, 'getTickets']);
