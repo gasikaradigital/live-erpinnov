@@ -26,9 +26,6 @@ class InstanceProvisioningService
 
     public function provisionInstance($instanceName, $password, $login, $urlSuffix, $api_key_dolibarr, $userEmail, $subscriptionId, $instance_free)
     {
-        //Activation Api dans dolibarr
-        $this->databaseServiceDolibarr->activeApi($instance_free);
-
         //Création base de donnée de Innov
         $dbNameInnov = $this->databaseServiceInnov->createDatabaseInnov($instanceName);
         if(!$dbNameInnov) {

@@ -97,7 +97,12 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        return response()->json(['message' => 'Authentificated']);
+        $user = Auth::user();
+
+        return response()->json([
+            'message' => 'Authentificated',
+            'user' => $user
+        ]);
     }
 
     public function sendResetLink(Request $request)
