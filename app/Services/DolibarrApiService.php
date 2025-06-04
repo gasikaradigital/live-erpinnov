@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Services;
 
 use App\DTO\EnterpriseDto;
 use Closure;
 use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DolibarrApiService
 {
@@ -31,7 +33,7 @@ class DolibarrApiService
      * @throws Exception Si la requête échoue ou si le mapping est invalide
      */
 
-    public function fetch(
+     public function fetch(
         string $endpoint,
         array $query = [],
         ?string $dtoClass = null,
@@ -40,36 +42,39 @@ class DolibarrApiService
         if ($dtoClass && !$mapper) {
             throw new \InvalidArgumentException("Un mapper est requis quand un DTO est spécifié");
         }
-        
+    
+        Log::info("dolibar url ",["{$this->baseUrl}/{$endpoint}"]);
         // Récupération des données
         $response = Http::withHeaders([
             'DOLAPIKEY' => $this->apiKey,
             'Accept' => 'application/json',
-        ])->get("{$this->baseUrl}/{$endpoint}", [
+        ])->get("{$this->baseUrl}/{$endpoint}", array_merge([
             'limit' => 100,
             'sortfield' => 'ref',
             'sortorder' => 'ASC',
-        ]);
-           
+        ], $query));
+    
         if ($response->failed()) {
             throw new \RuntimeException("Erreur API Dolibarr: " . $response->body());
         }
-
-        return $response;
-        //Transformation en DTO si nécessaire
-        /*if (!$dtoClass || !$mapper) {
+    
+        $apiData = $response->json();
+    
+        // Si pas de DTO, on retourne les données brutes
+        if (!$dtoClass || !$mapper) {
             return $apiData;
         }
-
+    
+        // Application du mapper
         if (array_is_list($apiData)) {
             return array_map(
-                fn(array $item): EnterpriseDto => $mapper($item),
+                fn(array $item) => $mapper($item),
                 $apiData
             );
         }
-
-        return [$mapper($apiData)];*/
-    }
+    
+        return [$mapper($apiData)];
+    }    
 
     /**
      * methode de création par defaut
@@ -119,7 +124,7 @@ class DolibarrApiService
         string $endpoint,
         array $data
     ): array {
-        
+
         $response = Http::withHeaders([
             'DOLAPIKEY' => $this->apiKey,
             'Content-Type' => 'application/json',

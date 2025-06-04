@@ -64,7 +64,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/create-instances',[InstancesController::class,'createInstance']);
 
     //Récupération de tous les tickets
-    Route::get('/tickets/get', [TicketsController::class, 'getTickets']);
+    Route::get('/tickets', [TicketsController::class, 'getTickets']);
+
+    // Création ticket
+    Route::post('/tickets',[TicketsController::class,'create']);
 
     //Création entreprise
     Route::post('/create-entreprise', [EntrepriseController::class, 'create']);
