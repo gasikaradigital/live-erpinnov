@@ -69,6 +69,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Création ticket
     Route::post('/tickets',[TicketsController::class,'create']);
 
+    Route::put('/tickets/{id}', [TicketsController::class, 'update']);
+    Route::delete('/tickets/{id}', [TicketsController::class, 'delete']);
+
     //Création entreprise
     Route::post('/create-entreprise', [EntrepriseController::class, 'create']);
 

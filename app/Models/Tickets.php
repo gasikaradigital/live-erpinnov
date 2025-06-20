@@ -13,6 +13,7 @@ class Tickets extends Model
         'user_id',
         'sujet',
         'message',
+        'status'
     ];
 
     /**
