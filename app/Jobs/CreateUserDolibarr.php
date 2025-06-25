@@ -49,9 +49,9 @@ class CreateUserDolibarr implements ShouldQueue
             Log::info('Données envoyées à l\'API:', $apiData);
             //sZiYMfRJ5JDi
             $response = Http::withHeaders([
-                'DOLAPIKEY' => $this->config['apiKey'],
+                'DOLAPIKEY' => '3at1TxcD44CYN4J9LJ23ldG6r7VrcdTu',
                 'Accept' => 'application/json'
-            ])->post( $this->config['url'] . '/api/index.php/users', $apiData);
+            ])->post( 'https://gmg.erpinnov.com' . '/api/index.php/users', $apiData);
 
             if (!$response->successful()) {
                 Log::error('Réponse API Dolibarr: ' . $response->body());
