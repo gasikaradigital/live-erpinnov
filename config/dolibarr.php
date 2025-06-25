@@ -22,7 +22,7 @@ return [
         'apiKey' => env('ApiKey_Sass_Fr'),
     ],
     'sass_mdg' => [
-        'url' => nev('Url_Sass_Mdg'),
+        'url' => env('Url_Sass_Mdg'),
         'apiKey' => env('ApiKey_Sass_Mdg'),
     ]
 ];
