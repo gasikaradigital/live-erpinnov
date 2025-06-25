@@ -80,7 +80,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/entreprises',[EntrepriseController::class,'get']);
 
     //Création utilisateur Dolisass
-    Route::post('/create-dolisaas',[InstancesController::class,'createUserSaas']);
+    Route::post('/create-dolisaas',[DolisaasController::class,'createUserSaas']);
 
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
