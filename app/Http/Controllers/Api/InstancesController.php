@@ -212,7 +212,7 @@ class InstancesController extends Controller
                 'password_dolibarr' => $dolibarrPassword,
                 'login_dolibarr' => 'admin',
                 'url_suffix' => Str::slug($instanceName),
-                'api_key_dolibarr' => Str::random(32),
+                'api_key_dolibarr' => $instance_free->api_key,
             ];
         } catch (Exception $e) {
             logger('no free instance');

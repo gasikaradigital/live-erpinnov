@@ -17,6 +17,14 @@ return [
         'document_root' => env('CPANEL_DOCUMENT_ROOT'),
         'cpsess' => env('CPANEL_CPSESS'),
     ],
+    'sass_fr' => [
+        'url' => env('Url_Sass_Fr'),
+        'apiKey' => env('ApiKey_Sass_Fr'),
+    ],
+    'sass_mdg' => [
+        'url' => nev('Url_Sass_Mdg'),
+        'apiKey' => env('ApiKey_Sass_Mdg'),
+    ]
 ];
 
 

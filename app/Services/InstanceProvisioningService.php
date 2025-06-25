@@ -36,17 +36,17 @@ class InstanceProvisioningService
         $this->databaseServiceInnov->importDatabaseInnov($dbNameInnov);
         
         //Cryptage API key dolibarr
-        $instance_id = $instance_free->instanceId;
-        $api_key = $this->apiService->dolEncryptApi($api_key_dolibarr, $instance_id);
+        // $instance_id = $instance_free->instanceId;
+        // $api_key = $this->apiService->dolEncryptApi($api_key_dolibarr, $instance_id);
 
         //Mise à jours de l'api key de l'instance après assignation à un client
-        $instance_free->api_key = $api_key_dolibarr;
+        // $instance_free->api_key = $api_key_dolibarr;
 
         // Enregistrer les modifications dans la base de données
-        $instance_free->save();
+        // $instance_free->save();
 
         //Injection de l'api dans dolibarr
-        $this->databaseServiceDolibarr->updateCredentials($instance_free, $api_key);
+        // $this->databaseServiceDolibarr->updateCredentials($instance_free, $api_key);
         
         //Mise à jours base de donnée Innov
         $this->databaseServiceInnov->updateCredentialsInnov($dbNameInnov, $instanceName, $api_key_dolibarr, $password, $userEmail, $subscriptionId, $instance_free);

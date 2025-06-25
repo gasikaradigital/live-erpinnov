@@ -18,6 +18,8 @@ use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\EntrepriseController;
+use App\Http\Controllers\Api\DolisaasController;
+
 
 Route::get('/sanctum/csrf-cookie', function () {
     return response()->json(['csrf_cookie' => 'set']);
@@ -76,6 +78,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/create-entreprise', [EntrepriseController::class, 'create']);
 
     Route::get('/entreprises',[EntrepriseController::class,'get']);
+
+    //Création utilisateur Dolisass
+    Route::post('/create-dolisaas',[InstancesController::class,'createUserSaas']);
 
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
