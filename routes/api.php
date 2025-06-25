@@ -18,7 +18,7 @@ use App\Models\User;
 use Fruitcake\Cors\HandleCors;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\EntrepriseController;
-use App\Http\Controllers\Api\DolisaasController;
+use App\Http\Controllers\Api\DolisassController;
 
 
 Route::get('/sanctum/csrf-cookie', function () {
