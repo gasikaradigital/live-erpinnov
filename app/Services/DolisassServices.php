@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Services\CpanelService;
 use Illuminate\Support\Facades\Config;
 use App\Jobs\CreateUserDolibarr;
