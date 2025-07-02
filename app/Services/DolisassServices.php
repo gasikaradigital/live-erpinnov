@@ -6,7 +6,7 @@ use App\Services\CpanelService;
 use Illuminate\Support\Facades\Config;
 use App\Jobs\CreateUserDolibarr;
 
-class DolisassService
+class DolisassServices
 {
     private $cpanelService;
     private $databaseService;
