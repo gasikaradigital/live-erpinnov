@@ -14,7 +14,7 @@ class DolisassController extends Controller
         //Validation des données
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string'],
-            'entrepriseId' => ['required', 'string'],
+            'entrepriseId' => ['required'],
         ]);
 
         if ($validator->fails()) {
