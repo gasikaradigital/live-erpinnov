@@ -28,8 +28,9 @@ class DolisassServices
             if($entreprise) {
                 Log::info("Entreprise bien récupérer");
             }
+            return $entreprise;
             //Création utilisateur de dolibarr
-            CreateUserDolibarr::dispatch($request->name, $entreprise);
+            //CreateUserDolibarr::dispatch($request->name, $entreprise);
         } catch (\Exception $e) {
             Log::info("erreur dans le dolisassServices: " . $e->getMessage());
         }

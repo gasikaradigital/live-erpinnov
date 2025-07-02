@@ -25,6 +25,9 @@ class DolisassController extends Controller
 
         try{
             $dolisass = new DolisassServices($request->all());
+            return response()->json([
+                'entr' => $dolisass,
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'Message' => 'enregistrement annulé',
