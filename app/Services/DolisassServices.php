@@ -25,13 +25,13 @@ class DolisassServices
         //$this->cpanelService->createSubdomainMg($request->name);
         try{
             $entreprise = Entreprise::find($request->entrepriseId);
-            if(!$entreprise) {
-                Log::error("erreur lors de la récupération de l'entreprise: ");
+            if($entreprise) {
+                Log::info("Entreprise bien récupérer");
             }
             //Création utilisateur de dolibarr
             CreateUserDolibarr::dispatch($request->name, $entreprise);
         } catch (\Exception $e) {
-            Log::error("erreur dans le dolisassServices: " . $e->getMessage());
+            Log::info("erreur dans le dolisassServices: " . $e->getMessage());
         }
         
         
