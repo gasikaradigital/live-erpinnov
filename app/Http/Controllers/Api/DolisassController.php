@@ -27,7 +27,7 @@ class DolisassController extends Controller
         try{
             //$dolisass = new DolisassServices($request->all());
             return response()->json([
-                'req' => $request->all(),
+                'req' => 'tong',
             ]);
         } catch (\Exception $e) {
             return response()->json([
