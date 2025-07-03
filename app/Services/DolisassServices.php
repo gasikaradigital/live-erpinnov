@@ -34,7 +34,7 @@ class DolisassServices
             }
 
             //Création sous-domaine pour le client
-            $this->cpanelService->createSubdomainMg($request->name);
+            $this->cpanelService->createSubdomainMg($data['name']);
 
             return $entreprise;
             //Création utilisateur de dolibarr
