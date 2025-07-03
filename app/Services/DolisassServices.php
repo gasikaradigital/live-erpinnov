@@ -33,6 +33,9 @@ class DolisassServices
                 return 'entreprise non troure';
             }
 
+            //Création sous-domaine pour le client
+            $this->cpanelService->createSubdomainMg($request->name);
+
             return $entreprise;
             //Création utilisateur de dolibarr
             //CreateUserDolibarr::dispatch($request->name, $entreprise);
