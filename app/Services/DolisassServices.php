@@ -28,7 +28,10 @@ class DolisassServices
             $entreprise = Entreprise::find($data['entrepriseId']);
             if($entreprise) {
                 Log::info("Entreprise bien récupérer");
+            } else {
+                return 'entreprise non troure';
             }
+            
             return $entreprise;
             //Création utilisateur de dolibarr
             //CreateUserDolibarr::dispatch($request->name, $entreprise);
