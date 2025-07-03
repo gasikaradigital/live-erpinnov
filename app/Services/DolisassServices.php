@@ -31,12 +31,13 @@ class DolisassServices
             } else {
                 return 'entreprise non troure';
             }
-            
+
             return $entreprise;
             //Création utilisateur de dolibarr
             //CreateUserDolibarr::dispatch($request->name, $entreprise);
         } catch (\Exception $e) {
             Log::info("erreur dans le dolisassServices: " . $e->getMessage());
+            return 'erreur dans la récupération';
         }
         
         
