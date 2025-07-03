@@ -20,12 +20,12 @@ class DolisassServices
     }
 
 
-    public function provisionInstance($request)
+    public function provisionInstance($data)
     {
         //Création sous-domaine pour le client
         //$this->cpanelService->createSubdomainMg($request->name);
         try{
-            $entreprise = Entreprise::find($request->entrepriseId);
+            $entreprise = Entreprise::find($data['entrepriseId']);
             if($entreprise) {
                 Log::info("Entreprise bien récupérer");
             }

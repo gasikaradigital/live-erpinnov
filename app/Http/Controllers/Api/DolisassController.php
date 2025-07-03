@@ -24,9 +24,11 @@ class DolisassController extends Controller
             Log::info("Erreur des données reçu");
         }
 
+        $data = $validator->validated();
+
         try{
             $dolisass = new DolisassServices();
-            $entreprise  = $dolisass->provisionInstance($request->all());
+            $entreprise  = $dolisass->provisionInstance($data);
             return response()->json([
                 'entreprise' => $entreprise,
             ], 201);
