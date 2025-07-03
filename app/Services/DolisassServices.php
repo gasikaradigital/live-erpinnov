@@ -7,6 +7,7 @@ use App\Services\CpanelService;
 use Illuminate\Support\Facades\Config;
 use App\Jobs\CreateUserDolibarr;
 use Illuminate\Support\Facades\Log;
+use App\Models\Entreprise;
 
 class DolisassServices
 {
