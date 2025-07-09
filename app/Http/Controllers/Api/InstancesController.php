@@ -67,7 +67,7 @@ class InstancesController extends Controller
                 'regex:/^[a-zA-Z0-9_-]*$/'
             ],
             'enterpriseId' => ['integer', 'required'],
-            'planId' => ['integer', 'required'],
+            //'planId' => ['integer', 'required'],
             'source' => ['string', 'required']
         ]);
 
