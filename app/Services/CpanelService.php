@@ -64,14 +64,15 @@ class CpanelService
         }
     }
 
-    public function createSubdomainMg($suffixSubDomain)
+    public function createSubdomainSass($suffixSubDomain, $url)
     {
         try{
             $cpanel_host = $this->config['host'];
             $cpanel_user = $this->config['user'];
             $api_token = $this->config['token'];
             $main_domain = $this->config['main_domain'];
-            $document_root = '/home/sc2sylg/gmg.erpinnov.com';
+            $fileDolibarr = Str::replaceFirst('https://', '', $url);
+            $document_root = '/home/sc2sylg/Instance/' . $fileDolibarr;
 
             $cpsess = $this->config['cpsess'];
 

@@ -10,6 +10,7 @@ use App\Notifications\SendInstanceCreatedEmail;
 use App\Services\CreateUserDolibarr;
 use App\Services\InstanceProvisioningService;
 use App\Models\Entreprise;
+use App\Services\CpanelService;
 
 class FastInstanceProvisioningService {
     public function createInstance($instanceData, $user, $instance, $source, $entrepriseId) {
@@ -79,6 +80,9 @@ class FastInstanceProvisioningService {
                 }
             } else {
                 $createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free->api_key, $instance_free->url);
+
+                //Création sous-domaine
+                $this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
 
                 //Mise à jours du statut de l'instance après assignation à un client
                 $instance_free->statut = 'atrribué';
