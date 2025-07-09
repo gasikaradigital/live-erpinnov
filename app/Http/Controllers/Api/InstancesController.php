@@ -67,7 +67,8 @@ class InstancesController extends Controller
                 'regex:/^[a-zA-Z0-9_-]*$/'
             ],
             'enterpriseId' => ['integer', 'required'],
-            'planId' => ['integer', 'required']
+            'planId' => ['integer', 'required'],
+            'source' => ['string', 'required']
         ]);
 
         if ($validator->fails()) {
@@ -88,7 +89,12 @@ class InstancesController extends Controller
         /**
          * @var int $enterpriseId
          */
-        $enterpriseId = (int) $request->enterpriseId;
+        $entrepriseId = (int) $request->enterpriseId;
+
+        /**
+         * @var string $source
+         */
+        $source = $request->source;
 
         try {
             DB::beginTransaction();
@@ -146,7 +152,7 @@ class InstancesController extends Controller
             ]);
 
             $fastProvisioning = new FastInstanceProvisioningService();
-            $success = $fastProvisioning->createInstance($instanceData, $user, $instance);
+            $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId);
 
             if (!$success) {
                 throw new Exception('Échec du provisionnement de l\'instance.');

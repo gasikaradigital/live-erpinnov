@@ -1,45 +1,36 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Services;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Bus\Queueable;
-use Exception;
+use Illuminate\Support\Facades\DB;
+use App\Models\OtherTable;
+use App\Models\Subscription;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Models\Entreprise;
 use Carbon\Carbon;
 
-
-class CreateUserDolibarr implements ShouldQueue
+class CreateUsersDolibarr
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    public $name, $entreprise, $value, $dolibarrApiKey, $urlDolibarr;
 
-    public $config, $name, $entreprise, $value;
- 
     /**
-     * Create a new job instance.
+     * Create a new  user Dolibarr.
      */
-    public function __construct($name, $entreprise)
+    public function __construct($name, $entreprise, $dolibarrApiKey, $urlDolibarr)
     {
 
         $this->entreprise = $entreprise;
         $this->name = $name;
-  
+        $this->dolibarrApiKey = $dolibarrApiKey;
+        $this->urlDolibarr = $urlDolibarr;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle()
-    {
+    public function create(){
         $this->setValue();
-        
-        try {
+
+        try{
             $apiData = [
                 ...$this->value,
                 'statut' => 1,
@@ -55,15 +46,16 @@ class CreateUserDolibarr implements ShouldQueue
 
             if (!$response->successful()) {
                 Log::error('Réponse API Dolibarr: ' . $response->body());
-                throw new Exception('Erreur API: ' . $response->body());
+                return false;
             }
 
             Log::info('contact créer avec succès');
-        } catch (Exception $e) {
-            Log::error('Erreur création de contact: ' . $e->getMessage());
-            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+            return true;
+        } catch (\Exception $e){
+            logger('Erreur dans la création d\'utilisateur', $e->getMessage());
+            return null;
         }
-
+        
     }
 
     public function setValue(){
@@ -81,4 +73,5 @@ class CreateUserDolibarr implements ShouldQueue
              
         ];
     }
+
 }

@@ -79,9 +79,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/entreprises',[EntrepriseController::class,'get']);
 
-    //Création utilisateur Dolisass
-    Route::post('/create-dolisaas',[DolisassController::class,'createUserSass']);
-
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
 Route::get('/tutorial', [TutorialController::class, 'getAll']);
