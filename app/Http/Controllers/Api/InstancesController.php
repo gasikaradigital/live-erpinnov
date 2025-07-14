@@ -175,7 +175,7 @@ class InstancesController extends Controller
                 'url' => "http://" . $instance->name . ".erpinnov.com",
                 'created_at' => now(),
                 'created_by' => $user->email
-            ]);
+            ], 200);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
