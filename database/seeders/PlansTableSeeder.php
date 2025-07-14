@@ -162,6 +162,47 @@ class PlansTableSeeder extends Seeder
                         'is_default' => false
                     ]
                 ]
+            ],
+            [
+                'uuid' => Str::uuid(),
+                'name' => 'Dolisaas',
+                'description' => 'Offre complète pour les grandes entreprises.',
+                'is_free' => false,
+                'is_default' => false,
+                'instance_limit' => null,
+                'duration_days' => null,
+                'has_sub_plans' => true,
+                'features' => json_encode([
+                    '100 Go de stockage',
+                    '10 000 appels API'
+                ]),
+                'sub_plans' => [
+                    [
+                        'name' => 'RH',
+                        'price_monthly' => 2.00,
+                        'price_yearly' => 24.00,
+                        'price_local' => 270000.00,
+                        'features' => ['Gestion des RH'],
+                        'is_default' => true
+                    ],
+                    [
+                        'name' => 'GPEC',
+                        'price_monthly' => 5.00,
+                        'price_yearly' => 60.00,
+                        'price_local' => 378000.00,
+                        'features' => ['GPEC'],
+                        'is_default' => false
+                    ],
+                    [
+                        'name' => 'Paie',
+                        'price_monthly' => 10.00,
+                        'price_yearly' => 120.00,
+                        'price_local' => 486000.00,
+                        'features' => ['Paie'],
+                        'is_default' => false
+                    ]
+                ]
+
             ]
         ];
 
