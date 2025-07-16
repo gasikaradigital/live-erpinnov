@@ -71,6 +71,10 @@ class InstancesController extends Controller
             'source' => ['string', 'required']
         ]);
 
+        return $response->json([
+            'message' => "api pointé",
+        ], 200);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 401);
         }
