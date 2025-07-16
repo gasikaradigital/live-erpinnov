@@ -58,7 +58,7 @@ class InstancesController extends Controller
         $user = auth()->user();
 
 
-        $validator = Validator::make($request->all(), [
+/*        $validator = Validator::make($request->all(), [
             'name' => [
                 'required',
                 'unique:instances,name',
@@ -69,7 +69,7 @@ class InstancesController extends Controller
             'enterpriseId' => ['integer', 'required'],
             //'planId' => ['integer', 'required'],
             'source' => ['string', 'required']
-        ]);
+        ]); */
 
         return $response->json([
             'message' => "api pointé",
