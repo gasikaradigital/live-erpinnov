@@ -71,7 +71,7 @@ class InstancesController extends Controller
             'source' => ['string', 'required']
         ]); 
 
-        return $response->json([
+        return response()->json([
             'message' => "api pointé",
             'data' => $request->all()
         ], 201);
@@ -180,7 +180,7 @@ class InstancesController extends Controller
                 'url' => "http://" . $instance->name . ".erpinnov.com",
                 'created_at' => now(),
                 'created_by' => $user->email
-            ], 200);
+            ], 201);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
