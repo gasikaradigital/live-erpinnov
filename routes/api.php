@@ -80,6 +80,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/entreprises',[EntrepriseController::class,'get']);
 
+    //Création subscription
     Route::post('/create-subscription', [SubscriptionController::class, 'create']);
 
 });
