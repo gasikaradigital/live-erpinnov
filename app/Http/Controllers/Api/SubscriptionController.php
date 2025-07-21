@@ -41,8 +41,12 @@ class SubscriptionController extends Controller
 
             return response()->json([
                 'Message' => 'subscription créer avec succès',
-            ], 200);
+            ], 201);
 
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            return response()->json([
+                'erreur' => $e->getMessage()
+            ]);
+        }
     }
 }
