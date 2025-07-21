@@ -60,6 +60,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return response()->json($request->user(), 200);
     });
 
+    Route::get('/me', function (Request $request) {
+        return response()->json([
+            'user' => $request->user,
+            'profile' => $request->user->profile,
+            'entreprises' => $request->user->entreprises,
+            'subscriptions' => $request->user->subscriptions,
+        ]);
+    });
+
     // Récuperation des instances liés au utilisateur
     #Route::get('instances',[InstancesController::class,'getInstanceByUser']);
 
