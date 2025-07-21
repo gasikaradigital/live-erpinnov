@@ -20,7 +20,7 @@ class SubscriptionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'planId' => ['integer', 'required'],
-            'sub_planId' => ['integer', 'required']
+            'subPlanId' => ['integer', 'required']
         ]); 
 
         if($validator->fails()){
