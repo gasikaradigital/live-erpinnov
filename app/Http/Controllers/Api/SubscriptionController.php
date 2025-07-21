@@ -31,14 +31,14 @@ class SubscriptionController extends Controller
 
         try{
             // Créer l'abonnement
-            /*Subscription::create([
+            Subscription::create([
                 'user_id' => $user->id,
                 'plan_id' => $request->planId,
                 'sub_plan_id' => $request->subPlanId,
-                'start_date' => Carbonn::now(),
+                'start_date' => Carbon::now(),
                 'end_date' => Carbon::now()->addDays(15),
                 'status' => Subscription::STATUS_TRIAL,
-            ]);*/
+            ]);
 
             return response()->json([
                 'Message' => 'subscription créer avec succès',
