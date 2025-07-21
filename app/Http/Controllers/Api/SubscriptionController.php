@@ -8,6 +8,7 @@ use App\Models\Plan;
 use App\Models\SubPlan;
 use Illuminate\Support\Facades\Http;
 use App\Models\Subscription;
+use Carbon\Carbon;
 
 class SubscriptionController extends Controller
 {
@@ -26,14 +27,15 @@ class SubscriptionController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 401);
         }
+
         try{
             // Créer l'abonnement
             Subscription::create([
                 'user_id' => $user->id,
                 'plan_id' => $request->planId,
-                'sub_plan_id' => $request->sub_planId,
-                'start_date' => $start_date,
-                'end_date' => $end_date,
+                'sub_plan_id' => $request->subPlanId,
+                'start_date' => Carbonn::now(),
+                'end_date' => Carbon::now()->addDays(15),
                 'status' => Subscription::STATUS_TRIAL,
             ]);
 
