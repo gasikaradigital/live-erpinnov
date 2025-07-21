@@ -19,6 +19,7 @@ use Fruitcake\Cors\HandleCors;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\EntrepriseController;
 use App\Http\Controllers\Api\DolisassController;
+use App\Http\Controllers\Api\SubscriptionController;
 
 
 Route::get('/sanctum/csrf-cookie', function () {
@@ -78,6 +79,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/create-entreprise', [EntrepriseController::class, 'create']);
 
     Route::get('/entreprises',[EntrepriseController::class,'get']);
+
+    Route::post('/create-subscription', [SubscriptionController::class, 'create']);
 
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
