@@ -127,9 +127,7 @@ class InstancesController extends Controller
             if ($entreprise === null) {
                 return response()->json(['message' => 'L\'entreprise selectionné n\'existe pas'], 400);
             }
-            return response()->json([
-                'message' => 'pointer'
-            ], 201);
+            
             /**
              * @var array|null $instanceData
              */
@@ -137,7 +135,9 @@ class InstancesController extends Controller
             if ($instanceData === null) {
                 return response()->json(['message' => 'Impossible de recuperer un instance libre'], 500);
             }
-            
+            return response()->json([
+                'message' => 'pointer'
+            ], 201);
             $instance = Instance::create([
                 'user_id' => $user->id,
                 'subscription_id' => $subscription->id,
