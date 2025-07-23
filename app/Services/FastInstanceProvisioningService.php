@@ -79,16 +79,16 @@ class FastInstanceProvisioningService {
                     return true;
                 }
             } else {
-                $createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free->api_key, $instance_free->url);
+                //$createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free->api_key, $instance_free->url);
 
                 //Création sous-domaine
-                $this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
+                //$this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
 
                 //Mise à jours du statut de l'instance après assignation à un client
-                $instance_free->statut = 'atrribué';
+                //$instance_free->statut = 'atrribué';
 
                 // Enregistrer les modifications dans la base de données
-                $instance_free->save();
+                //$instance_free->save();
 
                 return true;
             }

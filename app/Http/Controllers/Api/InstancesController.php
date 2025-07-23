@@ -150,11 +150,7 @@ class InstancesController extends Controller
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
-
-            DB::commit();
-            return response()->json([
-                'message' => 'pointer'
-            ], 201);
+           
             $fastProvisioning = new FastInstanceProvisioningService();
             $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId);
 
