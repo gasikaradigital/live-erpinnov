@@ -80,7 +80,11 @@ class FastInstanceProvisioningService {
                     return true;
                 }
             } else {
+                //Création de l'utilisateur Dolibarr
                 $createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free);
+                $createUserDolibarr->createUser();
+                //Mise à jours de son mot de passe
+                $createUserDolibarr->setPassword($instance_free);
 
                 //Création sous-domaine
                 //$this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);

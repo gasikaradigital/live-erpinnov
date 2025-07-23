@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\EntrepriseController;
 use App\Http\Controllers\Api\DolisassController;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Services\CreateUsersDolibarr;
 
 
 Route::get('/sanctum/csrf-cookie', function () {

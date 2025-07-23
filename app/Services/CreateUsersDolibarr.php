@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Config;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+
 
 class CreateUsersDolibarr
 {
@@ -25,7 +29,7 @@ class CreateUsersDolibarr
         $this->urlDolibarr = $instance_free->url;
     }
 
-    public function create(){
+    public function createUser(){
         $this->setValue();
 
         try{
@@ -36,11 +40,11 @@ class CreateUsersDolibarr
             ];
 
             Log::info('Données envoyées à l\'API:', $apiData);
-            //sZiYMfRJ5JDi
+            
             $response = Http::withHeaders([
-                'DOLAPIKEY' => $this->dolibarrApiKey,
+                'DOLAPIKEY' => 'XIP8d2htV78s6HkFY7A29fF5oX8qCjul',
                 'Accept' => 'application/json'
-            ])->post( $this->urlDolibarr . '/api/index.php/users', $apiData);
+            ])->post( 'https://001.erpinnov.com/api/index.php/users', $apiData);
 
             if (!$response->successful()) {
                 Log::error('Réponse API Dolibarr: ' . $response->body());
@@ -67,9 +71,40 @@ class CreateUsersDolibarr
             "employee" => "1",
             "lastname" => $this->name,
             "login" => $this->name,
-            "password" => "passwordtest",
              
         ];
+       
+    }
+
+    public function setPassword($insatnce_free){
+        try {
+            config(['database.connections.dynamic' => [
+                'driver' => 'mariadb',
+                'host' => 'localhost',
+                'database' => $instance_free->db_name,
+                'username' => $instance_free->db_user,
+                'password' => $instance_free->db_pass,
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'prefix' => '',
+                'strict' => false,
+                'engine' => null,
+            ]]);
+    
+            DB::purge('dynamic');
+            DB::reconnect('dynamic');
+           
+            DB::connection('dynamic')->table($instance_free->prefix.'user')
+                ->where('rowid', 1)
+                ->update([
+                    'pass_crypted' => $api_key_dolibarr
+                ]);
+    
+            return true;
+        } catch (\Exception $e) {
+            \Log::error("Erreur lors de la mise à jour : " . $e->getMessage());
+            return false;
+        }
     }
 
 }
