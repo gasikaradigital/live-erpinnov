@@ -116,7 +116,9 @@ class InstancesController extends Controller
                 DB::rollBack();
                 return response()->json(['message' => 'L\'utilisateur n\'a pas d\'abonnement sur cette plan'], 403);
             }
-
+            return response()->json([
+                'message' => 'avant recherche entreprise'
+            ], 201);
             /**
              * Entreprise selectionné
              * 
@@ -150,9 +152,7 @@ class InstancesController extends Controller
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
                 'pays' => $enterprise->pays === 'Madagascar' ? 0 : 1,
             ]);
-            return response()->json([
-                'message' => 'fastProvisioning'
-            ], 201);
+            
             $fastProvisioning = new FastInstanceProvisioningService();
             $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId);
 
