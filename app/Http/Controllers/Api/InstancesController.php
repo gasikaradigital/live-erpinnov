@@ -151,10 +151,7 @@ class InstancesController extends Controller
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
 
-            if($instance === null) {
-                return response()->json(['message' => 'Erreur lors de l\'enregistrement de l\'instance']);
-            }
-            
+            DB::commit();
             return response()->json([
                 'message' => 'pointer'
             ], 201);
@@ -164,7 +161,6 @@ class InstancesController extends Controller
             if (!$success) {
                 throw new Exception('Échec du provisionnement de l\'instance.');
             }
-
 
             DB::commit();
 
