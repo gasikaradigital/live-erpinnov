@@ -87,7 +87,7 @@ class InstancesController extends Controller
         $planId = (int) $request->planId;
 
         /**
-         * @var int $enterpriseId
+         * @var int $entrepriseId
          */
         $entrepriseId = (int) $request->entrepriseId;
 
@@ -120,11 +120,11 @@ class InstancesController extends Controller
             /**
              * Entreprise selectionné
              * 
-             * @var Enterprise|null $enterprise
+             * @var Entreprise|null $entreprise
              */
             $entreprise = Entreprise::find($entrepriseId);
 
-            if ($enterprise === null) {
+            if ($entreprise === null) {
                 return response()->json(['message' => 'L\'entreprise selectionné n\'existe pas'], 400);
             }
             return response()->json([
@@ -143,14 +143,14 @@ class InstancesController extends Controller
                 'subscription_id' => $subscription->id,
                 'reference' => Instance::generateNextReference(),
                 'name' => $instanceName,
-                'entreprise_id' => $enterprise->id,
+                'entreprise_id' => $entreprise->id,
                 'status' => 'active',
                 'url' => $instanceName . '.erpinnov.com',
                 'auth_token' => Instance::generateUniqueAuthToken(),
                 'dolibarr_username' => $instanceData['login_dolibarr'],
                 'dolibarr_password' => Hash::make($instanceData['password_dolibarr']),
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
-                'pays' => $enterprise->pays === 'Madagascar' ? 0 : 1,
+                'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
             
             $fastProvisioning = new FastInstanceProvisioningService();
