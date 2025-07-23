@@ -89,7 +89,7 @@ class InstancesController extends Controller
         /**
          * @var int $enterpriseId
          */
-        $entrepriseId = (int) $request->enterpriseId;
+        $entrepriseId = (int) $request->entrepriseId;
 
         /**
          * @var string $source
