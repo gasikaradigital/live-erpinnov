@@ -150,6 +150,11 @@ class InstancesController extends Controller
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
+
+            if($instance === null) {
+                return response()->json(['message' => 'Erreur lors de l\'enregistrement de l\'instance']);
+            }
+            
             return response()->json([
                 'message' => 'pointer'
             ], 201);
