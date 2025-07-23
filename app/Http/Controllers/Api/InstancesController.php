@@ -95,9 +95,7 @@ class InstancesController extends Controller
          * @var string $source
          */
         $source = $request->source;
-        return response()->json([
-            'message' => 'avant try'
-        ], 201);
+        
         try {
             DB::beginTransaction();
 
@@ -152,7 +150,9 @@ class InstancesController extends Controller
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
                 'pays' => $enterprise->pays === 'Madagascar' ? 0 : 1,
             ]);
-
+            return response()->json([
+                'message' => 'fastProvisioning'
+            ], 201);
             $fastProvisioning = new FastInstanceProvisioningService();
             $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId);
 
