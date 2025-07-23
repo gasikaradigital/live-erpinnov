@@ -4,11 +4,9 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\OtherTable;
-use App\Models\Subscription;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Config;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
-use App\Models\Entreprise;
 use Carbon\Carbon;
 
 class CreateUsersDolibarr
@@ -18,13 +16,13 @@ class CreateUsersDolibarr
     /**
      * Create a new  user Dolibarr.
      */
-    public function __construct($name, $entreprise, $dolibarrApiKey, $urlDolibarr)
+    public function __construct($name, $entreprise, $instance_free)
     {
 
         $this->entreprise = $entreprise;
         $this->name = $name;
-        $this->dolibarrApiKey = $dolibarrApiKey;
-        $this->urlDolibarr = $urlDolibarr;
+        $this->dolibarrApiKey = $instance_free->dolibarrApiKey;
+        $this->urlDolibarr = $instance_free->url;
     }
 
     public function create(){
@@ -40,9 +38,9 @@ class CreateUsersDolibarr
             Log::info('Données envoyées à l\'API:', $apiData);
             //sZiYMfRJ5JDi
             $response = Http::withHeaders([
-                'DOLAPIKEY' => '3at1TxcD44CYN4J9LJ23ldG6r7VrcdTu',
+                'DOLAPIKEY' => $this->dolibarrApiKey,
                 'Accept' => 'application/json'
-            ])->post( 'https://gmg.erpinnov.com' . '/api/index.php/users', $apiData);
+            ])->post( $this->urlDolibarr . '/api/index.php/users', $apiData);
 
             if (!$response->successful()) {
                 Log::error('Réponse API Dolibarr: ' . $response->body());

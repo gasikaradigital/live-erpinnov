@@ -11,6 +11,7 @@ use App\Services\CreateUserDolibarr;
 use App\Services\InstanceProvisioningService;
 use App\Models\Entreprise;
 use App\Services\CpanelService;
+use App\Services\CreateUsersDolibarr;
 
 class FastInstanceProvisioningService {
     public function createInstance($instanceData, $user, $instance, $source, $entrepriseId) {
@@ -79,7 +80,7 @@ class FastInstanceProvisioningService {
                     return true;
                 }
             } else {
-                //$createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free->api_key, $instance_free->url);
+                $createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free);
 
                 //Création sous-domaine
                 //$this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);

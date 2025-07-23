@@ -169,7 +169,7 @@ class InstancesController extends Controller
             return response()->json([
                 'id' => $instance->id,
                 'name' => $instance->name,
-                'login' => $user->email,
+                'login' => $instanceData['login_dolibarr'],
                 'password' => $instanceData['password_dolibarr'],
                 'url' => "http://" . $instance->name . ".erpinnov.com",
                 'created_at' => now(),
