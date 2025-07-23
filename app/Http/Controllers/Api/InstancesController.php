@@ -135,9 +135,7 @@ class InstancesController extends Controller
             if ($instanceData === null) {
                 return response()->json(['message' => 'Impossible de recuperer un instance libre'], 500);
             }
-            return response()->json([
-                'message' => 'pointer'
-            ], 201);
+            
             $instance = Instance::create([
                 'user_id' => $user->id,
                 'subscription_id' => $subscription->id,
@@ -152,7 +150,9 @@ class InstancesController extends Controller
                 'dolibarr_api_key' => $instanceData['api_key_dolibarr'],
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
-            
+            return response()->json([
+                'message' => 'pointer'
+            ], 201);
             $fastProvisioning = new FastInstanceProvisioningService();
             $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId);
 
