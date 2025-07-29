@@ -76,8 +76,9 @@ class CreateUsersDolibarr
        
     }
 
-    public function setPassword($insatnce_free){
+    public function setPassword($instance_free, $passwordHash){
         try {
+
             config(['database.connections.dynamic' => [
                 'driver' => 'mariadb',
                 'host' => 'localhost',
@@ -97,7 +98,7 @@ class CreateUsersDolibarr
             DB::connection('dynamic')->table($instance_free->prefix.'user')
                 ->where('rowid', 1)
                 ->update([
-                    'pass_crypted' => $api_key_dolibarr
+                    'pass_crypted' => $passwordHash
                 ]);
     
             return true;

@@ -12,6 +12,7 @@ use App\Services\InstanceProvisioningService;
 use App\Models\Entreprise;
 use App\Services\CpanelService;
 use App\Services\CreateUsersDolibarr;
+use Illuminate\Support\Str;
 
 class FastInstanceProvisioningService {
     public function createInstance($instanceData, $user, $instance, $source, $entrepriseId) {
@@ -84,10 +85,12 @@ class FastInstanceProvisioningService {
                 $createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free);
                 $createUserDolibarr->createUser();
                 //Mise à jours de son mot de passe
-                $createUserDolibarr->setPassword($instance_free);
+                $password = Str::random(12);
+                $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+                $createUserDolibarr->setPassword($instance_free, $passwordHash);
 
                 //Création sous-domaine
-                //$this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
+                $this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
 
                 //Mise à jours du statut de l'instance après assignation à un client
                 //$instance_free->statut = 'atrribué';
@@ -95,7 +98,7 @@ class FastInstanceProvisioningService {
                 // Enregistrer les modifications dans la base de données
                 //$instance_free->save();
 
-                return true;
+                return $passwordHash;
             }
             
             return false;
