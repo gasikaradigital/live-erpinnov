@@ -90,7 +90,7 @@ class FastInstanceProvisioningService {
                 $createUserDolibarr->setPassword($instance_free, $passwordHash);
 
                 //Création sous-domaine
-                //$this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
+                $this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
 
                 //Mise à jours du statut de l'instance après assignation à un client
                 //$instance_free->statut = 'atrribué';
