@@ -98,7 +98,7 @@ class FastInstanceProvisioningService {
                 // Enregistrer les modifications dans la base de données
                 //$instance_free->save();
 
-                return $passwordHash;
+                return true;
             }
             
             return false;
