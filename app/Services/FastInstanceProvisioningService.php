@@ -83,7 +83,7 @@ class FastInstanceProvisioningService {
             } else {
                 //Création de l'utilisateur Dolibarr
                 $createUserDolibarr = new CreateUsersDolibarr($instanceData['name'], $entreprise, $instance_free);
-                //$createUserDolibarr->createUser();
+                $createUserDolibarr->createUser();
                 //Mise à jours de son mot de passe
                /* $password = Str::random(12);
                 $passwordHash = password_hash($password, PASSWORD_BCRYPT);

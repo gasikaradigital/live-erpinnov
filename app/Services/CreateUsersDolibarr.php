@@ -42,9 +42,9 @@ class CreateUsersDolibarr
             Log::info('Données envoyées à l\'API:', $apiData);
             
             $response = Http::withHeaders([
-                'DOLAPIKEY' => 'XIP8d2htV78s6HkFY7A29fF5oX8qCjul',
+                'DOLAPIKEY' => $this->dolibarrApiKey,
                 'Accept' => 'application/json'
-            ])->post( 'https://001.erpinnov.com/api/index.php/users', $apiData);
+            ])->post( $this->urlDolibarr . '/api/index.php/users', $apiData);
 
             if (!$response->successful()) {
                 Log::error('Réponse API Dolibarr: ' . $response->body());
