@@ -85,9 +85,9 @@ class FastInstanceProvisioningService {
                 $createUserDolibarr = new CreateUsersDolibarr($instanceData['name'], $entreprise, $instance_free);
                 $createUserDolibarr->createUser();
                 //Mise à jours de son mot de passe
-               /* $password = Str::random(12);
+                $password = Str::random('testpassword');
                 $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-                $createUserDolibarr->setPassword($instance_free, $passwordHash);*/
+                $createUserDolibarr->setPassword($instance_free, $passwordHash);
 
                 //Création sous-domaine
                 //$this->cpanelService->createSubdomainSass($instanceData['name'], $instance_free->url);
