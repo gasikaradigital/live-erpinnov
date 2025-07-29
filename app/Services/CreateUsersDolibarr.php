@@ -25,7 +25,7 @@ class CreateUsersDolibarr
 
         $this->entreprise = $entreprise;
         $this->name = $name;
-        $this->dolibarrApiKey = $instance_free->dolibarrApiKey;
+        $this->dolibarrApiKey = $instance_free->api_key;
         $this->urlDolibarr = $instance_free->url;
     }
 
