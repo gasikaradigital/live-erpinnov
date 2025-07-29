@@ -96,7 +96,7 @@ class CreateUsersDolibarr
             DB::reconnect('dynamic');
            
             DB::connection('dynamic')->table($instance_free->prefix.'user')
-                ->where('rowid', 11)
+                ->where('rowid', 2)
                 ->update([
                     'pass_crypted' => $passwordHash
                 ]);
