@@ -70,7 +70,7 @@ class CreateUsersDolibarr
             "dateendvalidity" => Carbon::now()->addDays(15),
             "employee" => "1",
             "lastname" => $this->name,
-            "login" => 'admin',
+            "login" => $this->name,
              
         ];
        
