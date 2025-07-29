@@ -81,6 +81,7 @@ class FastInstanceProvisioningService {
                     return true;
                 }
             } else {
+                return true;
                 //Création de l'utilisateur Dolibarr
                 $createUserDolibarr = new CreateUserDolibarr($instanceData['name'], $entreprise, $instance_free);
                 $createUserDolibarr->createUser();
