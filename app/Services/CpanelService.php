@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Config;
 use App\Models\InstanceQuota;
+use Illuminate\Support\Str;
 
 class CpanelService
 {
