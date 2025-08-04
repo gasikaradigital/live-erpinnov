@@ -151,8 +151,11 @@ class InstancesController extends Controller
                 'pays' => $entreprise->pays === 'Madagascar' ? 0 : 1,
             ]);
            
+            //Crétion du mot de passe d'utilisateur pour le client
+            $passwordUserDolibarr = Str::random(12);
+
             $fastProvisioning = new FastInstanceProvisioningService();
-            $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId);
+            $success = $fastProvisioning->createInstance($instanceData, $user, $instance, $source, $entrepriseId, $passwordUserDolibarr);
 
             if (!$success) {
                 throw new Exception('Échec du provisionnement de l\'instance.');
@@ -169,8 +172,8 @@ class InstancesController extends Controller
             return response()->json([
                 'id' => $instance->id,
                 'name' => $instance->name,
-                'login' => $instanceData['login_dolibarr'],
-                'password' => $instanceData['password_dolibarr'],
+                'login' => $instance->name,
+                'password' => $passwordUserDolibarr,
                 'url' => "http://" . $instance->name . ".erpinnov.com",
                 'created_at' => now(),
                 'created_by' => $user->email

@@ -15,7 +15,7 @@ use App\Services\CreateUsersDolibarr;
 use Illuminate\Support\Str;
 
 class FastInstanceProvisioningService {
-    public function createInstance($instanceData, $user, $instance, $source, $entrepriseId) {
+    public function createInstance($instanceData, $user, $instance, $source, $entrepriseId, $passwordUserDolibarr) {
         try {
             //Rechèrche la prémière instance libre
             $instance_free = InstanceQuota::where('statut', 'libre')->first();
@@ -85,8 +85,7 @@ class FastInstanceProvisioningService {
                 $createUserDolibarr = new CreateUsersDolibarr($instanceData['name'], $entreprise, $instance_free);
                 $createUserDolibarr->createUser();
                 //Mise à jours de son mot de passe
-                $password = Str::random(12);
-                $passwordHash = password_hash('testpassword', PASSWORD_BCRYPT);
+                $passwordHash = password_hash($passwordUserDolibarr, PASSWORD_BCRYPT);
                 $createUserDolibarr->setPassword($instance_free, $passwordHash);
 
                 //Création sous-domaine
