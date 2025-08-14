@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('ref')->unique();
             $table->string('sujet');
-            $table->string('message');
+            $table->string('categorie');
+            $table->string('note');
             $table->string('status');
             $table->timestamps();
         });
