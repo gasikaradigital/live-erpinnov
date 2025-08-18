@@ -30,7 +30,6 @@ class PlanController extends Controller
 
     public function plan()
     {
-
         $this->data = $this->getFromDatabase();
         return response()->json([
             'plan' => $this->data,
@@ -91,7 +90,7 @@ class PlanController extends Controller
 
     private function getFromDatabase()
     {
-        $plans = Plan::with('subPlans')->get();
+        $plans = Plan::all();
         $data = [];
         foreach ($plans as $plan) {
              array_push($data,$this->mapFromModel($plan));
