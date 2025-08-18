@@ -34,7 +34,7 @@ class PlanController extends Controller
         return response()->json([
             'plan' => $this->data,
         ], 200);*/
-        return response()->json(['arrive' => "ok"]);
+        return response()->json(['arrive' => "ok"], 200);
     }
 
     private function fetchFromDolibarr()
