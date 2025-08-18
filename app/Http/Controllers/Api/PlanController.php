@@ -32,7 +32,9 @@ class PlanController extends Controller
     {
 
         $this->data = $this->getFromDatabase();
-        return $this->data;
+        return response()->json([
+            'plan' => $this->data,
+        ], 200);
     }
 
     private function fetchFromDolibarr()
@@ -87,16 +89,14 @@ class PlanController extends Controller
         }
     }
 
-    public function getFromDatabase()
+    private function getFromDatabase()
     {
         $plans = Plan::with('subPlans')->get();
         $data = [];
         foreach ($plans as $plan) {
              array_push($data,$this->mapFromModel($plan));
         }
-        return response()->json([
-            'plan' => $data,
-        ]);
+        return $data;
     }
 
     private function mapFromModel(Plan $plan)

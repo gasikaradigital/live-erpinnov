@@ -89,10 +89,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Création subscription
     Route::post('/create-subscription', [SubscriptionController::class, 'create']);
-
-    //Récupérationd des plans
-    Route::get('/plans', [PlanController::class, 'getFromDatabase']);
-    
 });
 Route::get('/faq', [FAQController::class, 'getAll']);
 Route::get('/tutorial', [TutorialController::class, 'getAll']);
