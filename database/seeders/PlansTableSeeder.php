@@ -178,26 +178,26 @@ class PlansTableSeeder extends Seeder
                 ]),
                 'sub_plans' => [
                     [
-                        'name' => '2g',
-                        'price_monthly' => 2.00,
-                        'price_yearly' => 24.00,
-                        'price_local' => 270000.00,
+                        'name' => '2 Go',
+                        'price_monthly' => 5.00,
+                        'price_yearly' => 60.00,
+                        'price_local' => 25000.00,
                         'features' => ['Gestion des RH'],
                         'is_default' => true
                     ],
                     [
-                        'name' => '5g',
-                        'price_monthly' => 5.00,
-                        'price_yearly' => 60.00,
-                        'price_local' => 378000.00,
+                        'name' => '5 5Go',
+                        'price_monthly' => 8.00,
+                        'price_yearly' => 96.00,
+                        'price_local' => 40000.00,
                         'features' => ['GPEC'],
                         'is_default' => false
                     ],
                     [
-                        'name' => '10g',
-                        'price_monthly' => 10.00,
-                        'price_yearly' => 120.00,
-                        'price_local' => 486000.00,
+                        'name' => '10 Go',
+                        'price_monthly' => 16.00,
+                        'price_yearly' => 192.00,
+                        'price_local' => 80000.00,
                         'features' => ['Paie'],
                         'is_default' => false
                     ]

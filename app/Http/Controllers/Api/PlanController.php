@@ -87,14 +87,16 @@ class PlanController extends Controller
         }
     }
 
-    private function getFromDatabase()
+    public function getFromDatabase()
     {
-        $plans = Plan::all();
+        $plans = Plan::with('subPlans')->get();
         $data = [];
         foreach ($plans as $plan) {
              array_push($data,$this->mapFromModel($plan));
         }
-        return $data;
+        return response()->json([
+            'plan' => $data,
+        ]);
     }
 
     private function mapFromModel(Plan $plan)

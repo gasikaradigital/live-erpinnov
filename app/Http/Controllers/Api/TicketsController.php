@@ -22,10 +22,10 @@ class TicketsController extends Controller
      */
     private $dolibarrApiService;
 
-    public function __construct(DolibarrApiService $dolibarr_api)
+    /*public function __construct(DolibarrApiService $dolibarr_api)
     {
         $this->dolibarrApiService = $dolibarr_api;
-    }
+    }*/
     public function getTickets(Request $request)
     {
         $user = $request->user();
@@ -105,17 +105,18 @@ class TicketsController extends Controller
     }
 
 
-    private function fetchFromDolibarr()
+    public function fetchFromDolibarr(Request $request)
     {
         try {
+            $dolibarrApiService = new DolibarrApiService($request->baseUrl, $request->apiKey);
+            $response = $dolibarrApiService->fetch("tickets");
 
-            $response = $this->dolibarrApiService->fetch("tickets");
-
-            return response()->json($response, 200);
+            return response()->json($response);
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ]);
         }
     }
+
 }

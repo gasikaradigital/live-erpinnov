@@ -48,11 +48,7 @@ class DolibarrApiService
         $response = Http::withHeaders([
             'DOLAPIKEY' => $this->apiKey,
             'Accept' => 'application/json',
-        ])->get("{$this->baseUrl}/{$endpoint}", array_merge([
-            'limit' => 100,
-            'sortfield' => 'ref',
-            'sortorder' => 'ASC',
-        ], $query));
+        ])->get("{$this->baseUrl}/{$endpoint}/2");
     
         if ($response->failed()) {
             throw new \RuntimeException("Erreur API Dolibarr: " . $response->body());
