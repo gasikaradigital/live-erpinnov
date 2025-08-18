@@ -30,11 +30,11 @@ class PlanController extends Controller
 
     public function plan()
     {
-        /*$this->data = $this->getFromDatabase();
+        $this->data = $this->getFromDatabase();
         return response()->json([
             'plan' => $this->data,
-        ], 200);*/
-        return response()->json(['arrive' => "ok"], 200);
+        ], 200);
+ 
     }
 
     private function fetchFromDolibarr()
